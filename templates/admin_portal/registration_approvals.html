@@ -1,44 +1,58 @@
 {% extends "admin_base.html" %}
 {% block title %}Approvals — Fitlab Admin{% endblock %}
+{% block admin_page_title %}Registration Queue{% endblock %}
 {% block content %}
 <div class="admin-hero">
-  <h1>Registration approvals</h1>
-  <p>Approve customers before they access the dashboard</p>
+  <p class="admin-kicker">Onboarding</p>
+  <h1>Registration Approvals</h1>
+  <p>Review new recruits before they unlock the member dashboard and earn TFL Points.</p>
 </div>
 
-<div class="admin-panel">
-  <table class="admin-table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Referred by</th>
-        <th>Registered</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for u in pending_users %}
-        <tr>
-          <td><strong>{{ u.display_name }}</strong></td>
-          <td>{{ u.email }}</td>
-          <td>{{ u.phone|default:"—" }}</td>
-          <td>{% if u.referred_by %}{{ u.referred_by.display_name }}{% else %}—{% endif %}</td>
-          <td>{{ u.date_joined|date:"M j, Y" }}</td>
-          <td>
-            <form method="post" style="display:inline">
-              {% csrf_token %}
-              <input type="hidden" name="user_id" value="{{ u.id }}">
-              <button name="action" value="approve" class="admin-btn admin-btn--primary" type="submit">Approve</button>
-              <button name="action" value="reject" class="admin-btn admin-btn--ghost" type="submit">Reject</button>
-            </form>
-          </td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="6" style="color:#71717a">No pending registrations.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+{% if pending_count %}
+  <div class="queue-badge">{{ pending_count }} pending registration{{ pending_count|pluralize }}</div>
+{% endif %}
+
+{% if pending_users %}
+  <div class="approval-grid">
+    {% for u in pending_users %}
+      <article class="approval-card">
+        <div class="approval-card__tag">
+          {% if u.referred_by %}Referral Recruit{% else %}Direct Signup{% endif %}
+        </div>
+        <h3>{{ u.display_name }}</h3>
+        <div class="approval-card__email">{{ u.email }}</div>
+        <dl class="approval-meta">
+          <div>
+            <dt>Phone</dt>
+            <dd>{{ u.phone|default:"Not provided" }}</dd>
+          </div>
+          <div>
+            <dt>Referred by</dt>
+            <dd>{% if u.referred_by %}{{ u.referred_by.display_name }}{% else %}—{% endif %}</dd>
+          </div>
+          <div>
+            <dt>Registered</dt>
+            <dd>{{ u.date_joined|date:"M j, Y g:i A" }}</dd>
+          </div>
+        </dl>
+        <div class="approval-card__actions">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ u.id }}">
+            <button name="action" value="approve" class="admin-btn admin-btn--success" type="submit">Approve</button>
+          </form>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ u.id }}">
+            <button name="action" value="reject" class="admin-btn admin-btn--danger" type="submit">Reject</button>
+          </form>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="admin-panel">
+    <p style="color:#71717a;margin:0">No pending registrations — the queue is clear.</p>
+  </div>
+{% endif %}
 {% endblock %}

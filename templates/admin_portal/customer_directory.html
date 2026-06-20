@@ -1,42 +1,89 @@
 {% extends "admin_base.html" %}
 {% block title %}Customers — Fitlab Admin{% endblock %}
+{% block admin_page_title %}Customer Directory{% endblock %}
 {% block content %}
 <div class="admin-hero">
-  <h1>Customer directory</h1>
-  <p>Search and review all gym members</p>
+  <p class="admin-kicker">Member Management</p>
+  <h1>Customer Directory</h1>
+  <p>Search members, review tier status, and adjust TFL Points balances.</p>
 </div>
 
-<form method="get" class="admin-search">
-  <input type="search" name="q" value="{{ q }}" placeholder="Name, email, or phone">
-  <button type="submit" class="admin-btn admin-btn--primary">Search</button>
-</form>
+<div class="admin-stat-grid">
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Total Members</div>
+    <div class="admin-stat-card__value">{{ total_customers }}</div>
+    <div class="admin-stat-card__sub">All registrations</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">TFLS Issued</div>
+    <div class="admin-stat-card__value">{{ total_points_issued|floatformat:0 }}</div>
+    <div class="admin-stat-card__sub">Program lifetime</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Active Sessions</div>
+    <div class="admin-stat-card__value">{{ approved_members }}</div>
+    <div class="admin-stat-card__sub">Approved members</div>
+  </div>
+</div>
 
 <div class="admin-panel">
+  <div class="admin-panel__head">
+    <h2>All Members</h2>
+    <form method="get" class="admin-search">
+      <input type="search" name="q" value="{{ q }}" placeholder="Search name, email, or phone">
+    </form>
+  </div>
+
   <table class="admin-table">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
+        <th>Member</th>
+        <th>Tier</th>
+        <th>Balance</th>
         <th>Status</th>
-        <th>Referral code</th>
         <th>Joined</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      {% for c in customers %}
+      {% for row in customers %}
+        {% with c=row.user %}
         <tr>
-          <td><strong>{{ c.display_name }}</strong></td>
-          <td>{{ c.email }}</td>
-          <td>{{ c.phone|default:"—" }}</td>
-          <td><span class="status-chip status-chip--{{ c.approval_status }}">{{ c.approval_status }}</span></td>
-          <td>{{ c.referral_code }}</td>
+          <td>
+            <div class="member-cell">
+              <div class="member-avatar">{{ c.display_name|slice:":1"|upper }}</div>
+              <div>
+                <div class="member-cell__name">{{ c.display_name }}</div>
+                <div class="member-cell__id">{{ c.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="tier-chip {% if 'Platinum' in row.tier %}tier-chip--platinum{% elif 'Gold' in row.tier %}tier-chip--gold{% endif %}">
+              {{ row.tier }}
+            </span>
+          </td>
+          <td><strong>{{ row.balance }}</strong> TFLS</td>
+          <td>
+            <span class="status-chip status-chip--{% if c.approval_status == 'approved' %}active{% else %}{{ c.approval_status }}{% endif %}">
+              {{ c.approval_status }}
+            </span>
+          </td>
           <td>{{ c.date_joined|date:"M j, Y" }}</td>
+          <td>
+            <a href="{% url 'admin_portal:points_ledger' %}?user={{ c.id }}#adjust" class="admin-btn admin-btn--ghost">Adjust Points</a>
+          </td>
         </tr>
+        {% endwith %}
       {% empty %}
         <tr><td colspan="6" style="color:#71717a">No customers found.</td></tr>
       {% endfor %}
     </tbody>
   </table>
+
+  <div class="admin-pagination">
+    <span>Showing {{ customers|length }} members</span>
+    {% if q %}<a href="{% url 'admin_portal:customer_directory' %}">Clear search</a>{% endif %}
+  </div>
 </div>
 {% endblock %}

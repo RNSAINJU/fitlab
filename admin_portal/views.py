@@ -4,10 +4,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
+from django.db.models import Sum
+
 from activity.services import log_activity
+from loyalty.helpers import get_membership_tier
 from loyalty.models import PointTransaction
 from loyalty.services import admin_adjust_points, deduct_points, get_balance
-from rewards.models import RedemptionRequest
+from rewards.models import RedemptionRequest, Reward
 
 from .decorators import staff_required
 
@@ -19,6 +22,8 @@ def dashboard(request):
     pending_users = User.objects.filter(approval_status=User.ApprovalStatus.PENDING).count()
     pending_redemptions = RedemptionRequest.objects.filter(status=RedemptionRequest.Status.PENDING).count()
     total_customers = User.objects.filter(is_staff=False).count()
+    total_points = PointTransaction.objects.filter(amount__gt=0).aggregate(total=Sum("amount"))["total"] or 0
+    approved_members = User.objects.filter(is_staff=False, approval_status=User.ApprovalStatus.APPROVED).count()
     return render(
         request,
         "admin_portal/dashboard.html",
@@ -26,6 +31,8 @@ def dashboard(request):
             "pending_users": pending_users,
             "pending_redemptions": pending_redemptions,
             "total_customers": total_customers,
+            "total_points_issued": total_points,
+            "approved_members": approved_members,
         },
     )
 
@@ -35,13 +42,32 @@ def customer_directory(request):
     q = request.GET.get("q", "").strip()
     customers = User.objects.filter(is_staff=False).order_by("-date_joined")
     if q:
-        customers = customers.filter(
-            models_q(q)
+        customers = customers.filter(models_q(q))
+
+    customer_rows = []
+    for c in customers[:50]:
+        balance = get_balance(c)
+        customer_rows.append(
+            {
+                "user": c,
+                "balance": balance,
+                "tier": get_membership_tier(balance),
+            }
         )
+
+    total_points = PointTransaction.objects.filter(amount__gt=0).aggregate(total=Sum("amount"))["total"] or 0
+    approved_count = User.objects.filter(is_staff=False, approval_status=User.ApprovalStatus.APPROVED).count()
+
     return render(
         request,
         "admin_portal/customer_directory.html",
-        {"customers": customers, "q": q},
+        {
+            "customers": customer_rows,
+            "q": q,
+            "total_customers": User.objects.filter(is_staff=False).count(),
+            "total_points_issued": total_points,
+            "approved_members": approved_count,
+        },
     )
 
 
@@ -79,7 +105,11 @@ def registration_approvals(request):
             messages.info(request, f"Rejected {user.display_name}.")
         return redirect("admin_portal:registration_approvals")
 
-    return render(request, "admin_portal/registration_approvals.html", {"pending_users": pending})
+    return render(
+        request,
+        "admin_portal/registration_approvals.html",
+        {"pending_users": pending, "pending_count": pending.count()},
+    )
 
 
 @staff_required
@@ -153,6 +183,12 @@ def points_ledger(request):
             return redirect("admin_portal:points_ledger")
 
     customers = User.objects.filter(is_staff=False).order_by("email")
+    total_earned = PointTransaction.objects.filter(amount__gt=0).aggregate(total=Sum("amount"))["total"] or 0
+    total_redemptions = RedemptionRequest.objects.filter(status=RedemptionRequest.Status.APPROVED).count()
+    all_redemptions = RedemptionRequest.objects.count()
+    redemption_rate = int((total_redemptions / all_redemptions) * 100) if all_redemptions else 0
+    top_rewards = Reward.objects.filter(is_active=True).order_by("-points_cost")[:3]
+
     return render(
         request,
         "admin_portal/points_ledger.html",
@@ -160,5 +196,9 @@ def points_ledger(request):
             "transactions": transactions,
             "pending_redemptions": pending_redemptions,
             "customers": customers,
+            "total_earned": total_earned,
+            "total_redemptions": total_redemptions,
+            "redemption_rate": redemption_rate,
+            "top_rewards": top_rewards,
         },
     )

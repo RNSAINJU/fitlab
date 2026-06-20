@@ -1,32 +1,51 @@
 {% extends "base.html" %}
 {% load fitlab_tags %}
 {% block body %}
-<div class="admin-shell">
-  <header class="admin-topbar">
-    <a href="{% url 'admin_portal:dashboard' %}" class="admin-topbar__brand">Fitlab Admin</a>
-    <div style="display:flex;gap:12px;align-items:center">
-      <a href="{% url 'accounts:dashboard' %}" style="font-size:12px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em">Customer app</a>
-      <a href="{% url 'accounts:logout' %}" style="font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em">Logout</a>
-    </div>
-  </header>
-
-  <nav class="admin-nav">
+<div class="admin-shell admin-layout">
+  <aside class="admin-sidebar">
+    <a href="{% url 'admin_portal:dashboard' %}" class="admin-sidebar__brand">
+      Fitlab Admin
+      <small>Loyalty Command</small>
+    </a>
     <a href="{% url 'admin_portal:dashboard' %}" class="{% active_nav request 'admin_portal' 'dashboard' %}">Overview</a>
-    <a href="{% url 'admin_portal:customer_directory' %}" class="{% active_nav request 'admin_portal' 'customer_directory' %}">Customers</a>
-    <a href="{% url 'admin_portal:registration_approvals' %}" class="{% active_nav request 'admin_portal' 'registration_approvals' %}">Approvals</a>
-    <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Ledger</a>
-  </nav>
+    <a href="{% url 'admin_portal:customer_directory' %}" class="{% active_nav request 'admin_portal' 'customer_directory' %}">Customer Directory</a>
+    <a href="{% url 'admin_portal:registration_approvals' %}" class="{% active_nav request 'admin_portal' 'registration_approvals' %}">Registration Queue</a>
+    <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Points Ledger</a>
+    <div class="admin-sidebar__footer">
+      <a href="{% url 'accounts:dashboard' %}">Customer App</a>
+      <a href="{% url 'accounts:logout' %}">Logout</a>
+    </div>
+  </aside>
 
-  {% if messages %}
-    <ul class="messages" style="max-width:1100px;padding:0 24px">
-      {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  <div class="admin-content">
+    <header class="admin-header-bar">
+      <div class="admin-header-bar__title">
+        <span>FITLAB</span> / {% block admin_page_title %}Admin{% endblock %}
+      </div>
+      <div class="admin-header-bar__actions">
+        <span>{{ request.user.email }}</span>
+        <a href="{% url 'accounts:logout' %}">Sign out</a>
+      </div>
+    </header>
 
-  <main class="admin-main">
-    {% block content %}{% endblock %}
-  </main>
+    <nav class="admin-mobile-nav">
+      <a href="{% url 'admin_portal:dashboard' %}" class="{% active_nav request 'admin_portal' 'dashboard' %}">Overview</a>
+      <a href="{% url 'admin_portal:customer_directory' %}" class="{% active_nav request 'admin_portal' 'customer_directory' %}">Directory</a>
+      <a href="{% url 'admin_portal:registration_approvals' %}" class="{% active_nav request 'admin_portal' 'registration_approvals' %}">Queue</a>
+      <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Ledger</a>
+    </nav>
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <main class="admin-main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 </div>
 {% endblock %}

@@ -1,44 +1,33 @@
 {% extends "admin_base.html" %}
 {% block title %}Ledger — Fitlab Admin{% endblock %}
+{% block admin_page_title %}Points &amp; Redemptions{% endblock %}
 {% block content %}
 <div class="admin-hero">
-  <h1>Points &amp; redemptions</h1>
-  <p>Audit TFL Points and approve redemption requests</p>
+  <p class="admin-kicker">Financial Audit</p>
+  <h1>Points &amp; Redemptions Ledger</h1>
+  <p>Track TFL Points flow, approve redemptions, and apply manual balance adjustments.</p>
 </div>
 
-<div class="admin-panel">
-  <h2>Pending redemptions</h2>
-  {% if pending_redemptions %}
-    <table class="admin-table">
-      <thead>
-        <tr><th>Customer</th><th>Reward</th><th>Points</th><th>Requested</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-        {% for r in pending_redemptions %}
-          <tr>
-            <td>{{ r.user.display_name }}</td>
-            <td>{{ r.reward.title }}</td>
-            <td style="color:var(--accent)">{{ r.points_cost }}</td>
-            <td>{{ r.created_at|date:"M j, Y" }}</td>
-            <td>
-              <form method="post" style="display:inline">
-                {% csrf_token %}
-                <input type="hidden" name="redemption_id" value="{{ r.id }}">
-                <button name="action" value="approve_redemption" class="admin-btn admin-btn--primary" type="submit">Approve</button>
-                <button name="action" value="reject_redemption" class="admin-btn admin-btn--ghost" type="submit">Reject</button>
-              </form>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p style="color:#71717a;margin:0">No pending redemptions.</p>
-  {% endif %}
+<div class="admin-stat-grid">
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Total Earned</div>
+    <div class="admin-stat-card__value">{{ total_earned|floatformat:0 }}</div>
+    <div class="admin-stat-card__sub">TFLS issued</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Redemptions</div>
+    <div class="admin-stat-card__value">{{ total_redemptions }}</div>
+    <div class="admin-stat-card__sub">Approved requests</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Redemption Rate</div>
+    <div class="admin-stat-card__value">{{ redemption_rate }}%</div>
+    <div class="admin-stat-card__sub">Approved vs total</div>
+  </div>
 </div>
 
-<div class="admin-panel">
-  <h2>Manual point adjustment</h2>
+<div id="adjust" class="admin-form-panel">
+  <h3>Manual Point Adjustment</h3>
   <form method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="adjust">
@@ -47,42 +36,111 @@
         <label for="user_id">Customer</label>
         <select name="user_id" id="user_id" required>
           {% for c in customers %}
-            <option value="{{ c.id }}">{{ c.display_name }} ({{ c.email }})</option>
+            <option value="{{ c.id }}" {% if request.GET.user == c.id|stringformat:"s" %}selected{% endif %}>
+              {{ c.display_name }} ({{ c.email }})
+            </option>
           {% endfor %}
         </select>
       </div>
       <div>
         <label for="amount">Amount (+/- TFL Points)</label>
-        <input type="number" name="amount" id="amount" required>
+        <input type="number" name="amount" id="amount" required placeholder="e.g. 500 or -100">
       </div>
       <div>
         <label for="note">Note</label>
         <input type="text" name="note" id="note" placeholder="Reason for adjustment">
       </div>
     </div>
-    <button type="submit" class="admin-btn admin-btn--primary">Apply adjustment</button>
+    <button type="submit" class="admin-btn admin-btn--primary">Apply Adjustment</button>
   </form>
 </div>
 
-<div class="admin-panel">
-  <h2>Recent transactions</h2>
-  <table class="admin-table">
-    <thead>
-      <tr><th>Customer</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th></tr>
-    </thead>
-    <tbody>
-      {% for tx in transactions %}
-        <tr>
-          <td>{{ tx.user.display_name }}</td>
-          <td style="color:{% if tx.amount >= 0 %}#22c55e{% else %}var(--accent){% endif %}">{% if tx.amount >= 0 %}+{% endif %}{{ tx.amount }}</td>
-          <td>{{ tx.transaction_type }}</td>
-          <td>{{ tx.description }}</td>
-          <td>{{ tx.created_at|date:"M j, Y g:i A" }}</td>
-        </tr>
+<div class="ledger-grid">
+  <div>
+    {% if pending_redemptions %}
+      <div class="admin-panel">
+        <div class="admin-panel__head">
+          <h2>Pending Redemptions</h2>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr><th>Customer</th><th>Reward</th><th>Points</th><th>Requested</th><th></th></tr>
+          </thead>
+          <tbody>
+            {% for r in pending_redemptions %}
+              <tr>
+                <td>{{ r.user.display_name }}</td>
+                <td>{{ r.reward.title }}</td>
+                <td style="color:var(--accent)">{{ r.points_cost }} TFLS</td>
+                <td>{{ r.created_at|date:"M j, Y" }}</td>
+                <td>
+                  <form method="post" style="display:inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="redemption_id" value="{{ r.id }}">
+                    <button name="action" value="approve_redemption" class="admin-btn admin-btn--success" type="submit">Approve</button>
+                    <button name="action" value="reject_redemption" class="admin-btn admin-btn--danger" type="submit">Reject</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    <div class="admin-panel">
+      <div class="admin-panel__head">
+        <h2>Recent Transactions</h2>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr><th>Customer</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          {% for tx in transactions %}
+            <tr>
+              <td>{{ tx.user.display_name }}</td>
+              <td style="color:{% if tx.amount >= 0 %}#22c55e{% else %}var(--accent){% endif %}">
+                {% if tx.amount >= 0 %}+{% endif %}{{ tx.amount }} TFLS
+              </td>
+              <td>{{ tx.transaction_type }}</td>
+              <td>{{ tx.description }}</td>
+              <td>{{ tx.created_at|date:"M j, Y g:i A" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5" style="color:#71717a">No transactions yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <aside>
+    <div class="ledger-side-card">
+      <h3>Top Redemptions</h3>
+      {% for reward in top_rewards %}
+        <div class="redemption-item">
+          <div>
+            <strong>{{ reward.title }}</strong>
+            <div class="redemption-item__count">{{ reward.points_cost }} TFLS</div>
+          </div>
+        </div>
       {% empty %}
-        <tr><td colspan="5" style="color:#71717a">No transactions yet.</td></tr>
+        <p style="color:#71717a;font-size:13px;margin:0">No rewards configured.</p>
       {% endfor %}
-    </tbody>
-  </table>
+    </div>
+
+    <div class="ledger-side-card">
+      <h3>Queue Summary</h3>
+      <div class="redemption-item">
+        <span>Pending redemptions</span>
+        <strong>{{ pending_redemptions|length }}</strong>
+      </div>
+      <div class="redemption-item">
+        <span>Transactions shown</span>
+        <strong>{{ transactions|length }}</strong>
+      </div>
+    </div>
+  </aside>
 </div>
 {% endblock %}
