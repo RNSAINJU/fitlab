@@ -1,0 +1,80 @@
+{% extends "customer_base.html" %}
+{% block title %}Referrals — Fitlab{% endblock %}
+{% block content %}
+<section class="ref-hero">
+  <h2>Recruit your<br>squad</h2>
+  <p>Bring your partners in pain. Earn 500 TFL Points for every successful recruitment.</p>
+</section>
+
+<div class="ref-code-card" style="margin-top:40px">
+  <span class="ref-code-card__exclusive">Exclusive</span>
+  <div class="ref-code-label">Unique referral code</div>
+  <div class="ref-code-box">
+    <div class="ref-code-value" id="referral-code">{{ referral_code }}</div>
+    <button type="button" class="ref-copy-btn" data-copy-target="referral-code">Copy</button>
+  </div>
+</div>
+
+<section style="margin-top:40px">
+  <div class="ref-code-label" style="color:#71717a;letter-spacing:0.2em;margin-bottom:24px">Referral progress</div>
+  <div class="ref-bento">
+    <div class="ref-stat-card">
+      <svg width="28" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <div class="num">{{ approved_count }}</div>
+      <div class="lbl">Elite recruits</div>
+    </div>
+    <div class="ref-stat-card">
+      <svg width="14" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <div class="num">{{ total_bonus|floatformat:0 }}</div>
+      <div class="lbl">Points earned</div>
+    </div>
+  </div>
+
+  <div class="app-card" style="margin-top:16px">
+    <div class="progress-head" style="font-size:14px;text-transform:none">
+      <div>
+        <strong>Tier: {{ tier_name }}</strong>
+        <div style="font-size:10px;color:#71717a;text-transform:uppercase;margin-top:4px">{{ recruits_until }} recruits until next rank</div>
+      </div>
+      <span class="pct">{{ tier_progress }}%</span>
+    </div>
+    <div class="progress-track" style="height:8px">
+      <div class="progress-fill" style="width:{{ tier_progress }}%;background:linear-gradient(135deg,var(--accent),#930007)"></div>
+    </div>
+  </div>
+</section>
+
+<div class="community-banner">
+  <div class="community-banner__tag">Community driven</div>
+</div>
+
+<button type="button" class="share-btn" data-copy-target="referral-code">Share code</button>
+
+{% if referrals %}
+<section style="margin-top:40px">
+  <div class="section-head"><span>Your squad</span></div>
+  {% for ref in referrals %}
+    <div class="timeline-card" style="margin-bottom:12px">
+      <div>
+        <strong>{{ ref.display_name }}</strong>
+        <div class="activity-row__meta">Joined {{ ref.date_joined|date:"M j, Y" }}</div>
+      </div>
+      <span class="status-chip status-chip--{{ ref.approval_status }}">{{ ref.approval_status }}</span>
+    </div>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll("[data-copy-target]").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    var el = document.getElementById(btn.getAttribute("data-copy-target"));
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent.trim());
+    if (btn.classList.contains("ref-copy-btn")) btn.textContent = "Copied";
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Connection lost — Fitlab{% endblock %}
+{% block body %}
+<div class="auth-page auth-page--login">
+  <div class="auth-bg-gradient"></div>
+  <main class="auth-main" style="text-align:center">
+    <p class="auth-brand-kicker">Fitlab</p>
+    <h1 class="auth-hero__title" style="font-size:32px">Connection<br><span class="accent" style="color:var(--accent)">Lost</span></h1>
+    <p class="auth-brand-sub">We couldn't reach the server. Check your connection and try again.</p>
+    <a href="{% url 'accounts:login' %}" class="auth-btn-primary" style="text-decoration:none;margin-top:24px">Try again</a>
+  </main>
+</div>
+{% endblock %}

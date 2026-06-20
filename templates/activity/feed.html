@@ -1,0 +1,54 @@
+{% extends "customer_base.html" %}
+{% load fitlab_tags %}
+{% block title %}Activity — Fitlab{% endblock %}
+{% block content %}
+<h1 class="page-hero">Activity</h1>
+<p class="page-kicker">Your performance timeline</p>
+
+<div class="balance-card">
+  <div class="balance-card__glow"></div>
+  <div class="balance-card__row">
+    <div>
+      <div style="font-size:12px;color:#a1a1aa;text-transform:uppercase;margin-bottom:4px">Available balance</div>
+      <div class="balance-card__amount">{{ balance|floatformat:0 }} <span class="balance-card__unit">TFLs</span></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;color:#a1a1aa;text-transform:uppercase;margin-bottom:8px">Monthly goal</div>
+      <div class="progress-track" style="width:128px;height:8px">
+        <div class="progress-fill" style="width:{{ monthly_progress }}%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline">
+  {% for group in grouped_events %}
+    <div class="timeline-group">
+      <div class="timeline-marker {% if group.code != 'TOD' %}timeline-marker--muted{% endif %}">{{ group.code }}</div>
+      {% for event in group.events %}
+        <div class="timeline-card">
+          <div class="activity-row__left">
+            <div class="activity-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            </div>
+            <div>
+              <strong style="font-size:14px">{{ event.title }}</strong>
+              <div class="activity-row__meta">{{ event.created_at|date:"M j, g:i A" }}</div>
+            </div>
+          </div>
+          <div class="timeline-card__points">
+            {% with pts=event.title|points_from_title %}
+              {% if pts %}{{ pts }}{% else %}—{% endif %}
+            {% endwith %}
+            <small>Points</small>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% empty %}
+    <div class="app-card">
+      <p style="margin:0;color:#71717a">No activity recorded yet.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

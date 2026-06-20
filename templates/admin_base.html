@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load fitlab_tags %}
+{% block body %}
+<div class="admin-shell">
+  <header class="admin-topbar">
+    <a href="{% url 'admin_portal:dashboard' %}" class="admin-topbar__brand">Fitlab Admin</a>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="{% url 'accounts:dashboard' %}" style="font-size:12px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em">Customer app</a>
+      <a href="{% url 'accounts:logout' %}" style="font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em">Logout</a>
+    </div>
+  </header>
+
+  <nav class="admin-nav">
+    <a href="{% url 'admin_portal:dashboard' %}" class="{% active_nav request 'admin_portal' 'dashboard' %}">Overview</a>
+    <a href="{% url 'admin_portal:customer_directory' %}" class="{% active_nav request 'admin_portal' 'customer_directory' %}">Customers</a>
+    <a href="{% url 'admin_portal:registration_approvals' %}" class="{% active_nav request 'admin_portal' 'registration_approvals' %}">Approvals</a>
+    <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Ledger</a>
+  </nav>
+
+  {% if messages %}
+    <ul class="messages" style="max-width:1100px;padding:0 24px">
+      {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <main class="admin-main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

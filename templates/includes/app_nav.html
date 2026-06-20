@@ -1,0 +1,38 @@
+{% load fitlab_tags %}
+<nav class="app-sidebar">
+  <a href="{% url 'accounts:dashboard' %}" class="{% active_nav request 'accounts' 'dashboard' %}">Dashboard</a>
+  <a href="{% url 'activity:feed' %}" class="{% active_nav request 'activity' 'feed' %}">Activity</a>
+  <a href="{% url 'rewards:marketplace' %}" class="{% active_nav request 'rewards' 'marketplace' %}">Rewards</a>
+  <a href="{% url 'referrals:hub' %}" class="{% active_nav request 'referrals' 'hub' %}">Referrals</a>
+  {% if user.is_staff %}
+    <a href="{% url 'admin_portal:dashboard' %}">Admin portal</a>
+  {% endif %}
+  <a href="{% url 'accounts:logout' %}">Logout</a>
+</nav>
+
+<nav class="app-bottomnav">
+  <a href="{% url 'accounts:dashboard' %}" class="app-bottomnav__item {% active_nav request 'accounts' 'dashboard' %}">
+    <span class="app-bottomnav__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </span>
+    <span class="app-bottomnav__label">Dash</span>
+  </a>
+  <a href="{% url 'activity:feed' %}" class="app-bottomnav__item {% active_nav request 'activity' 'feed' %}">
+    <span class="app-bottomnav__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11v11h-11z"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+    </span>
+    Activity
+  </a>
+  <a href="{% url 'rewards:marketplace' %}" class="app-bottomnav__item {% active_nav request 'rewards' 'marketplace' %}">
+    <span class="app-bottomnav__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10l1 7H6l1-7z"/></svg>
+    </span>
+    Rewards
+  </a>
+  <a href="{% url 'referrals:hub' %}" class="app-bottomnav__item {% active_nav request 'referrals' 'hub' %}">
+    <span class="app-bottomnav__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </span>
+    Referral
+  </a>
+</nav>

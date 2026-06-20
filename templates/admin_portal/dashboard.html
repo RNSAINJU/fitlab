@@ -1,0 +1,26 @@
+{% extends "admin_base.html" %}
+{% block title %}Admin — Fitlab{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <h1>Command center</h1>
+  <p>Manage customers, approvals, and TFL Points</p>
+</div>
+
+<div class="admin-metrics">
+  <div class="admin-metric">
+    <div class="admin-metric__label">Total customers</div>
+    <div class="admin-metric__value">{{ total_customers }}</div>
+    <a href="{% url 'admin_portal:customer_directory' %}">View directory →</a>
+  </div>
+  <div class="admin-metric">
+    <div class="admin-metric__label">Pending registrations</div>
+    <div class="admin-metric__value">{{ pending_users }}</div>
+    <a href="{% url 'admin_portal:registration_approvals' %}">Review approvals →</a>
+  </div>
+  <div class="admin-metric">
+    <div class="admin-metric__label">Pending redemptions</div>
+    <div class="admin-metric__value">{{ pending_redemptions }}</div>
+    <a href="{% url 'admin_portal:points_ledger' %}">Open ledger →</a>
+  </div>
+</div>
+{% endblock %}

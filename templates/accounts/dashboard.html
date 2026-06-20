@@ -1,0 +1,84 @@
+{% extends "customer_base.html" %}
+{% load fitlab_tags %}
+{% block title %}Dashboard — Fitlab{% endblock %}
+{% block content %}
+<section class="dash-balance">
+  <span class="dash-badge">{{ membership_tier }}</span>
+  <div class="dash-balance__value">{{ balance|floatformat:0 }}</div>
+  <div class="dash-balance__label">TFL Points</div>
+</section>
+
+<section class="app-card">
+  <div class="progress-head">
+    <span>Platinum path</span>
+    <span class="pct">{{ tier_progress }}%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" style="width:{{ tier_progress }}%"></div>
+  </div>
+  <p style="margin:12px 0 0;font-size:14px;color:#c8c6c5">
+    <strong style="color:var(--text)">{{ tier_remaining }} points</strong> remaining until Platinum Tier rewards.
+  </p>
+</section>
+
+<div class="dash-actions">
+  <a href="{% url 'activity:feed' %}" class="dash-btn dash-btn--primary">Earn<br>Points</a>
+  <a href="{% url 'rewards:marketplace' %}" class="dash-btn dash-btn--outline">Redeem</a>
+</div>
+
+<div class="dash-stats">
+  <div class="dash-stat">
+    <div class="dash-stat__label">Lifetime</div>
+    <div class="dash-stat__value">{{ lifetime_earned|floatformat:0 }} <span class="dash-stat__unit">TFL</span></div>
+    <div class="dash-stat__unit">Points</div>
+  </div>
+  <div class="dash-stat">
+    <div class="dash-stat__label">Workouts</div>
+    <div class="dash-stat__value">{{ workout_count }} <span class="dash-stat__unit">SESS.</span></div>
+  </div>
+</div>
+
+<section>
+  <div class="section-head">
+    <span>Recent activity</span>
+    <a href="{% url 'activity:feed' %}">View all</a>
+  </div>
+
+  {% for event in recent_activity %}
+    <div class="activity-row {% if forloop.first %}activity-row--highlight{% endif %}">
+      <div class="activity-row__left">
+        <div class="activity-icon">
+          {% if event.event_type == 'referral' %}
+            <svg width="20" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          {% elif event.event_type == 'redemption' %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/></svg>
+          {% else %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a9 9 0 1 0-12.728-12.728 9 9 0 0 0 12.728 12.728Z"/></svg>
+          {% endif %}
+        </div>
+        <div>
+          <div>{{ event.title }}</div>
+          <div class="activity-row__meta">{{ event.created_at|timesince_short }}</div>
+        </div>
+      </div>
+      <div class="activity-row__points">
+        {% if event.title and '+' in event.title %} {{ event.title|truncatewords:3 }} {% else %}—{% endif %}
+      </div>
+    </div>
+  {% empty %}
+    <div class="app-card app-card--muted">
+      <p style="margin:0;color:#71717a">No activity yet. Start earning TFL Points at the gym.</p>
+      <a href="{% url 'rewards:marketplace' %}" class="dash-btn dash-btn--primary" style="margin-top:16px">Browse rewards</a>
+    </div>
+  {% endfor %}
+</section>
+
+<div class="featured-banner">
+  <div class="featured-banner__overlay"></div>
+  <div class="featured-banner__content">
+    <h4>Elite yoga masterclass</h4>
+    <p>Push your mobility limits with our Master Instructor.</p>
+    <a href="{% url 'rewards:marketplace' %}" class="claim-btn">Claim now</a>
+  </div>
+</div>
+{% endblock %}

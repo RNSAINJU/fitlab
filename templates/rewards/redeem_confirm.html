@@ -1,0 +1,22 @@
+{% extends "customer_base.html" %}
+{% block title %}Confirm redemption — Fitlab{% endblock %}
+{% block content %}
+<div class="app-card" style="max-width:100%">
+  <span class="featured-tag">Confirm redemption</span>
+  <div style="display:flex;gap:16px;align-items:center;margin:16px 0">
+    <div class="reward-tile__img" style="width:80px;height:80px;min-height:80px;margin:0;font-size:32px">{{ reward.image_emoji }}</div>
+    <div>
+      <h2 style="margin:0;font-size:20px;font-weight:400">{{ reward.title }}</h2>
+      <p style="margin:8px 0 0;color:#71717a;font-size:14px">{{ reward.description }}</p>
+    </div>
+  </div>
+  <p style="font-size:16px"><strong style="color:var(--accent)">{{ reward.points_cost }} TFL Points</strong></p>
+  <p style="color:#71717a;font-size:14px">Your balance: {{ balance|floatformat:0 }} TFL Points</p>
+  <p style="color:#71717a;font-size:14px">Points are deducted only after admin approval.</p>
+  <form method="post" style="margin-top:24px;display:flex;flex-direction:column;gap:12px">
+    {% csrf_token %}
+    <button type="submit" class="share-btn" style="margin-top:0;font-size:18px">Submit request</button>
+    <a href="{% url 'rewards:marketplace' %}" class="dash-btn dash-btn--outline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

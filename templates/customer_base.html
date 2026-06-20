@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="app-shell app-shell--with-sidebar">
+  {% include "includes/app_topbar.html" %}
+  {% include "includes/app_nav.html" %}
+
+  {% if messages %}
+    <ul class="messages" style="padding:0 20px">
+      {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <main class="app-main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

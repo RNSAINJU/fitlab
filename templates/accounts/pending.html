@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Pending approval — Fitlab{% endblock %}
+{% block body %}
+<div class="auth-page auth-page--register">
+  <div class="auth-bg-radial"></div>
+  <header class="auth-topbar">
+    <span class="auth-topbar__logo">Fitlab</span>
+  </header>
+  <main class="auth-main auth-main--register">
+    <section class="auth-hero">
+      <h1 class="auth-hero__title">Awaiting<br><span class="accent">Approval</span></h1>
+      <p class="auth-hero__sub">Hi {{ user.display_name }}, your registration is being reviewed by the gym team.</p>
+    </section>
+    <div class="auth-card">
+      {% if user.approval_status == 'rejected' %}
+        <p style="color:#f87171;margin:0 0 16px">Your registration was not approved. Please contact the gym.</p>
+      {% else %}
+        <p style="color:var(--text-muted);margin:0 0 24px">You'll get full access once an admin approves your account.</p>
+      {% endif %}
+      <a href="{% url 'accounts:logout' %}" class="auth-btn-primary" style="text-decoration:none">Sign out</a>
+    </div>
+  </main>
+</div>
+{% endblock %}

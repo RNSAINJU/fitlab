@@ -1,0 +1,90 @@
+from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.password_validation import validate_password
+
+User = get_user_model()
+
+INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
+INPUT_REG = {"class": "auth-input auth-input--dark"}
+
+
+class RegistrationForm(forms.ModelForm):
+    full_name = forms.CharField(
+        max_length=150,
+        required=True,
+        label="Full name",
+        widget=forms.TextInput(attrs={**INPUT_REG, "placeholder": "John Doe"}),
+    )
+    email = forms.EmailField(
+        required=True,
+        label="Email address",
+        widget=forms.EmailInput(attrs={**INPUT_REG, "placeholder": "recruit@fitlab.com"}),
+    )
+    password = forms.CharField(
+        label="Security key",
+        widget=forms.PasswordInput(attrs={**INPUT_REG, "placeholder": "••••••••"}),
+    )
+    referral_code = forms.CharField(
+        max_length=12,
+        required=False,
+        label="Referral code (optional)",
+        widget=forms.TextInput(attrs={**INPUT_REG, "placeholder": "LAB-XXXX"}),
+    )
+    terms_accepted = forms.BooleanField(
+        required=True,
+        label="I accept the Protocol Terms and acknowledge the intensity of the program.",
+    )
+
+    class Meta:
+        model = User
+        fields = ()
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("An account with this email already exists.")
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        validate_password(password)
+        return password
+
+    def save(self, commit=True):
+        user = User()
+        user.email = self.cleaned_data["email"].lower()
+        user.username = user.email
+        name = self.cleaned_data["full_name"].strip()
+        parts = name.split(None, 1)
+        user.first_name = parts[0]
+        user.last_name = parts[1] if len(parts) > 1 else ""
+        user.approval_status = User.ApprovalStatus.PENDING
+        user.set_password(self.cleaned_data["password"])
+
+        referral = self.cleaned_data.get("referral_code", "").strip().upper()
+        if referral:
+            referrer = User.objects.filter(referral_code__iexact=referral).first()
+            if referrer:
+                user.referred_by = referrer
+
+        if commit:
+            user.save()
+        return user
+
+
+class LoginForm(AuthenticationForm):
+    username = forms.EmailField(
+        label="Email address",
+        widget=forms.EmailInput(attrs={**INPUT_LOGIN, "autofocus": True, "placeholder": "athlete@fitlab.com"}),
+    )
+    password = forms.CharField(
+        label="Password",
+        strip=False,
+        widget=forms.PasswordInput(attrs={**INPUT_LOGIN, "placeholder": "••••••••", "id": "login-password"}),
+    )
+
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+        if not user.is_staff and user.approval_status == User.ApprovalStatus.REJECTED:
+            raise forms.ValidationError("Your account was not approved.", code="inactive")

@@ -1,0 +1,42 @@
+{% extends "admin_base.html" %}
+{% block title %}Customers — Fitlab Admin{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <h1>Customer directory</h1>
+  <p>Search and review all gym members</p>
+</div>
+
+<form method="get" class="admin-search">
+  <input type="search" name="q" value="{{ q }}" placeholder="Name, email, or phone">
+  <button type="submit" class="admin-btn admin-btn--primary">Search</button>
+</form>
+
+<div class="admin-panel">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Referral code</th>
+        <th>Joined</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in customers %}
+        <tr>
+          <td><strong>{{ c.display_name }}</strong></td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.phone|default:"—" }}</td>
+          <td><span class="status-chip status-chip--{{ c.approval_status }}">{{ c.approval_status }}</span></td>
+          <td>{{ c.referral_code }}</td>
+          <td>{{ c.date_joined|date:"M j, Y" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" style="color:#71717a">No customers found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

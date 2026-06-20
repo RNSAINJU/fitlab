@@ -1,0 +1,70 @@
+{% extends "customer_base.html" %}
+{% block title %}Rewards — Fitlab{% endblock %}
+{% block content %}
+<div class="rewards-balance-kicker">Available TFL Points</div>
+<div class="rewards-balance-line">
+  <strong>{{ balance|floatformat:0 }}</strong>
+  <span>TFL Points</span>
+</div>
+
+<div class="filter-pills">
+  <span class="filter-pill is-active">All</span>
+  <span class="filter-pill">Apparel</span>
+  <span class="filter-pill">Supplements</span>
+  <span class="filter-pill">Workouts</span>
+</div>
+
+{% if featured_reward %}
+<div class="featured-reward">
+  <div class="featured-reward__bg"></div>
+  <div class="featured-reward__content">
+    <span class="featured-tag">Featured reward</span>
+    <h3 style="margin:4px 0;color:white;font-weight:400">{{ featured_reward.title }}</h3>
+    <p style="margin:0 0 16px;color:#a1a1aa;font-size:16px">{{ featured_reward.description|truncatewords:12 }}</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div>
+        <strong style="color:white;font-size:16px">{{ featured_reward.points_cost }}</strong>
+        <span style="color:#71717a;font-size:14px"> TFL Points</span>
+      </div>
+      <a href="{% url 'rewards:redeem' featured_reward.id %}" class="admin-btn admin-btn--primary" style="padding:12px 32px;text-decoration:none">Redeem</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="reward-grid" style="padding-top:16px">
+  {% for reward in rewards %}
+    <div class="reward-tile">
+      <div class="reward-tile__img">
+        <span>{{ reward.image_emoji }}</span>
+        <span class="reward-tile__cost">{{ reward.points_cost }} TFL Points</span>
+      </div>
+      <h4>{{ reward.title }}</h4>
+      {% if reward.in_stock %}
+        <a href="{% url 'rewards:redeem' reward.id %}" class="redeem-btn">Redeem</a>
+      {% else %}
+        <span class="redeem-btn" style="opacity:0.5;cursor:not-allowed">Out of stock</span>
+      {% endif %}
+    </div>
+  {% endfor %}
+  <div class="reward-slot-empty">
+    <svg width="24" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:8px;opacity:0.5"><path d="M12 5v14M5 12h14"/></svg>
+    More unlocking<br>soon
+  </div>
+</div>
+
+{% if my_redemptions %}
+<section style="margin-top:40px">
+  <div class="section-head"><span>Your requests</span></div>
+  {% for r in my_redemptions %}
+    <div class="timeline-card" style="margin-bottom:12px">
+      <div>
+        <strong>{{ r.reward.title }}</strong>
+        <div class="activity-row__meta">{{ r.points_cost }} TFL Points · {{ r.created_at|date:"M j, Y" }}</div>
+      </div>
+      <span class="status-chip status-chip--{{ r.status }}">{{ r.status }}</span>
+    </div>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

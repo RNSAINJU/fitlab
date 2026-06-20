@@ -1,0 +1,88 @@
+{% extends "admin_base.html" %}
+{% block title %}Ledger — Fitlab Admin{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <h1>Points &amp; redemptions</h1>
+  <p>Audit TFL Points and approve redemption requests</p>
+</div>
+
+<div class="admin-panel">
+  <h2>Pending redemptions</h2>
+  {% if pending_redemptions %}
+    <table class="admin-table">
+      <thead>
+        <tr><th>Customer</th><th>Reward</th><th>Points</th><th>Requested</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for r in pending_redemptions %}
+          <tr>
+            <td>{{ r.user.display_name }}</td>
+            <td>{{ r.reward.title }}</td>
+            <td style="color:var(--accent)">{{ r.points_cost }}</td>
+            <td>{{ r.created_at|date:"M j, Y" }}</td>
+            <td>
+              <form method="post" style="display:inline">
+                {% csrf_token %}
+                <input type="hidden" name="redemption_id" value="{{ r.id }}">
+                <button name="action" value="approve_redemption" class="admin-btn admin-btn--primary" type="submit">Approve</button>
+                <button name="action" value="reject_redemption" class="admin-btn admin-btn--ghost" type="submit">Reject</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:#71717a;margin:0">No pending redemptions.</p>
+  {% endif %}
+</div>
+
+<div class="admin-panel">
+  <h2>Manual point adjustment</h2>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="adjust">
+    <div class="admin-form-row">
+      <div>
+        <label for="user_id">Customer</label>
+        <select name="user_id" id="user_id" required>
+          {% for c in customers %}
+            <option value="{{ c.id }}">{{ c.display_name }} ({{ c.email }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="amount">Amount (+/- TFL Points)</label>
+        <input type="number" name="amount" id="amount" required>
+      </div>
+      <div>
+        <label for="note">Note</label>
+        <input type="text" name="note" id="note" placeholder="Reason for adjustment">
+      </div>
+    </div>
+    <button type="submit" class="admin-btn admin-btn--primary">Apply adjustment</button>
+  </form>
+</div>
+
+<div class="admin-panel">
+  <h2>Recent transactions</h2>
+  <table class="admin-table">
+    <thead>
+      <tr><th>Customer</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+      {% for tx in transactions %}
+        <tr>
+          <td>{{ tx.user.display_name }}</td>
+          <td style="color:{% if tx.amount >= 0 %}#22c55e{% else %}var(--accent){% endif %}">{% if tx.amount >= 0 %}+{% endif %}{{ tx.amount }}</td>
+          <td>{{ tx.transaction_type }}</td>
+          <td>{{ tx.description }}</td>
+          <td>{{ tx.created_at|date:"M j, Y g:i A" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" style="color:#71717a">No transactions yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

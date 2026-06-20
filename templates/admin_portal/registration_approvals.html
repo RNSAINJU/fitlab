@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+{% block title %}Approvals — Fitlab Admin{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <h1>Registration approvals</h1>
+  <p>Approve customers before they access the dashboard</p>
+</div>
+
+<div class="admin-panel">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Referred by</th>
+        <th>Registered</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in pending_users %}
+        <tr>
+          <td><strong>{{ u.display_name }}</strong></td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.phone|default:"—" }}</td>
+          <td>{% if u.referred_by %}{{ u.referred_by.display_name }}{% else %}—{% endif %}</td>
+          <td>{{ u.date_joined|date:"M j, Y" }}</td>
+          <td>
+            <form method="post" style="display:inline">
+              {% csrf_token %}
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <button name="action" value="approve" class="admin-btn admin-btn--primary" type="submit">Approve</button>
+              <button name="action" value="reject" class="admin-btn admin-btn--ghost" type="submit">Reject</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" style="color:#71717a">No pending registrations.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
