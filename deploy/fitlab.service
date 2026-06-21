@@ -8,7 +8,7 @@ Group=www-data
 WorkingDirectory=/var/www/fitlab
 EnvironmentFile=/var/www/fitlab/.env
 ExecStart=/var/www/fitlab/.venv/bin/gunicorn fitlab_project.wsgi:application \
-    --bind 127.0.0.1:8001 \
+    --bind 127.0.0.1:__FITLAB_GUNICORN_PORT__ \
     --workers 3 \
     --timeout 120 \
     --access-logfile - \

@@ -35,15 +35,18 @@ Open http://127.0.0.1:8000/
 
 ## Deploy to VPS (82.197.69.121)
 
-Production stack: **Nginx** ’ **Gunicorn** ’ **Django** (SQLite).
+Production stack: **Nginx** ? **Gunicorn** ? **Django** (SQLite).  
+GitHub repo: https://github.com/RNSAINJU/fitlab
 
-### Option 1  From your PC (recommended)
+Fitlab runs on **port 8083** on this VPS (port 80 is used by other sites).
+
+### Option 1 — From your PC (recommended)
 
 1. Push code to GitHub:
    ```powershell
    cd C:\Users\Aryan\Projects\fitlab
    git add .
-   git commit -m "Add VPS deployment"
+   git commit -m "Update Fitlab"
    git push origin main
    ```
 
@@ -57,13 +60,12 @@ Production stack: **Nginx** ’ **Gunicorn** ’ **Django** (SQLite).
    powershell -ExecutionPolicy Bypass -File .\deploy-to-vps.ps1
    ```
 
-   Or set a non-root user:
-   ```powershell
-   $env:VPS_USER = "ubuntu"
-   powershell -ExecutionPolicy Bypass -File .\deploy-to-vps.ps1
+   Linux/macOS:
+   ```bash
+   ./deploy-to-vps.sh
    ```
 
-### Option 2  Manual on the VPS
+### Option 2 — Manual on the VPS
 
 SSH into the server and run:
 
@@ -73,15 +75,24 @@ sudo apt install -y python3 python3-venv nginx git
 
 sudo git clone https://github.com/RNSAINJU/fitlab.git /var/www/fitlab
 cd /var/www/fitlab
-sudo bash deploy/server-setup.sh
+sudo FITLAB_SERVER_IP=82.197.69.121 FITLAB_GUNICORN_PORT=8004 FITLAB_NGINX_PORT=8083 bash deploy/server-setup.sh
+```
+
+### Link existing VPS install to GitHub
+
+If the app was deployed without git:
+
+```bash
+cd /var/www/fitlab
+sudo bash deploy/link-to-github.sh
 ```
 
 ### After deploy
 
 | URL | Purpose |
 |-----|---------|
-| http://82.197.69.121/ | Customer app |
-| http://82.197.69.121/admin-portal/ | Admin portal |
+| http://82.197.69.121:8083/ | Customer app |
+| http://82.197.69.121:8083/admin-portal/ | Admin portal |
 
 **Change the default admin password immediately** after first login.
 
@@ -101,7 +112,7 @@ Copy from `.env.example`. Important values:
 - `DJANGO_SECRET_KEY`  long random string (auto-generated on first setup)
 - `DJANGO_DEBUG=0`  required in production
 - `DJANGO_ALLOWED_HOSTS=82.197.69.121,yourdomain.com`
-- `DJANGO_CSRF_TRUSTED_ORIGINS=http://82.197.69.121,https://yourdomain.com`
+- `DJANGO_CSRF_TRUSTED_ORIGINS=http://82.197.69.121:8083,https://yourdomain.com` (include port if not 80)
 
 ### HTTPS (optional, when you have a domain)
 

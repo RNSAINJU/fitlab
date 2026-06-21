@@ -29,5 +29,5 @@ Write-Host "`n[2/3] Run first-time server setup (safe to re-run)..." -Foreground
 ssh "${VpsUser}@${VpsHost}" "export FITLAB_SERVER_IP='${VpsHost}'; bash -s" < deploy/server-setup.sh
 
 Write-Host "`n[3/3] Done." -ForegroundColor Green
-Write-Host "Open: http://${VpsHost}/" -ForegroundColor Green
-Write-Host "Admin: http://${VpsHost}/admin-portal/ (admin@fitlab.com / admin123)" -ForegroundColor Green
+Write-Host "Open: http://${VpsHost}:8083/" -ForegroundColor Green
+Write-Host "Admin: http://${VpsHost}:8083/admin-portal/ (admin@fitlab.com / admin123)" -ForegroundColor Green
