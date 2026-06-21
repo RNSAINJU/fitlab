@@ -9,7 +9,7 @@ INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
 INPUT_REG = {"class": "auth-input auth-input--dark"}
 
 
-class RegistrationForm(forms.ModelForm):
+class RegistrationForm(forms.Form):
     full_name = forms.CharField(
         max_length=150,
         required=True,
@@ -35,10 +35,6 @@ class RegistrationForm(forms.ModelForm):
         required=True,
         label="I accept the Protocol Terms and acknowledge the intensity of the program.",
     )
-
-    class Meta:
-        model = User
-        fields = ()
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
