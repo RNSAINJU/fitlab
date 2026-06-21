@@ -55,7 +55,8 @@ chown -R www-data:www-data "$APP_DIR"
 chmod 640 "$APP_DIR/.env"
 
 echo "==> Nginx"
-cp deploy/nginx-fitlab.conf /etc/nginx/sites-available/fitlab
+SERVER_NAME="${FITLAB_DOMAIN:-${SERVER_IP}}"
+sed "s/__FITLAB_SERVER_NAME__/${SERVER_NAME}/g" deploy/nginx-fitlab.conf > /etc/nginx/sites-available/fitlab
 ln -sf /etc/nginx/sites-available/fitlab /etc/nginx/sites-enabled/fitlab
 rm -f /etc/nginx/sites-enabled/default
 nginx -t
