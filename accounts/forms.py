@@ -9,7 +9,7 @@ INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
 INPUT_REG = {"class": "auth-input auth-input--dark"}
 
 
-class RegistrationForm(forms.ModelForm):
+class RegistrationForm(forms.Form):
     full_name = forms.CharField(
         max_length=150,
         required=True,
@@ -36,10 +36,6 @@ class RegistrationForm(forms.ModelForm):
         label="I accept the Protocol Terms and acknowledge the intensity of the program.",
     )
 
-    class Meta:
-        model = User
-        fields = ()
-
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
         if User.objects.filter(email__iexact=email).exists():
@@ -50,6 +46,12 @@ class RegistrationForm(forms.ModelForm):
         password = self.cleaned_data["password"]
         validate_password(password)
         return password
+
+    def clean_referral_code(self):
+        referral = self.cleaned_data.get("referral_code", "").strip().upper()
+        if referral and not User.objects.filter(referral_code__iexact=referral).exists():
+            raise forms.ValidationError("Enter a valid referral code.")
+        return referral
 
     def save(self, commit=True):
         user = User()
@@ -62,7 +64,7 @@ class RegistrationForm(forms.ModelForm):
         user.approval_status = User.ApprovalStatus.PENDING
         user.set_password(self.cleaned_data["password"])
 
-        referral = self.cleaned_data.get("referral_code", "").strip().upper()
+        referral = self.cleaned_data.get("referral_code", "")
         if referral:
             referrer = User.objects.filter(referral_code__iexact=referral).first()
             if referrer:
@@ -83,6 +85,9 @@ class LoginForm(AuthenticationForm):
         strip=False,
         widget=forms.PasswordInput(attrs={**INPUT_LOGIN, "placeholder": "••••••••", "id": "login-password"}),
     )
+
+    def clean_username(self):
+        return self.cleaned_data["username"].lower()
 
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)

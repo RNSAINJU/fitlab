@@ -17,6 +17,15 @@ from .decorators import staff_required
 User = get_user_model()
 
 
+def _parse_posted_int(request, field_name, label):
+    value = request.POST.get(field_name)
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        messages.error(request, f"Invalid {label}.")
+        return None
+
+
 @staff_required
 def dashboard(request):
     pending_users = User.objects.filter(approval_status=User.ApprovalStatus.PENDING).count()
@@ -85,8 +94,10 @@ def registration_approvals(request):
     ).order_by("date_joined")
 
     if request.method == "POST":
-        user_id = request.POST.get("user_id")
+        user_id = _parse_posted_int(request, "user_id", "customer")
         action = request.POST.get("action")
+        if user_id is None:
+            return redirect("admin_portal:registration_approvals")
         user = get_object_or_404(User, pk=user_id, is_staff=False)
 
         if action == "approve":
@@ -103,6 +114,8 @@ def registration_approvals(request):
                 description="Your registration was not approved. Contact the gym for help.",
             )
             messages.info(request, f"Rejected {user.display_name}.")
+        else:
+            messages.error(request, "Invalid approval action.")
         return redirect("admin_portal:registration_approvals")
 
     return render(
@@ -123,17 +136,23 @@ def points_ledger(request):
         action = request.POST.get("action")
 
         if action == "adjust":
-            user = get_object_or_404(User, pk=request.POST.get("user_id"))
-            amount = int(request.POST.get("amount", "0"))
-            note = request.POST.get("note", "Admin adjustment")
+            user_id = _parse_posted_int(request, "user_id", "customer")
+            amount = _parse_posted_int(request, "amount", "point amount")
+            if user_id is None or amount is None:
+                return redirect("admin_portal:points_ledger")
+            user = get_object_or_404(User, pk=user_id)
+            note = request.POST.get("note", "").strip() or "Admin adjustment"
             admin_adjust_points(user, amount, note, request.user)
             messages.success(request, f"Adjusted {user.display_name} by {amount} TFL Points.")
             return redirect("admin_portal:points_ledger")
 
         if action == "approve_redemption":
+            redemption_id = _parse_posted_int(request, "redemption_id", "redemption")
+            if redemption_id is None:
+                return redirect("admin_portal:points_ledger")
             redemption = get_object_or_404(
                 RedemptionRequest,
-                pk=request.POST.get("redemption_id"),
+                pk=redemption_id,
                 status=RedemptionRequest.Status.PENDING,
             )
             balance = get_balance(redemption.user)
@@ -163,9 +182,12 @@ def points_ledger(request):
             return redirect("admin_portal:points_ledger")
 
         if action == "reject_redemption":
+            redemption_id = _parse_posted_int(request, "redemption_id", "redemption")
+            if redemption_id is None:
+                return redirect("admin_portal:points_ledger")
             redemption = get_object_or_404(
                 RedemptionRequest,
-                pk=request.POST.get("redemption_id"),
+                pk=redemption_id,
                 status=RedemptionRequest.Status.PENDING,
             )
             redemption.status = RedemptionRequest.Status.REJECTED
@@ -181,6 +203,9 @@ def points_ledger(request):
             )
             messages.info(request, "Redemption rejected.")
             return redirect("admin_portal:points_ledger")
+
+        messages.error(request, "Invalid ledger action.")
+        return redirect("admin_portal:points_ledger")
 
     customers = User.objects.filter(is_staff=False).order_by("email")
     total_earned = PointTransaction.objects.filter(amount__gt=0).aggregate(total=Sum("amount"))["total"] or 0
