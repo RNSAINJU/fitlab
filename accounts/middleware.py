@@ -14,6 +14,7 @@ class ApprovalRequiredMiddleware:
         "/accounts/register",
         "/accounts/pending",
         "/accounts/logout",
+        "/connection-lost/",
     )
 
     def __init__(self, get_response):

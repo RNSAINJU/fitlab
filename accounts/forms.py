@@ -51,6 +51,12 @@ class RegistrationForm(forms.ModelForm):
         validate_password(password)
         return password
 
+    def clean_referral_code(self):
+        referral = self.cleaned_data.get("referral_code", "").strip().upper()
+        if referral and not User.objects.filter(referral_code__iexact=referral).exists():
+            raise forms.ValidationError("Enter a valid referral code.")
+        return referral
+
     def save(self, commit=True):
         user = User()
         user.email = self.cleaned_data["email"].lower()
@@ -62,7 +68,7 @@ class RegistrationForm(forms.ModelForm):
         user.approval_status = User.ApprovalStatus.PENDING
         user.set_password(self.cleaned_data["password"])
 
-        referral = self.cleaned_data.get("referral_code", "").strip().upper()
+        referral = self.cleaned_data.get("referral_code", "")
         if referral:
             referrer = User.objects.filter(referral_code__iexact=referral).first()
             if referrer:
@@ -83,6 +89,9 @@ class LoginForm(AuthenticationForm):
         strip=False,
         widget=forms.PasswordInput(attrs={**INPUT_LOGIN, "placeholder": "••••••••", "id": "login-password"}),
     )
+
+    def clean_username(self):
+        return self.cleaned_data["username"].lower()
 
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)

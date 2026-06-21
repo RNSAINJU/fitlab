@@ -20,6 +20,10 @@ def _store_referral_code(request):
         request.session["referral_code"] = referral
 
 
+def _session_referral_code(request):
+    return (request.session.get("referral_code", "") or "").strip().upper()
+
+
 class FitlabLoginView(LoginView):
     template_name = "accounts/login.html"
     authentication_form = LoginForm
@@ -42,16 +46,22 @@ def register(request):
         return redirect("accounts:dashboard")
 
     _store_referral_code(request)
+    session_referral = _session_referral_code(request)
 
     if request.method == "POST":
-        form = RegistrationForm(request.POST)
+        data = request.POST.copy()
+        if session_referral and not data.get("referral_code"):
+            data["referral_code"] = session_referral
+        form = RegistrationForm(data)
         if form.is_valid():
             user = form.save()
+            request.session.pop("referral_code", None)
             messages.success(request, "Registration submitted. Awaiting admin approval.")
-            login(request, user)
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return redirect("accounts:pending")
     else:
-        form = RegistrationForm()
+        initial = {"referral_code": session_referral} if session_referral else None
+        form = RegistrationForm(initial=initial)
 
     return render(request, "accounts/register.html", {"form": form})
 
