@@ -13,10 +13,21 @@ from rewards.models import RedemptionRequest
 from .forms import LoginForm, RegistrationForm
 
 
+def _store_referral_code(request):
+    referral = request.GET.get("ref") or request.POST.get("referral_code", "")
+    referral = referral.strip().upper()
+    if referral:
+        request.session["referral_code"] = referral
+
+
 class FitlabLoginView(LoginView):
     template_name = "accounts/login.html"
     authentication_form = LoginForm
     redirect_authenticated_user = True
+
+    def dispatch(self, request, *args, **kwargs):
+        _store_referral_code(request)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = form.get_user()
@@ -29,6 +40,8 @@ class FitlabLoginView(LoginView):
 def register(request):
     if request.user.is_authenticated:
         return redirect("accounts:dashboard")
+
+    _store_referral_code(request)
 
     if request.method == "POST":
         form = RegistrationForm(request.POST)

@@ -3,6 +3,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from accounts.oauth import build_socialaccount_providers, social_auth_enabled_flags
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
@@ -35,6 +37,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.apple",
     "accounts",
     "loyalty",
     "rewards",
@@ -52,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "accounts.middleware.ApprovalRequiredMiddleware",
 ]
 
@@ -68,6 +77,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "loyalty.context_processors.points_balance",
+                "accounts.context_processors.social_auth",
             ],
         },
     },
@@ -113,6 +123,35 @@ if not DEBUG:
         CSRF_COOKIE_SECURE = True
 
 AUTH_USER_MODEL = "accounts.User"
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+ACCOUNT_ADAPTER = "accounts.adapters.FitlabAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "accounts.adapters.FitlabSocialAccountAdapter"
+
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
+ACCOUNT_UNIQUE_EMAIL = True
+
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_STORE_TOKENS = False
+
+_social_providers = build_socialaccount_providers()
+_social_flags = social_auth_enabled_flags(_social_providers)
+SOCIALACCOUNT_PROVIDERS = _social_providers
+SOCIAL_AUTH_GOOGLE_ENABLED = _social_flags["google"]
+SOCIAL_AUTH_APPLE_ENABLED = _social_flags["apple"]
 
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "accounts:dashboard"

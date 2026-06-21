@@ -9,6 +9,7 @@ class ApprovalRequiredMiddleware:
         "/static/",
         "/django-admin/",
         "/admin-portal/",
+        "/oauth/",
         "/accounts/login",
         "/accounts/register",
         "/accounts/pending",
