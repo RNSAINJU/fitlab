@@ -33,61 +33,13 @@ Open http://127.0.0.1:8000/
 - **Activity feed** for customer events
 - **Admin portal** at `/admin-portal/` (customer directory, approvals, ledger)
 
-## Deploy to VPS (82.197.69.121)
+## Production (VPS + GitHub)
+
+GitHub repo: https://github.com/RNSAINJU/fitlab  
+VPS path: `/var/www/fitlab` (linked to `origin/main`)
 
 Production stack: **Nginx** ? **Gunicorn** ? **Django** (SQLite).  
-GitHub repo: https://github.com/RNSAINJU/fitlab
-
-Fitlab runs on **port 8083** on this VPS (port 80 is used by other sites).
-
-### Option 1 — From your PC (recommended)
-
-1. Push code to GitHub:
-   ```powershell
-   cd C:\Users\Aryan\Projects\fitlab
-   git add .
-   git commit -m "Update Fitlab"
-   git push origin main
-   ```
-
-2. Ensure you can SSH into the VPS:
-   ```powershell
-   ssh root@82.197.69.121
-   ```
-
-3. Run the deploy script (pipes setup to the server):
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File .\deploy-to-vps.ps1
-   ```
-
-   Linux/macOS:
-   ```bash
-   ./deploy-to-vps.sh
-   ```
-
-### Option 2 — Manual on the VPS
-
-SSH into the server and run:
-
-```bash
-sudo apt update
-sudo apt install -y python3 python3-venv nginx git
-
-sudo git clone https://github.com/RNSAINJU/fitlab.git /var/www/fitlab
-cd /var/www/fitlab
-sudo FITLAB_SERVER_IP=82.197.69.121 FITLAB_GUNICORN_PORT=8004 FITLAB_NGINX_PORT=8083 bash deploy/server-setup.sh
-```
-
-### Link existing VPS install to GitHub
-
-If the app was deployed without git:
-
-```bash
-cd /var/www/fitlab
-sudo bash deploy/link-to-github.sh
-```
-
-### After deploy
+Fitlab runs on **port 8083** (port 80 is used by other sites on this server).
 
 | URL | Purpose |
 |-----|---------|
@@ -96,13 +48,25 @@ sudo bash deploy/link-to-github.sh
 
 **Change the default admin password immediately** after first login.
 
-### Redeploy after updates
+### Update the live site
 
-On the VPS:
+1. Push your changes to GitHub (`main` branch).
+2. SSH into the VPS and pull:
 
 ```bash
+ssh root@82.197.69.121
 cd /var/www/fitlab
 sudo bash deploy/deploy.sh
+```
+
+That runs `git pull`, installs dependencies, migrates, collects static files, and restarts the app.
+
+### First-time VPS setup (new server only)
+
+```bash
+sudo git clone https://github.com/RNSAINJU/fitlab.git /var/www/fitlab
+cd /var/www/fitlab
+sudo FITLAB_SERVER_IP=82.197.69.121 FITLAB_GUNICORN_PORT=8004 FITLAB_NGINX_PORT=8083 bash deploy/server-setup.sh
 ```
 
 ### Environment variables (`.env` on server)
@@ -127,15 +91,6 @@ Set in `.env`: `DJANGO_HTTPS=1` and update `DJANGO_CSRF_TRUSTED_ORIGINS` to `htt
 
 ```bash
 sudo systemctl restart fitlab
-```
-
-## Push to GitHub
-
-```powershell
-cd C:\Users\Aryan\Projects\fitlab
-git add .
-git commit -m "Update Fitlab"
-git push origin main
 ```
 
 ## Project structure
