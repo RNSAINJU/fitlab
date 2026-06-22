@@ -1,0 +1,136 @@
+{% extends "admin_base.html" %}
+{% block title %}Role Management — Fitlab Admin{% endblock %}
+{% block admin_page_title %}Role Management{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <p class="admin-kicker">Access Control</p>
+  <h1>Admin Role Management</h1>
+  <p>Grant admin portal access to staff or create new administrator accounts.</p>
+</div>
+
+<div class="admin-stat-grid">
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Admins</div>
+    <div class="admin-stat-card__value">{{ admins|length }}</div>
+    <div class="admin-stat-card__sub">With portal access</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Eligible Users</div>
+    <div class="admin-stat-card__value">{{ eligible_users }}</div>
+    <div class="admin-stat-card__sub">Can be promoted</div>
+  </div>
+</div>
+
+<div class="ledger-grid">
+  <div>
+    <div class="admin-panel">
+      <div class="admin-panel__head">
+        <h2>Current Admins</h2>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Admin</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for admin in admins %}
+            <tr>
+              <td>
+                <div class="member-cell">
+                  <div class="member-avatar">{{ admin.display_name|slice:":1"|upper }}</div>
+                  <div>
+                    <div class="member-cell__name">{{ admin.display_name }}</div>
+                    <div class="member-cell__id">{{ admin.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if admin.is_superuser %}
+                  <span class="status-chip status-chip--approved">Superuser</span>
+                {% else %}
+                  <span class="status-chip status-chip--active">Admin</span>
+                {% endif %}
+              </td>
+              <td>{{ admin.date_joined|date:"M j, Y" }}</td>
+              <td>
+                {% if admin.pk != request.user.pk or not admin.is_superuser %}
+                  <form method="post" style="display:inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ admin.id }}">
+                    {% if admin.pk != request.user.pk %}
+                      <button name="action" value="revoke" class="admin-btn admin-btn--danger" type="submit" onclick="return confirm('Remove admin access for {{ admin.display_name }}?')">Revoke</button>
+                    {% endif %}
+                    <button name="action" value="toggle_superuser" class="admin-btn admin-btn--ghost" type="submit">
+                      {% if admin.is_superuser %}Remove superuser{% else %}Make superuser{% endif %}
+                    </button>
+                  </form>
+                {% else %}
+                  <span style="color:#71717a;font-size:12px">You</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <aside>
+    <div class="admin-form-panel">
+      <h3>Promote Customer</h3>
+      <p style="margin:0 0 16px;color:#71717a;font-size:13px">Give an existing customer account access to the admin portal.</p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="promote">
+        <div class="admin-form-row" style="grid-template-columns:1fr">
+          <div>
+            <label for="id_user">Select user</label>
+            {{ promote_form.user }}
+          </div>
+        </div>
+        <button type="submit" class="admin-btn admin-btn--primary">Grant Admin Access</button>
+      </form>
+    </div>
+
+    <div class="admin-form-panel">
+      <h3>Create New Admin</h3>
+      <p style="margin:0 0 16px;color:#71717a;font-size:13px">Create a brand-new administrator login.</p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create">
+        <div class="admin-form-row" style="grid-template-columns:1fr">
+          <div>
+            <label for="create_full_name">Full name</label>
+            <input type="text" name="full_name" id="create_full_name" required placeholder="Jane Admin">
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div>
+            <label for="create_username">Username</label>
+            <input type="text" name="username" id="create_username" required placeholder="janeadmin">
+          </div>
+          <div>
+            <label for="create_email">Email</label>
+            <input type="email" name="email" id="create_email" required placeholder="jane@fitlab.com">
+          </div>
+        </div>
+        <div class="admin-form-row" style="grid-template-columns:1fr">
+          <div>
+            <label for="create_password">Password</label>
+            <input type="password" name="password" id="create_password" required minlength="8" placeholder="••••••••">
+          </div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;margin:12px 0 16px;cursor:pointer;font-size:13px">
+          <input type="checkbox" name="is_superuser" value="1">
+          <span>Full superuser (can manage other admins)</span>
+        </label>
+        <button type="submit" class="admin-btn admin-btn--primary">Create Admin</button>
+      </form>
+    </div>
+  </aside>
+</div>
+{% endblock %}

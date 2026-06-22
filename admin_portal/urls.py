@@ -10,5 +10,6 @@ urlpatterns = [
     path("approvals/", views.registration_approvals, name="registration_approvals"),
     path("rewards/", views.rewards_list, name="rewards_list"),
     path("rewards/create/", views.reward_create, name="reward_create"),
+    path("roles/", views.role_management, name="role_management"),
     path("ledger/", views.points_ledger, name="points_ledger"),
 ]

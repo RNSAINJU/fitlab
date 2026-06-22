@@ -13,7 +13,8 @@ from loyalty.services import admin_adjust_points, deduct_points, get_balance
 from rewards.forms import RewardForm
 from rewards.models import RedemptionRequest, Reward
 
-from .decorators import staff_required
+from .decorators import staff_required, superuser_required
+from .forms import CreateAdminForm, PromoteAdminForm
 
 User = get_user_model()
 
@@ -158,6 +159,74 @@ def reward_create(request):
         request,
         "admin_portal/reward_create.html",
         {"form": form},
+    )
+
+
+@superuser_required
+def role_management(request):
+    admins = User.objects.filter(is_staff=True).order_by("-is_superuser", "email")
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "promote":
+            form = PromoteAdminForm(request.POST)
+            if form.is_valid():
+                user = form.cleaned_data["user"]
+                user.is_staff = True
+                user.approval_status = User.ApprovalStatus.APPROVED
+                user.save(update_fields=["is_staff", "approval_status"])
+                messages.success(request, f"{user.display_name} now has admin access.")
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:role_management")
+
+        if action == "create":
+            form = CreateAdminForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                messages.success(request, f"Admin account created for {user.email}.")
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:role_management")
+
+        if action == "revoke":
+            target = get_object_or_404(User, pk=request.POST.get("user_id"), is_staff=True)
+            if target.pk == request.user.pk:
+                messages.error(request, "You cannot remove your own admin access.")
+            elif User.objects.filter(is_staff=True).count() <= 1:
+                messages.error(request, "At least one admin must remain.")
+            else:
+                target.is_staff = False
+                target.is_superuser = False
+                target.save(update_fields=["is_staff", "is_superuser"])
+                messages.success(request, f"Admin access removed from {target.display_name}.")
+            return redirect("admin_portal:role_management")
+
+        if action == "toggle_superuser":
+            target = get_object_or_404(User, pk=request.POST.get("user_id"), is_staff=True)
+            if target.pk == request.user.pk and target.is_superuser:
+                messages.error(request, "You cannot remove your own superuser access.")
+            else:
+                target.is_superuser = not target.is_superuser
+                target.save(update_fields=["is_superuser"])
+                role = "superuser" if target.is_superuser else "admin"
+                messages.success(request, f"{target.display_name} is now a {role}.")
+            return redirect("admin_portal:role_management")
+
+    promote_form = PromoteAdminForm()
+    create_form = CreateAdminForm()
+    eligible_users = User.objects.filter(is_staff=False).count()
+
+    return render(
+        request,
+        "admin_portal/role_management.html",
+        {
+            "admins": admins,
+            "promote_form": promote_form,
+            "create_form": create_form,
+            "eligible_users": eligible_users,
+        },
     )
 
 
