@@ -9,12 +9,17 @@ INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
 INPUT_REG = {"class": "auth-input auth-input--dark"}
 
 
-class RegistrationForm(forms.ModelForm):
+class RegistrationForm(forms.Form):
     full_name = forms.CharField(
         max_length=150,
         required=True,
         label="Full name",
         widget=forms.TextInput(attrs={**INPUT_REG, "placeholder": "John Doe"}),
+    )
+    username = forms.CharField(
+        label="Username",
+        max_length=150,
+        widget=forms.TextInput(attrs={**INPUT_REG, "placeholder": "athlete42", "autocomplete": "username"}),
     )
     email = forms.EmailField(
         required=True,
@@ -36,15 +41,20 @@ class RegistrationForm(forms.ModelForm):
         label="I accept the Protocol Terms and acknowledge the intensity of the program.",
     )
 
-    class Meta:
-        model = User
-        fields = ()
-
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("An account with this email already exists.")
         return email
+
+    def clean_username(self):
+        from django.contrib.auth.validators import UnicodeUsernameValidator
+
+        username = self.cleaned_data["username"]
+        UnicodeUsernameValidator()(username)
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
 
     def clean_password(self):
         password = self.cleaned_data["password"]
@@ -54,7 +64,7 @@ class RegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         user = User()
         user.email = self.cleaned_data["email"].lower()
-        user.username = user.email
+        user.username = self.cleaned_data["username"]
         name = self.cleaned_data["full_name"].strip()
         parts = name.split(None, 1)
         user.first_name = parts[0]
