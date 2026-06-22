@@ -63,7 +63,10 @@
       </div>
       <div class="activity-row__points">
         {% with pts=event|activity_points %}
-          {% if pts %}{{ pts }}{% else %}—{% endif %}
+          {% if pts %}
+            <span>{{ pts }}</span>
+            <small>TFL Points</small>
+          {% else %}—{% endif %}
         {% endwith %}
       </div>
     </div>

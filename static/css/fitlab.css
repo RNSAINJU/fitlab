@@ -867,6 +867,13 @@ a { color: inherit; text-decoration: none; }
   text-align: right;
 }
 
+.activity-row__points small {
+  display: block;
+  font-size: 8px;
+  color: #71717a;
+  letter-spacing: 0.05em;
+}
+
 .featured-banner {
   position: relative;
   height: 256px;
