@@ -4,13 +4,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
 
 from activity.models import ActivityEvent
 from loyalty.helpers import get_lifetime_earned, get_membership_tier, get_tier_progress
 from loyalty.services import get_balance
 from rewards.models import RedemptionRequest
 
+from .auth_helpers import get_post_login_url
 from .forms import LoginForm, RegistrationForm
 
 DEFAULT_AUTH_BACKEND = settings.AUTHENTICATION_BACKENDS[0]
@@ -32,6 +32,14 @@ class FitlabLoginView(LoginView):
         _store_referral_code(request)
         return super().dispatch(request, *args, **kwargs)
 
+    def get_success_url(self):
+        return get_post_login_url(self.request.user)
+
+    def get_redirect_url(self):
+        if self.request.user.is_authenticated:
+            return get_post_login_url(self.request.user)
+        return super().get_redirect_url()
+
     def form_valid(self, form):
         user = form.get_user()
         if not user.is_staff and user.approval_status == user.ApprovalStatus.PENDING:
@@ -42,7 +50,7 @@ class FitlabLoginView(LoginView):
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect("accounts:dashboard")
+        return redirect(get_post_login_url(request.user))
 
     _store_referral_code(request)
 
@@ -63,13 +71,15 @@ def register(request):
 def pending_approval(request):
     user = request.user
     if user.is_staff or user.approval_status == user.ApprovalStatus.APPROVED:
-        return redirect("accounts:dashboard")
+        return redirect(get_post_login_url(user))
     return render(request, "accounts/pending.html", {"user": user})
 
 
 @login_required
 def dashboard(request):
     user = request.user
+    if user.is_staff:
+        return redirect("admin_portal:dashboard")
     if not user.is_staff and user.approval_status != user.ApprovalStatus.APPROVED:
         return redirect("accounts:pending")
 
