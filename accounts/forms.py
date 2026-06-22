@@ -74,15 +74,39 @@ class RegistrationForm(forms.ModelForm):
 
 
 class LoginForm(AuthenticationForm):
-    username = forms.EmailField(
-        label="Email address",
-        widget=forms.EmailInput(attrs={**INPUT_LOGIN, "autofocus": True, "placeholder": "athlete@fitlab.com"}),
+    username = forms.CharField(
+        label="Username",
+        widget=forms.TextInput(
+            attrs={
+                **INPUT_LOGIN,
+                "autofocus": True,
+                "placeholder": "username or email",
+                "autocomplete": "username",
+            }
+        ),
     )
     password = forms.CharField(
         label="Password",
         strip=False,
-        widget=forms.PasswordInput(attrs={**INPUT_LOGIN, "placeholder": "••••••••", "id": "login-password"}),
+        widget=forms.PasswordInput(
+            attrs={
+                **INPUT_LOGIN,
+                "placeholder": "••••••••",
+                "id": "login-password",
+                "autocomplete": "current-password",
+            }
+        ),
     )
+
+    def clean(self):
+        identifier = self.cleaned_data.get("username", "").strip()
+        if identifier:
+            user = User.objects.filter(username__iexact=identifier).first()
+            if user is None:
+                user = User.objects.filter(email__iexact=identifier).first()
+            if user is not None:
+                self.cleaned_data["username"] = user.get_username()
+        return super().clean()
 
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)
