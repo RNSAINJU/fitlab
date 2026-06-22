@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,8 @@ from loyalty.services import get_balance
 from rewards.models import RedemptionRequest
 
 from .forms import LoginForm, RegistrationForm
+
+DEFAULT_AUTH_BACKEND = settings.AUTHENTICATION_BACKENDS[0]
 
 
 def _store_referral_code(request):
@@ -32,7 +35,7 @@ class FitlabLoginView(LoginView):
     def form_valid(self, form):
         user = form.get_user()
         if not user.is_staff and user.approval_status == user.ApprovalStatus.PENDING:
-            login(self.request, user)
+            login(self.request, user, backend=DEFAULT_AUTH_BACKEND)
             return redirect("accounts:pending")
         return super().form_valid(form)
 
@@ -48,7 +51,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, "Registration submitted. Awaiting admin approval.")
-            login(request, user)
+            login(request, user, backend=DEFAULT_AUTH_BACKEND)
             return redirect("accounts:pending")
     else:
         form = RegistrationForm()
