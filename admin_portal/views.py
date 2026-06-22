@@ -10,6 +10,7 @@ from activity.services import log_activity
 from loyalty.helpers import get_membership_tier
 from loyalty.models import PointTransaction
 from loyalty.services import admin_adjust_points, deduct_points, get_balance
+from rewards.forms import RewardForm
 from rewards.models import RedemptionRequest, Reward
 
 from .decorators import staff_required
@@ -109,6 +110,54 @@ def registration_approvals(request):
         request,
         "admin_portal/registration_approvals.html",
         {"pending_users": pending, "pending_count": pending.count()},
+    )
+
+
+@staff_required
+def rewards_list(request):
+    rewards = Reward.objects.all()
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        reward = get_object_or_404(Reward, pk=request.POST.get("reward_id"))
+
+        if action == "toggle_active":
+            reward.is_active = not reward.is_active
+            reward.save(update_fields=["is_active"])
+            state = "activated" if reward.is_active else "deactivated"
+            messages.success(request, f'Reward "{reward.title}" {state}.')
+        elif action == "delete":
+            title = reward.title
+            reward.delete()
+            messages.success(request, f'Reward "{title}" deleted.')
+
+        return redirect("admin_portal:rewards_list")
+
+    return render(
+        request,
+        "admin_portal/rewards_list.html",
+        {
+            "rewards": rewards,
+            "active_count": rewards.filter(is_active=True).count(),
+        },
+    )
+
+
+@staff_required
+def reward_create(request):
+    if request.method == "POST":
+        form = RewardForm(request.POST)
+        if form.is_valid():
+            reward = form.save()
+            messages.success(request, f'Reward "{reward.title}" created for {reward.points_cost} TFL Points.')
+            return redirect("admin_portal:rewards_list")
+    else:
+        form = RewardForm(initial={"is_active": True, "image_emoji": "🎁"})
+
+    return render(
+        request,
+        "admin_portal/reward_create.html",
+        {"form": form},
     )
 
 

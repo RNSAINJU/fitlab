@@ -1,0 +1,69 @@
+{% extends "admin_base.html" %}
+{% block title %}Create Reward — Fitlab Admin{% endblock %}
+{% block admin_page_title %}Create Reward{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <p class="admin-kicker">Marketplace</p>
+  <h1>Create Reward</h1>
+  <p>Add a new reward to the customer marketplace. Set the TFL Points required to redeem it.</p>
+</div>
+
+<div class="admin-form-panel" style="max-width:640px">
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="admin-form-row" style="grid-template-columns:1fr">
+      <div>
+        <label for="id_title">Reward title</label>
+        {{ form.title }}
+        {% if form.title.errors %}<ul class="auth-errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </div>
+
+    <div class="admin-form-row" style="grid-template-columns:1fr">
+      <div>
+        <label for="id_description">Description</label>
+        {{ form.description }}
+        {% if form.description.errors %}<ul class="auth-errorlist">{% for e in form.description.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </div>
+
+    <div class="admin-form-row">
+      <div>
+        <label for="id_points_cost">Required TFL Points</label>
+        {{ form.points_cost }}
+        {% if form.points_cost.errors %}<ul class="auth-errorlist">{% for e in form.points_cost.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div>
+        <label for="id_image_emoji">Icon emoji</label>
+        {{ form.image_emoji }}
+        {% if form.image_emoji.errors %}<ul class="auth-errorlist">{% for e in form.image_emoji.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </div>
+
+    <div class="admin-form-row">
+      <div>
+        <label for="id_stock">Stock (optional)</label>
+        {{ form.stock }}
+        <p style="margin:6px 0 0;font-size:12px;color:#71717a">{{ form.stock.help_text }}</p>
+        {% if form.stock.errors %}<ul class="auth-errorlist">{% for e in form.stock.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div style="display:flex;align-items:center;padding-top:24px">
+        <label style="display:flex;align-items:center;gap:8px;margin:0;cursor:pointer">
+          {{ form.is_active }}
+          <span>Visible in customer marketplace</span>
+        </label>
+      </div>
+    </div>
+
+    {% if form.non_field_errors %}
+      <div class="auth-nonfield">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div style="display:flex;gap:12px;margin-top:24px">
+      <button type="submit" class="admin-btn admin-btn--primary">Create Reward</button>
+      <a href="{% url 'admin_portal:rewards_list' %}" class="admin-btn admin-btn--outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

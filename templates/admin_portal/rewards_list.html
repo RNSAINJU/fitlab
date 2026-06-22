@@ -1,0 +1,87 @@
+{% extends "admin_base.html" %}
+{% block title %}Rewards — Fitlab Admin{% endblock %}
+{% block admin_page_title %}Rewards Catalog{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <p class="admin-kicker">Marketplace</p>
+  <h1>Customer Rewards</h1>
+  <p>Create and manage rewards that customers can redeem with TFL Points.</p>
+</div>
+
+<div class="admin-stat-grid">
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Total Rewards</div>
+    <div class="admin-stat-card__value">{{ rewards|length }}</div>
+    <div class="admin-stat-card__sub">In catalog</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Active</div>
+    <div class="admin-stat-card__value">{{ active_count }}</div>
+    <div class="admin-stat-card__sub">Visible to customers</div>
+  </div>
+</div>
+
+<div class="admin-panel">
+  <div class="admin-panel__head">
+    <h2>Reward Catalog</h2>
+    <a href="{% url 'admin_portal:reward_create' %}" class="admin-btn admin-btn--primary">+ Create Reward</a>
+  </div>
+
+  {% if rewards %}
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Reward</th>
+          <th>TFL Points</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reward in rewards %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:24px">{{ reward.image_emoji }}</span>
+                <div>
+                  <strong>{{ reward.title }}</strong>
+                  {% if reward.description %}
+                    <div style="color:#71717a;font-size:12px;margin-top:2px">{{ reward.description|truncatewords:12 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+            <td style="color:var(--accent);font-weight:600">{{ reward.points_cost }}</td>
+            <td>{% if reward.stock is None %}Unlimited{% else %}{{ reward.stock }}{% endif %}</td>
+            <td>
+              {% if reward.is_active %}
+                <span class="status-chip status-chip--approved">Active</span>
+              {% else %}
+                <span class="status-chip status-chip--rejected">Hidden</span>
+              {% endif %}
+            </td>
+            <td>{{ reward.created_at|date:"M j, Y" }}</td>
+            <td>
+              <form method="post" style="display:inline">
+                {% csrf_token %}
+                <input type="hidden" name="reward_id" value="{{ reward.id }}">
+                <button name="action" value="toggle_active" class="admin-btn admin-btn--ghost" type="submit">
+                  {% if reward.is_active %}Hide{% else %}Activate{% endif %}
+                </button>
+                <button name="action" value="delete" class="admin-btn admin-btn--danger" type="submit" onclick="return confirm('Delete this reward?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div style="padding:32px;text-align:center;color:#71717a">
+      <p style="margin:0 0 16px">No rewards yet. Create the first reward for your customers.</p>
+      <a href="{% url 'admin_portal:reward_create' %}" class="admin-btn admin-btn--primary">Create Reward</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
