@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
@@ -25,6 +27,18 @@ class RegistrationForm(forms.Form):
         required=True,
         label="Email address",
         widget=forms.EmailInput(attrs={**INPUT_REG, "placeholder": "recruit@fitlab.com"}),
+    )
+    phone = forms.CharField(
+        label="Mobile number",
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={
+                **INPUT_REG,
+                "placeholder": "+977 98XXXXXXXX",
+                "autocomplete": "tel",
+                "inputmode": "tel",
+            }
+        ),
     )
     password = forms.CharField(
         label="Security key",
@@ -56,6 +70,15 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("This username is already taken.")
         return username
 
+    def clean_phone(self):
+        phone = self.cleaned_data["phone"].strip()
+        digits = re.sub(r"\D", "", phone)
+        if len(digits) < 7 or len(digits) > 15:
+            raise forms.ValidationError("Enter a valid mobile number.")
+        if User.objects.filter(phone=digits).exists():
+            raise forms.ValidationError("This mobile number is already registered.")
+        return digits
+
     def clean_password(self):
         password = self.cleaned_data["password"]
         validate_password(password)
@@ -65,6 +88,7 @@ class RegistrationForm(forms.Form):
         user = User()
         user.email = self.cleaned_data["email"].lower()
         user.username = self.cleaned_data["username"]
+        user.phone = self.cleaned_data["phone"]
         name = self.cleaned_data["full_name"].strip()
         parts = name.split(None, 1)
         user.first_name = parts[0]
