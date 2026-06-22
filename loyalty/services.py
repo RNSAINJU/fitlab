@@ -8,7 +8,7 @@ def get_balance(user):
     return sum(tx.amount for tx in user.point_transactions.all())
 
 
-def award_points(user, amount, transaction_type, description, created_by=None):
+def award_points(user, amount, transaction_type, description, created_by=None, log_activity_event=True):
     tx = PointTransaction.objects.create(
         user=user,
         amount=amount,
@@ -16,22 +16,25 @@ def award_points(user, amount, transaction_type, description, created_by=None):
         description=description,
         created_by=created_by,
     )
-    log_activity(
-        user=user,
-        event_type="points",
-        title=f"{'+' if amount >= 0 else ''}{amount} TFL Points",
-        description=description,
-    )
+    if log_activity_event:
+        log_activity(
+            user=user,
+            event_type="points",
+            title=f"{'+' if amount >= 0 else ''}{amount} TFL Points",
+            description=description,
+            points_amount=amount,
+        )
     return tx
 
 
-def deduct_points(user, amount, description, created_by=None):
+def deduct_points(user, amount, description, created_by=None, log_activity_event=True):
     return award_points(
         user=user,
         amount=-abs(amount),
         transaction_type=PointTransaction.TransactionType.REDEEM,
         description=description,
         created_by=created_by,
+        log_activity_event=log_activity_event,
     )
 
 

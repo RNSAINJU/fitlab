@@ -28,7 +28,10 @@ def feed(request):
     if not user.is_approved and not user.is_staff:
         return redirect("accounts:pending")
 
-    events = ActivityEvent.objects.filter(user=user)
+    events = ActivityEvent.objects.filter(user=user).exclude(
+        event_type="points",
+        description__startswith="Redeemed:",
+    )
     balance = get_balance(user)
     _, tier_remaining = get_tier_progress(balance)
     monthly_goal = 1500

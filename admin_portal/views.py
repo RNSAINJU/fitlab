@@ -145,6 +145,7 @@ def points_ledger(request):
                     redemption.points_cost,
                     f"Redeemed: {redemption.reward.title}",
                     created_by=request.user,
+                    log_activity_event=False,
                 )
                 redemption.status = RedemptionRequest.Status.APPROVED
                 redemption.reviewed_by = request.user
@@ -158,6 +159,7 @@ def points_ledger(request):
                     event_type="redemption",
                     title=f"Redemption approved: {redemption.reward.title}",
                     description=f"{redemption.points_cost} TFL Points deducted.",
+                    points_amount=-redemption.points_cost,
                 )
                 messages.success(request, "Redemption approved and points deducted.")
             return redirect("admin_portal:points_ledger")

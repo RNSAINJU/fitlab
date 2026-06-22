@@ -57,12 +57,14 @@
           {% endif %}
         </div>
         <div>
-          <div>{{ event.title }}</div>
+          <div>{{ event|activity_display_title }}</div>
           <div class="activity-row__meta">{{ event.created_at|timesince_short }}</div>
         </div>
       </div>
       <div class="activity-row__points">
-        {% if event.title and '+' in event.title %} {{ event.title|truncatewords:3 }} {% else %}—{% endif %}
+        {% with pts=event|activity_points %}
+          {% if pts %}{{ pts }}{% else %}—{% endif %}
+        {% endwith %}
       </div>
     </div>
   {% empty %}

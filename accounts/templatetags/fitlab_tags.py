@@ -1,3 +1,5 @@
+import re
+
 from datetime import timedelta
 
 from django import template
@@ -20,6 +22,36 @@ def active_nav(request, app_name, url_name=""):
 def points_from_title(title):
     if "+" in str(title) and "TFL" in str(title):
         return str(title).split("TFL")[0].strip()
+    return ""
+
+
+@register.filter
+def activity_display_title(event):
+    if event.event_type == "redemption":
+        return event.title
+    if event.event_type == "points" and "TFL Points" in event.title:
+        description = (event.description or "").strip()
+        if description.startswith("Redeemed:"):
+            reward = description.removeprefix("Redeemed:").strip()
+            return f"Redemption approved: {reward}"
+    return event.title
+
+
+@register.filter
+def activity_points(event):
+    if getattr(event, "points_amount", None) is not None:
+        amount = event.points_amount
+        return f"{'+' if amount > 0 else ''}{amount}"
+
+    if event.event_type == "redemption" and "approved" in event.title.lower():
+        match = re.search(r"(\d+)\s*TFL Points deducted", event.description or "")
+        if match:
+            return f"-{match.group(1)}"
+
+    title = str(event.title)
+    match = re.search(r"([+-]?\d+)\s*TFL", title)
+    if match:
+        return match.group(1)
     return ""
 
 

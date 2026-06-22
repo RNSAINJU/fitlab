@@ -73,7 +73,10 @@ def dashboard(request):
     if not user.is_staff and user.approval_status != user.ApprovalStatus.APPROVED:
         return redirect("accounts:pending")
 
-    recent_activity = ActivityEvent.objects.filter(user=user)[:5]
+    recent_activity = ActivityEvent.objects.filter(user=user).exclude(
+        event_type="points",
+        description__startswith="Redeemed:",
+    )[:5]
     pending_redemptions = RedemptionRequest.objects.filter(
         user=user, status=RedemptionRequest.Status.PENDING
     ).count()

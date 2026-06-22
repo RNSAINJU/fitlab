@@ -32,12 +32,12 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
             </div>
             <div>
-              <strong style="font-size:14px">{{ event.title }}</strong>
+              <strong style="font-size:14px">{{ event|activity_display_title }}</strong>
               <div class="activity-row__meta">{{ event.created_at|date:"M j, g:i A" }}</div>
             </div>
           </div>
           <div class="timeline-card__points">
-            {% with pts=event.title|points_from_title %}
+            {% with pts=event|activity_points %}
               {% if pts %}{{ pts }}{% else %}—{% endif %}
             {% endwith %}
             <small>Points</small>

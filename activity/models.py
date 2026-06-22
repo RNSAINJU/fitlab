@@ -7,6 +7,7 @@ class ActivityEvent(models.Model):
     event_type = models.CharField(max_length=40)
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True)
+    points_amount = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
