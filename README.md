@@ -33,6 +33,16 @@ Open http://127.0.0.1:8000/
 - **Activity feed** for customer events
 - **Admin portal** at `/admin-portal/` (customer directory, approvals, ledger)
 
+## Google Stitch (design sync)
+
+Fitlab's design system is documented in [`DESIGN.md`](DESIGN.md) for [Google Stitch](https://stitch.withgoogle.com/).
+
+**Quick link steps:**
+1. Open Stitch ? import `DESIGN.md` from this repo, **or** extract design system from `http://82.197.69.121:8083/`
+2. New Stitch screens will match Fitlab's dark theme, Lexend typography, and red accent.
+
+Full guide: [`docs/google-stitch.md`](docs/google-stitch.md)
+
 ## Production (VPS + GitHub)
 
 GitHub repo: https://github.com/RNSAINJU/fitlab  
