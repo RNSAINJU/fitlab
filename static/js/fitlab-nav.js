@@ -1,14 +1,24 @@
 (function () {
+  function setExpanded(shell, open) {
+    if (!shell) return;
+    shell.querySelectorAll("[data-sidebar-toggle]").forEach(function (btn) {
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+  }
+
   function closeSidebar(shell) {
     if (!shell) return;
     shell.classList.remove("is-mobile-sidebar-open");
     document.body.classList.remove("is-mobile-sidebar-open");
+    setExpanded(shell, false);
   }
 
   function openSidebar(shell) {
     if (!shell) return;
     shell.classList.add("is-mobile-sidebar-open");
     document.body.classList.add("is-mobile-sidebar-open");
+    setExpanded(shell, true);
   }
 
   function toggleSidebar(shell) {
@@ -22,13 +32,17 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-sidebar-toggle]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         toggleSidebar(btn.closest("[data-mobile-sidebar]"));
       });
     });
 
     document.querySelectorAll("[data-sidebar-close]").forEach(function (el) {
-      el.addEventListener("click", function () {
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         closeSidebar(el.closest("[data-mobile-sidebar]"));
       });
     });
