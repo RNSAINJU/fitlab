@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="app-shell app-shell--with-sidebar">
+<div class="app-shell app-shell--with-sidebar" data-mobile-sidebar>
+  <div class="mobile-sidebar-overlay" data-sidebar-close aria-hidden="true"></div>
   {% include "includes/app_topbar.html" %}
   {% include "includes/app_nav.html" %}
 
@@ -16,4 +17,9 @@
     {% block content %}{% endblock %}
   </main>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'js/fitlab-nav.js' %}"></script>
 {% endblock %}

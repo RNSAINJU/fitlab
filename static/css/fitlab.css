@@ -568,6 +568,14 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid #18181b;
 }
 
+.app-topbar__start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
 .app-topbar--center-logo {
   display: grid;
   grid-template-columns: 40px 1fr 40px;
@@ -1774,39 +1782,100 @@ a { color: inherit; text-decoration: none; }
   gap: 24px;
 }
 
-.admin-mobile-nav {
+/* Mobile sidebar (shared) */
+.sidebar-toggle {
   display: none;
-  gap: 8px;
-  padding: 12px 20px;
-  overflow-x: auto;
+  background: none;
+  border: none;
+  color: var(--text);
+  padding: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mobile-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 90;
+  backdrop-filter: blur(2px);
+}
+
+.is-mobile-sidebar-open {
+  overflow: hidden;
+}
+
+.is-mobile-sidebar-open .mobile-sidebar-overlay {
+  display: block;
+}
+
+.mobile-sidebar__head {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 16px;
+  margin-bottom: 8px;
   border-bottom: 1px solid #18181b;
-  background: #09090b;
 }
 
-.admin-mobile-nav a {
-  flex-shrink: 0;
-  padding: 8px 14px;
-  border-radius: var(--pill);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.mobile-sidebar__close {
+  background: none;
+  border: none;
   color: #71717a;
-  border: 1px solid #27272a;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 10px;
 }
 
-.admin-mobile-nav a.is-active {
-  color: var(--accent);
-  border-color: rgba(227, 6, 19, 0.35);
-  background: rgba(227, 6, 19, 0.1);
+.mobile-sidebar__close:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mobile-sidebar__close svg {
+  width: 20px;
+  height: 20px;
 }
 
 @media (max-width: 960px) {
   .ledger-grid { grid-template-columns: 1fr; }
-  .admin-sidebar { display: none; }
-  .admin-mobile-nav { display: flex; }
   .admin-main { padding: 20px; }
-  .admin-header-bar { padding: 16px 20px; }
+  .admin-header-bar { padding: 16px 20px; gap: 12px; }
+  .admin-header-bar__title { flex: 1; min-width: 0; }
+  .sidebar-toggle { display: flex; }
+  .admin-sidebar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    width: min(280px, 85vw);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.5);
+  }
+  .is-mobile-sidebar-open .admin-sidebar {
+    transform: translateX(0);
+  }
+  .mobile-sidebar__head { display: flex; }
+  .admin-sidebar__brand--desktop { display: none; }
+}
+
+.admin-sidebar__brand--desktop {
+  display: block;
 }
 
 .ledger-side-card {
@@ -1964,9 +2033,43 @@ a { color: inherit; text-decoration: none; }
   color: #71717a;
 }
 
+.app-sidebar a:hover {
+  color: var(--text);
+}
+
 .app-sidebar a.is-active {
   background: rgba(227, 6, 19, 0.15);
   color: var(--accent);
+  border: 1px solid rgba(227, 6, 19, 0.25);
+}
+
+.app-sidebar__brand {
+  display: none;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+@media (max-width: 767px) {
+  .app-topbar .sidebar-toggle { display: flex; }
+  .app-topbar .app-avatar--desktop { display: none; }
+  .app-sidebar {
+    display: flex;
+    top: 0;
+    width: min(280px, 85vw);
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.5);
+    padding-top: 20px;
+  }
+  .is-mobile-sidebar-open .app-sidebar {
+    transform: translateX(0);
+  }
+  .app-sidebar__brand { display: block; }
+  .mobile-sidebar__head { display: flex; }
 }
 
 @media (min-width: 768px) {
@@ -1975,4 +2078,6 @@ a { color: inherit; text-decoration: none; }
   }
   .app-sidebar { display: flex; }
   .app-main { max-width: 720px; }
+  .app-sidebar__brand,
+  .mobile-sidebar__head { display: none; }
 }

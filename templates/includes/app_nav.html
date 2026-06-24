@@ -1,5 +1,11 @@
 {% load fitlab_tags %}
 <nav class="app-sidebar">
+  <div class="mobile-sidebar__head">
+    <span class="app-sidebar__brand">Fitlab</span>
+    <button type="button" class="mobile-sidebar__close" data-sidebar-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
   <a href="{% url 'accounts:dashboard' %}" class="{% active_nav request 'accounts' 'dashboard' %}">Dashboard</a>
   <a href="{% url 'activity:feed' %}" class="{% active_nav request 'activity' 'feed' %}">Activity</a>
   <a href="{% url 'rewards:marketplace' %}" class="{% active_nav request 'rewards' 'marketplace' %}">Rewards</a>
