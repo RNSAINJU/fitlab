@@ -11,6 +11,10 @@ INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
 INPUT_REG = {"class": "auth-input auth-input--dark"}
 
 
+def normalize_phone(value):
+    return re.sub(r"\D", "", value or "")
+
+
 class RegistrationForm(forms.Form):
     full_name = forms.CharField(
         max_length=150,
@@ -31,6 +35,7 @@ class RegistrationForm(forms.Form):
     phone = forms.CharField(
         label="Mobile number",
         max_length=20,
+        required=True,
         widget=forms.TextInput(
             attrs={
                 **INPUT_REG,
@@ -71,12 +76,15 @@ class RegistrationForm(forms.Form):
         return username
 
     def clean_phone(self):
-        phone = self.cleaned_data["phone"].strip()
-        digits = re.sub(r"\D", "", phone)
+        phone = self.cleaned_data.get("phone", "").strip()
+        if not phone:
+            raise forms.ValidationError("Mobile number is required.")
+        digits = normalize_phone(phone)
         if len(digits) < 7 or len(digits) > 15:
             raise forms.ValidationError("Enter a valid mobile number.")
-        if User.objects.filter(phone=digits).exists():
-            raise forms.ValidationError("This mobile number is already registered.")
+        for existing in User.objects.exclude(phone="").values_list("phone", flat=True):
+            if normalize_phone(existing) == digits:
+                raise forms.ValidationError("An account with this mobile number already exists.")
         return digits
 
     def clean_password(self):
