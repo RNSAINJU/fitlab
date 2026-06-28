@@ -11,6 +11,10 @@ INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
 INPUT_REG = {"class": "auth-input auth-input--dark"}
 
 
+def normalize_phone(value):
+    return re.sub(r"\D", "", value or "")
+
+
 class RegistrationForm(forms.Form):
     full_name = forms.CharField(
         max_length=150,
