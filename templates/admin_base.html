@@ -21,11 +21,11 @@
     <a href="{% url 'admin_portal:customer_directory' %}" class="{% active_nav request 'admin_portal' 'customer_directory' %}">Customer Directory</a>
     <a href="{% url 'admin_portal:registration_approvals' %}" class="{% active_nav request 'admin_portal' 'registration_approvals' %}">Registration Queue</a>
     <a href="{% url 'admin_portal:rewards_list' %}" class="{% if request.resolver_match.url_name == 'rewards_list' or request.resolver_match.url_name == 'reward_create' %}is-active{% endif %}">Rewards</a>
-    <a href="{% url 'admin_portal:point_rules' %}" class="{% active_nav request 'admin_portal' 'point_rules' %}">Point Rules</a>
+    <a href="{% url 'admin_portal:point_rules' %}" class="{% active_nav request 'admin_portal' 'point_rules' %}">TFL Point Rules</a>
+    <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Points Ledger</a>
     {% if request.user.is_superuser %}
     <a href="{% url 'admin_portal:role_management' %}" class="{% active_nav request 'admin_portal' 'role_management' %}">Roles</a>
     {% endif %}
-    <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Points Ledger</a>
     <div class="admin-sidebar__footer">
       <a href="{% url 'accounts:dashboard' %}">Customer App</a>
       <a href="{% url 'accounts:logout' %}">Logout</a>
