@@ -1,7 +1,7 @@
 from django.utils import timezone
 
 from activity.services import log_activity
-from loyalty.services import award_referral_bonus
+from loyalty.rule_engine import try_award_referral_points
 from .models import ReferralRecord
 
 
@@ -17,7 +17,10 @@ def award_referrer_on_approval(referee):
     if record.bonus_awarded:
         return record
 
-    tx = award_referral_bonus(referrer, referee)
+    tx = try_award_referral_points(referrer, referee)
+    if not tx:
+        return record
+
     record.bonus_awarded = True
     record.bonus_points = tx.amount
     record.awarded_at = timezone.now()

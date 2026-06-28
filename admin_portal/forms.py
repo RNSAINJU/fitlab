@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
+from loyalty.models import PointRule, PointRuleKind, PointRuleTrigger
+
 User = get_user_model()
 
 
@@ -65,3 +67,72 @@ class CreateAdminForm(forms.Form):
         user.set_password(self.cleaned_data["password"])
         user.save()
         return user
+
+
+class DistributePointsForm(forms.Form):
+    rule = forms.ModelChoiceField(
+        queryset=PointRule.objects.none(),
+        label="Activity rule",
+        empty_label="Select a gym activity rule",
+    )
+    customers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.none(),
+        label="Customers",
+        widget=forms.SelectMultiple(attrs={"size": 8}),
+    )
+    custom_points = forms.IntegerField(
+        required=False,
+        min_value=1,
+        label="Custom points (optional)",
+        widget=forms.NumberInput(attrs={"placeholder": "Leave blank to use rule default"}),
+    )
+    note = forms.CharField(
+        required=False,
+        max_length=200,
+        label="Note (optional)",
+        widget=forms.TextInput(attrs={"placeholder": "e.g. HIIT class, morning check-in"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["rule"].queryset = PointRule.objects.filter(
+            is_active=True,
+            trigger=PointRuleTrigger.MANUAL,
+            rule_kind=PointRuleKind.FIXED,
+        ).order_by("title")
+        self.fields["customers"].queryset = User.objects.filter(
+            is_staff=False,
+            approval_status=User.ApprovalStatus.APPROVED,
+        ).order_by("email")
+
+    def clean_customers(self):
+        customers = self.cleaned_data["customers"]
+        if not customers:
+            raise forms.ValidationError("Select at least one customer.")
+        return customers
+
+
+class PaymentPointsForm(forms.Form):
+    customer = forms.ModelChoiceField(
+        queryset=User.objects.none(),
+        label="Customer",
+        empty_label="Select a customer",
+    )
+    amount_spent = forms.IntegerField(
+        min_value=1,
+        label="Amount spent",
+        widget=forms.NumberInput(attrs={"placeholder": "e.g. 2500"}),
+    )
+    note = forms.CharField(
+        required=False,
+        max_length=200,
+        label="Note (optional)",
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Monthly membership renewal"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["customer"].queryset = User.objects.filter(
+            is_staff=False,
+            approval_status=User.ApprovalStatus.APPROVED,
+        ).order_by("email")

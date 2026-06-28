@@ -45,7 +45,13 @@ class FitlabLoginView(LoginView):
         if not user.is_staff and user.approval_status == user.ApprovalStatus.PENDING:
             login(self.request, user, backend=DEFAULT_AUTH_BACKEND)
             return redirect("accounts:pending")
-        return super().form_valid(form)
+
+        response = super().form_valid(form)
+        if not user.is_staff and user.is_approved:
+            from loyalty.rule_engine import try_award_daily_login_points
+
+            try_award_daily_login_points(user)
+        return response
 
 
 def register(request):

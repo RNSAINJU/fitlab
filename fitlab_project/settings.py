@@ -158,5 +158,5 @@ LOGIN_REDIRECT_URL = "accounts:dashboard"
 LOGOUT_REDIRECT_URL = "accounts:login"
 
 # Fitlab business defaults
-REFERRAL_BONUS_POINTS = int(os.environ.get("REFERRAL_BONUS_POINTS", "500"))
-SIGNUP_BONUS_POINTS = int(os.environ.get("SIGNUP_BONUS_POINTS", "100"))
+REFERRAL_BONUS_POINTS = int(os.environ.get("REFERRAL_BONUS_POINTS", "5"))
+SIGNUP_BONUS_POINTS = int(os.environ.get("SIGNUP_BONUS_POINTS", "10"))

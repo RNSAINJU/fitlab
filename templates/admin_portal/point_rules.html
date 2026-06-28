@@ -1,0 +1,260 @@
+{% extends "admin_base.html" %}
+{% block title %}Point Rules — Fitlab Admin{% endblock %}
+{% block admin_page_title %}TFL Point Rules{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <p class="admin-kicker">Loyalty Engine</p>
+  <h1>TFL Point Rules</h1>
+  <p>Automatic rules run on registration, daily login, and referrals. Admins distribute gym activity and payment rewards manually.</p>
+</div>
+
+<div class="admin-stat-grid">
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Active Rules</div>
+    <div class="admin-stat-card__value">{{ active_rules }}</div>
+    <div class="admin-stat-card__sub">Enabled now</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Distributed via Rules</div>
+    <div class="admin-stat-card__value">{{ total_distributed|floatformat:0 }}</div>
+    <div class="admin-stat-card__sub">TFL Points issued</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-card__label">Total Rules</div>
+    <div class="admin-stat-card__value">{{ rules|length }}</div>
+    <div class="admin-stat-card__sub">System + custom</div>
+  </div>
+</div>
+
+<div class="ledger-grid">
+  <div>
+    <div class="admin-form-panel" id="gym-activity">
+      <h3>Gym Activity Distribution</h3>
+      <p style="margin:0 0 16px;font-size:13px;color:#a1a1aa">Award points for classes, check-ins, challenges, and other gym activities.</p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="distribute">
+        <div class="admin-form-row">
+          <div>
+            <label for="id_rule">Activity rule</label>
+            {{ distribute_form.rule }}
+          </div>
+          <div>
+            <label for="id_custom_points">Custom points (optional)</label>
+            {{ distribute_form.custom_points }}
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div>
+            <label for="id_note">Note (optional)</label>
+            {{ distribute_form.note }}
+          </div>
+        </div>
+        <div class="admin-form-row" style="grid-template-columns:1fr">
+          <div>
+            <label for="id_customers">Customers</label>
+            {{ distribute_form.customers }}
+            <p style="margin:6px 0 0;font-size:12px;color:#71717a">Hold Ctrl/Cmd to select multiple approved customers.</p>
+          </div>
+        </div>
+        <button type="submit" class="admin-btn admin-btn--primary">Award Activity Points</button>
+      </form>
+    </div>
+
+    <div class="admin-form-panel" id="payment">
+      <h3>Payment Reward</h3>
+      <p style="margin:0 0 16px;font-size:13px;color:#a1a1aa">
+        {% if payment_rule %}
+          Current rate: <strong>{{ payment_rule.points_amount }} TFL Points</strong> per <strong>{{ payment_rule.spend_amount }}</strong> spent.
+        {% else %}
+          Payment rule is not configured.
+        {% endif %}
+      </p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="payment">
+        <div class="admin-form-row">
+          <div>
+            <label for="id_customer">Customer</label>
+            {{ payment_form.customer }}
+          </div>
+          <div>
+            <label for="id_amount_spent">Amount spent</label>
+            {{ payment_form.amount_spent }}
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div>
+            <label for="id_note">Note (optional)</label>
+            {{ payment_form.note }}
+          </div>
+        </div>
+        <button type="submit" class="admin-btn admin-btn--primary">Award Payment Points</button>
+      </form>
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-panel__head">
+        <h2>All Point Rules</h2>
+      </div>
+
+      {% if rules %}
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th>Value</th>
+              <th>Trigger</th>
+              <th>Used</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rule in rules %}
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <span style="font-size:24px">{{ rule.icon_emoji }}</span>
+                    <div>
+                      <strong>{{ rule.title }}</strong>
+                      {% if rule.is_system %}<span class="status-chip" style="margin-left:8px">System</span>{% endif %}
+                      {% if rule.description %}
+                        <div style="color:#71717a;font-size:12px;margin-top:2px">{{ rule.description|truncatewords:16 }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+                <td style="color:var(--accent);font-weight:600">
+                  {% if rule.rule_kind == "payment_spend" %}
+                    +{{ rule.points_amount }} / {{ rule.spend_amount }}
+                  {% else %}
+                    +{{ rule.points_amount }}
+                  {% endif %}
+                </td>
+                <td>{{ rule.get_trigger_display }}</td>
+                <td>{{ rule.award_count }}</td>
+                <td>
+                  {% if rule.is_active %}
+                    <span class="status-chip status-chip--approved">Active</span>
+                  {% else %}
+                    <span class="status-chip status-chip--rejected">Inactive</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if rule.is_system %}
+                    <form method="post" style="display:grid;gap:8px;min-width:220px">
+                      {% csrf_token %}
+                      <input type="hidden" name="rule_id" value="{{ rule.id }}">
+                      <input type="hidden" name="action" value="update_rule">
+                      <input type="number" name="points_amount" value="{{ rule.points_amount }}" min="1" placeholder="Points">
+                      {% if rule.rule_kind == "payment_spend" %}
+                        <input type="number" name="spend_amount" value="{{ rule.spend_amount }}" min="1" placeholder="Spend amount">
+                      {% endif %}
+                      <textarea name="description" rows="2" placeholder="Description">{{ rule.description }}</textarea>
+                      <label style="display:flex;align-items:center;gap:8px;margin:0">
+                        <input type="checkbox" name="is_active" {% if rule.is_active %}checked{% endif %}>
+                        <span>Enabled</span>
+                      </label>
+                      <button type="submit" class="admin-btn admin-btn--ghost">Save</button>
+                    </form>
+                  {% else %}
+                    <form method="post" style="display:inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="rule_id" value="{{ rule.id }}">
+                      <button name="action" value="toggle_active" class="admin-btn admin-btn--ghost" type="submit">
+                        {% if rule.is_active %}Deactivate{% else %}Activate{% endif %}
+                      </button>
+                      <button name="action" value="delete" class="admin-btn admin-btn--danger" type="submit" onclick="return confirm('Delete this point rule?')">Delete</button>
+                    </form>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div style="padding:32px;text-align:center;color:#71717a">
+          <p style="margin:0">No point rules yet.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-panel__head">
+        <h2>Recent Distributions</h2>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr><th>Customer</th><th>Rule</th><th>Points</th><th>By</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          {% for tx in recent_awards %}
+            <tr>
+              <td>{{ tx.user.display_name }}</td>
+              <td>{{ tx.rule.title|default:tx.description }}</td>
+              <td style="color:#22c55e">+{{ tx.amount }} TFLS</td>
+              <td>{{ tx.created_by.display_name|default:"System" }}</td>
+              <td>{{ tx.created_at|date:"M j, Y g:i A" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5" style="color:#71717a">No rule-based awards yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <aside>
+    <div class="ledger-side-card">
+      <h3>Automatic Rules</h3>
+      {% for rule in automatic_rules %}
+        <div class="redemption-item"><span>{{ rule.title }}</span><strong>{{ rule.points_amount }} TFL</strong></div>
+      {% endfor %}
+      <p style="margin:12px 0 0;font-size:12px;color:#71717a">Values are editable in the rules table. Automatic rules apply on approval and login.</p>
+    </div>
+
+    <div class="admin-form-panel" id="create">
+      <h3>Create Custom Rule</h3>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_rule">
+
+        <div class="admin-form-row" style="grid-template-columns:1fr">
+          <div>
+            <label for="id_title">Rule title</label>
+            {{ rule_form.title }}
+          </div>
+        </div>
+
+        <div class="admin-form-row" style="grid-template-columns:1fr">
+          <div>
+            <label for="id_description">Description</label>
+            {{ rule_form.description }}
+          </div>
+        </div>
+
+        <div class="admin-form-row">
+          <div>
+            <label for="id_points_amount">TFL Points to award</label>
+            {{ rule_form.points_amount }}
+          </div>
+          <div>
+            <label for="id_icon_emoji">Icon emoji</label>
+            {{ rule_form.icon_emoji }}
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:8px;margin:0;cursor:pointer">
+            {{ rule_form.is_active }}
+            <span>Available for distribution</span>
+          </label>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn--primary">Create Rule</button>
+      </form>
+    </div>
+  </aside>
+</div>
+{% endblock %}

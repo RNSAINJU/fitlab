@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 
 from loyalty.models import PointTransaction
+from loyalty.rule_engine import ensure_default_point_rules
 from loyalty.services import award_points
 from rewards.models import Reward
 
@@ -19,6 +20,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         admin_email = options["admin_email"].lower()
         admin_password = options["admin_password"]
+
+        ensure_default_point_rules()
 
         admin, created = User.objects.get_or_create(
             username=admin_email,

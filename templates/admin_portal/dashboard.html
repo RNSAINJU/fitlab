@@ -39,6 +39,7 @@
     <a href="{% url 'admin_portal:customer_directory' %}" class="admin-btn admin-btn--outline">Open Directory</a>
     <a href="{% url 'admin_portal:registration_approvals' %}" class="admin-btn admin-btn--primary">Review Queue</a>
     <a href="{% url 'admin_portal:reward_create' %}" class="admin-btn admin-btn--outline">Create Reward</a>
+    <a href="{% url 'admin_portal:point_rules' %}" class="admin-btn admin-btn--outline">Point Rules</a>
     {% if request.user.is_superuser %}
     <a href="{% url 'admin_portal:role_management' %}" class="admin-btn admin-btn--outline">Manage Roles</a>
     {% endif %}
