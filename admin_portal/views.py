@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.db.models import Count, Sum
 
 from activity.services import log_activity
-from loyalty.forms import PointRuleForm, SystemRuleForm
+from loyalty.forms import CustomRuleForm, PointRuleForm, SystemRuleForm
 from loyalty.helpers import get_membership_tier
 from loyalty.models import PointRule, PointRuleKind, PointRuleTrigger, PointTransaction
 from loyalty.rule_engine import award_rule_points, ensure_default_point_rules, get_point_rule, on_user_approved
@@ -348,14 +348,20 @@ def point_rules(request):
             return redirect("admin_portal:point_rules")
 
         if action == "update_rule":
-            rule = get_object_or_404(PointRule, pk=request.POST.get("rule_id"), is_system=True)
+            rule = get_object_or_404(PointRule, pk=request.POST.get("rule_id"))
             post_data = request.POST.copy()
             if "is_active" not in post_data:
                 post_data["is_active"] = False
-            form = SystemRuleForm(post_data, instance=rule)
+            if rule.is_system:
+                form = SystemRuleForm(post_data, instance=rule)
+            else:
+                form = CustomRuleForm(post_data, instance=rule)
             if form.is_valid():
-                form.save()
-                messages.success(request, f'Updated "{rule.title}".')
+                updated = form.save()
+                messages.success(
+                    request,
+                    f'Updated "{updated.title}" — now awards {updated.points_amount} TFL Points.',
+                )
             else:
                 messages.error(request, form.errors.as_text())
             return redirect("admin_portal:point_rules")
@@ -436,6 +442,7 @@ def point_rules(request):
     distribute_form = DistributePointsForm()
     payment_form = PaymentPointsForm()
     payment_rule = get_point_rule("payment")
+    gym_activity_rule = get_point_rule("gym_activity")
     automatic_rules = rules.filter(
         is_system=True,
         trigger__in=[
@@ -465,6 +472,7 @@ def point_rules(request):
             "distribute_form": distribute_form,
             "payment_form": payment_form,
             "payment_rule": payment_rule,
+            "gym_activity_rule": gym_activity_rule,
             "automatic_rules": automatic_rules,
             "recent_awards": recent_awards,
             "active_rules": active_rules,

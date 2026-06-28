@@ -6,10 +6,11 @@ from .services import award_points
 
 
 def ensure_default_point_rules():
+    """Create missing system rules only — never overwrite admin-edited values."""
     for rule_data in DEFAULT_POINT_RULES:
         slug = rule_data["slug"]
         defaults = {key: value for key, value in rule_data.items() if key != "slug"}
-        PointRule.objects.update_or_create(slug=slug, defaults=defaults)
+        PointRule.objects.get_or_create(slug=slug, defaults=defaults)
 
 
 def get_point_rule(slug):

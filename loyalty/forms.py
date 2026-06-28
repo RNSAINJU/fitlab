@@ -29,20 +29,23 @@ class PointRuleForm(forms.ModelForm):
 class SystemRuleForm(forms.ModelForm):
     class Meta:
         model = PointRule
-        fields = ("points_amount", "spend_amount", "description", "is_active")
+        fields = ("title", "points_amount", "spend_amount", "description", "icon_emoji", "is_active")
         widgets = {
-            "points_amount": forms.NumberInput(attrs={"min": 1}),
-            "spend_amount": forms.NumberInput(attrs={"min": 1}),
-            "description": forms.Textarea(attrs={"rows": 2}),
+            "title": forms.TextInput(attrs={"readonly": "readonly"}),
+            "points_amount": forms.NumberInput(attrs={"min": 1, "class": "auth-input"}),
+            "spend_amount": forms.NumberInput(attrs={"min": 1, "class": "auth-input"}),
+            "description": forms.Textarea(attrs={"rows": 2, "class": "auth-input"}),
+            "icon_emoji": forms.TextInput(attrs={"maxlength": 8, "class": "auth-input"}),
         }
         labels = {
-            "points_amount": "TFL Points",
-            "spend_amount": "Spend amount",
+            "points_amount": "TFL Points awarded",
+            "spend_amount": "Spend amount required",
             "is_active": "Rule enabled",
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["title"].disabled = True
         if self.instance.rule_kind != PointRuleKind.PAYMENT_SPEND:
             self.fields.pop("spend_amount", None)
 
@@ -54,3 +57,25 @@ class SystemRuleForm(forms.ModelForm):
             if not cleaned.get("points_amount"):
                 raise forms.ValidationError("Payment rules require a points amount.")
         return cleaned
+
+
+class CustomRuleForm(forms.ModelForm):
+    class Meta:
+        model = PointRule
+        fields = ("title", "description", "points_amount", "icon_emoji", "is_active")
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "auth-input"}),
+            "description": forms.Textarea(attrs={"rows": 2, "class": "auth-input"}),
+            "points_amount": forms.NumberInput(attrs={"min": 1, "class": "auth-input"}),
+            "icon_emoji": forms.TextInput(attrs={"maxlength": 8, "class": "auth-input"}),
+        }
+        labels = {
+            "points_amount": "TFL Points awarded",
+            "is_active": "Rule enabled",
+        }
+
+    def clean_points_amount(self):
+        points = self.cleaned_data["points_amount"]
+        if points < 1:
+            raise forms.ValidationError("Points must be at least 1.")
+        return points

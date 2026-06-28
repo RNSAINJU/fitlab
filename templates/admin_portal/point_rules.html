@@ -5,7 +5,7 @@
 <div class="admin-hero">
   <p class="admin-kicker">Loyalty Engine</p>
   <h1>TFL Point Rules</h1>
-  <p>Automatic rules run on registration, daily login, and referrals. Admins distribute gym activity and payment rewards manually.</p>
+  <p>Edit point values below — changes apply immediately to all future awards. Automatic rules run on registration, daily login, and referrals.</p>
 </div>
 
 <div class="admin-stat-grid">
@@ -26,11 +26,113 @@
   </div>
 </div>
 
-<div class="ledger-grid">
+<div class="admin-panel" id="configure">
+  <div class="admin-panel__head">
+    <h2>Rule Configuration</h2>
+    <span style="color:#71717a;font-size:13px">Edit points and save — values are read from the database on every award</span>
+  </div>
+
+  <div style="display:grid;gap:16px">
+    {% for rule in rules %}
+      <div class="admin-form-panel" style="margin:0">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="update_rule">
+          <input type="hidden" name="rule_id" value="{{ rule.id }}">
+
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:28px">{{ rule.icon_emoji }}</span>
+              <div>
+                <strong style="font-size:16px">{{ rule.title }}</strong>
+                {% if rule.is_system %}<span class="status-chip" style="margin-left:8px">System</span>{% endif %}
+                <div style="color:#71717a;font-size:12px;margin-top:4px">{{ rule.get_trigger_display }}</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              {% if rule.is_active %}
+                <span class="status-chip status-chip--approved">Active</span>
+              {% else %}
+                <span class="status-chip status-chip--rejected">Inactive</span>
+              {% endif %}
+              <span style="color:#71717a;font-size:12px">Used {{ rule.award_count }}×</span>
+            </div>
+          </div>
+
+          <div class="admin-form-row" style="margin-top:16px">
+            {% if not rule.is_system %}
+              <div>
+                <label>Rule title</label>
+                <input type="text" name="title" value="{{ rule.title }}" class="auth-input" required>
+              </div>
+            {% else %}
+              <input type="hidden" name="title" value="{{ rule.title }}">
+            {% endif %}
+
+            <div>
+              <label>TFL Points awarded</label>
+              <input type="number" name="points_amount" value="{{ rule.points_amount }}" min="1" class="auth-input" required>
+            </div>
+
+            {% if rule.rule_kind == "payment_spend" %}
+              <div>
+                <label>Per spend amount</label>
+                <input type="number" name="spend_amount" value="{{ rule.spend_amount }}" min="1" class="auth-input" required>
+              </div>
+            {% endif %}
+
+            <div>
+              <label>Icon</label>
+              <input type="text" name="icon_emoji" value="{{ rule.icon_emoji }}" maxlength="8" class="auth-input">
+            </div>
+          </div>
+
+          <div class="admin-form-row" style="grid-template-columns:1fr">
+            <div>
+              <label>Description</label>
+              <textarea name="description" rows="2" class="auth-input">{{ rule.description }}</textarea>
+            </div>
+          </div>
+
+          {% if rule.rule_kind == "payment_spend" %}
+            <p style="margin:0 0 12px;font-size:13px;color:#a1a1aa">
+              Rate: <strong>{{ rule.points_amount }} TFL Points</strong> per <strong>{{ rule.spend_amount }}</strong> spent
+              (e.g. 2500 spent → {% widthratio 2500 rule.spend_amount rule.points_amount %} points)
+            </p>
+          {% endif %}
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:8px;margin:0;cursor:pointer">
+              <input type="checkbox" name="is_active" {% if rule.is_active %}checked{% endif %}>
+              <span>Rule enabled</span>
+            </label>
+
+            <button type="submit" class="admin-btn admin-btn--primary">Save Changes</button>
+          </div>
+        </form>
+        {% if not rule.is_system %}
+          <form method="post" style="margin-top:8px" onsubmit="return confirm('Delete this point rule?')">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="rule_id" value="{{ rule.id }}">
+            <button type="submit" class="admin-btn admin-btn--danger">Delete Rule</button>
+          </form>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p style="color:#71717a;margin:0">No rules configured yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="ledger-grid" style="margin-top:24px">
   <div>
     <div class="admin-form-panel" id="gym-activity">
       <h3>Gym Activity Distribution</h3>
-      <p style="margin:0 0 16px;font-size:13px;color:#a1a1aa">Award points for classes, check-ins, challenges, and other gym activities.</p>
+      <p style="margin:0 0 16px;font-size:13px;color:#a1a1aa">
+        Default: <strong>{{ gym_activity_rule.points_amount|default:"—" }} TFL Points</strong> per activity
+        {% if gym_activity_rule %} (editable above){% endif %}
+      </p>
       <form method="post">
         {% csrf_token %}
         <input type="hidden" name="action" value="distribute">
@@ -40,7 +142,7 @@
             {{ distribute_form.rule }}
           </div>
           <div>
-            <label for="id_custom_points">Custom points (optional)</label>
+            <label for="id_custom_points">Override points (optional)</label>
             {{ distribute_form.custom_points }}
           </div>
         </div>
@@ -65,7 +167,7 @@
       <h3>Payment Reward</h3>
       <p style="margin:0 0 16px;font-size:13px;color:#a1a1aa">
         {% if payment_rule %}
-          Current rate: <strong>{{ payment_rule.points_amount }} TFL Points</strong> per <strong>{{ payment_rule.spend_amount }}</strong> spent.
+          Current rate: <strong>{{ payment_rule.points_amount }} TFL Points</strong> per <strong>{{ payment_rule.spend_amount }}</strong> spent (editable above).
         {% else %}
           Payment rule is not configured.
         {% endif %}
@@ -91,93 +193,6 @@
         </div>
         <button type="submit" class="admin-btn admin-btn--primary">Award Payment Points</button>
       </form>
-    </div>
-
-    <div class="admin-panel">
-      <div class="admin-panel__head">
-        <h2>All Point Rules</h2>
-      </div>
-
-      {% if rules %}
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Rule</th>
-              <th>Value</th>
-              <th>Trigger</th>
-              <th>Used</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for rule in rules %}
-              <tr>
-                <td>
-                  <div style="display:flex;align-items:center;gap:12px">
-                    <span style="font-size:24px">{{ rule.icon_emoji }}</span>
-                    <div>
-                      <strong>{{ rule.title }}</strong>
-                      {% if rule.is_system %}<span class="status-chip" style="margin-left:8px">System</span>{% endif %}
-                      {% if rule.description %}
-                        <div style="color:#71717a;font-size:12px;margin-top:2px">{{ rule.description|truncatewords:16 }}</div>
-                      {% endif %}
-                    </div>
-                  </div>
-                </td>
-                <td style="color:var(--accent);font-weight:600">
-                  {% if rule.rule_kind == "payment_spend" %}
-                    +{{ rule.points_amount }} / {{ rule.spend_amount }}
-                  {% else %}
-                    +{{ rule.points_amount }}
-                  {% endif %}
-                </td>
-                <td>{{ rule.get_trigger_display }}</td>
-                <td>{{ rule.award_count }}</td>
-                <td>
-                  {% if rule.is_active %}
-                    <span class="status-chip status-chip--approved">Active</span>
-                  {% else %}
-                    <span class="status-chip status-chip--rejected">Inactive</span>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if rule.is_system %}
-                    <form method="post" style="display:grid;gap:8px;min-width:220px">
-                      {% csrf_token %}
-                      <input type="hidden" name="rule_id" value="{{ rule.id }}">
-                      <input type="hidden" name="action" value="update_rule">
-                      <input type="number" name="points_amount" value="{{ rule.points_amount }}" min="1" placeholder="Points">
-                      {% if rule.rule_kind == "payment_spend" %}
-                        <input type="number" name="spend_amount" value="{{ rule.spend_amount }}" min="1" placeholder="Spend amount">
-                      {% endif %}
-                      <textarea name="description" rows="2" placeholder="Description">{{ rule.description }}</textarea>
-                      <label style="display:flex;align-items:center;gap:8px;margin:0">
-                        <input type="checkbox" name="is_active" {% if rule.is_active %}checked{% endif %}>
-                        <span>Enabled</span>
-                      </label>
-                      <button type="submit" class="admin-btn admin-btn--ghost">Save</button>
-                    </form>
-                  {% else %}
-                    <form method="post" style="display:inline">
-                      {% csrf_token %}
-                      <input type="hidden" name="rule_id" value="{{ rule.id }}">
-                      <button name="action" value="toggle_active" class="admin-btn admin-btn--ghost" type="submit">
-                        {% if rule.is_active %}Deactivate{% else %}Activate{% endif %}
-                      </button>
-                      <button name="action" value="delete" class="admin-btn admin-btn--danger" type="submit" onclick="return confirm('Delete this point rule?')">Delete</button>
-                    </form>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <div style="padding:32px;text-align:center;color:#71717a">
-          <p style="margin:0">No point rules yet.</p>
-        </div>
-      {% endif %}
     </div>
 
     <div class="admin-panel">
@@ -209,9 +224,12 @@
     <div class="ledger-side-card">
       <h3>Automatic Rules</h3>
       {% for rule in automatic_rules %}
-        <div class="redemption-item"><span>{{ rule.title }}</span><strong>{{ rule.points_amount }} TFL</strong></div>
+        <div class="redemption-item">
+          <span>{{ rule.title }}</span>
+          <strong>{{ rule.points_amount }} TFL</strong>
+        </div>
       {% endfor %}
-      <p style="margin:12px 0 0;font-size:12px;color:#71717a">Values are editable in the rules table. Automatic rules apply on approval and login.</p>
+      <p style="margin:12px 0 0;font-size:12px;color:#71717a">These values update live when you save changes above.</p>
     </div>
 
     <div class="admin-form-panel" id="create">
