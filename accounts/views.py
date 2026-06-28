@@ -13,7 +13,7 @@ from rewards.models import RedemptionRequest
 from .auth_helpers import get_post_login_url
 from .forms import LoginForm, RegistrationForm
 
-DEFAULT_AUTH_BACKEND = settings.AUTHENTICATION_BACKENDS[0]
+DEFAULT_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
 
 
 def _store_referral_code(request):
