@@ -3,8 +3,8 @@
 # Run on the VPS as root:
 #   sudo FITLAB_DOMAIN=thefitlab.com.np bash deploy/setup-origin-ssl.sh
 #
-# Then in Cloudflare: SSL/TLS → Overview → Full
-# (Use "Full (strict)" only with a Cloudflare Origin Certificate instead of self-signed.)
+# Port 80 serves HTTP directly (required for Cloudflare Flexible).
+# Port 443 serves HTTPS with a self-signed origin cert (for Cloudflare Full).
 
 set -euo pipefail
 
@@ -29,23 +29,12 @@ if [[ ! -f "$CERT_FILE" || ! -f "$KEY_FILE" ]]; then
   chmod 644 "$CERT_FILE"
 fi
 
-echo "==> Writing nginx SSL vhost"
+echo "==> Writing nginx vhost"
 cat > "$NGINX_SITE" <<EOF
 server {
     listen 80;
     listen [::]:80;
     server_name ${DOMAIN} www.${DOMAIN};
-    return 301 https://\$host\$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    server_name ${DOMAIN} www.${DOMAIN};
-
-    ssl_certificate ${CERT_FILE};
-    ssl_certificate_key ${KEY_FILE};
-    ssl_protocols TLSv1.2 TLSv1.3;
 
     client_max_body_size 10M;
 
@@ -75,26 +64,50 @@ server {
         proxy_redirect off;
     }
 }
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${DOMAIN} www.${DOMAIN};
+
+    ssl_certificate ${CERT_FILE};
+    ssl_certificate_key ${KEY_FILE};
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    client_max_body_size 10M;
+
+    location /static/ {
+        alias /var/www/fitlab/staticfiles/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location = /accounts/login/ {
+        limit_req zone=fitlab_login burst=3 nodelay;
+        proxy_pass http://127.0.0.1:${GUNICORN_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_redirect off;
+    }
+
+    location / {
+        limit_req zone=fitlab_general burst=50 nodelay;
+        proxy_pass http://127.0.0.1:${GUNICORN_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_redirect off;
+    }
+}
 EOF
 
 ln -sf "$NGINX_SITE" /etc/nginx/sites-enabled/fitlab-domain
 nginx -t
 systemctl reload nginx
 
-ENV_FILE="/var/www/fitlab/.env"
-if [[ -f "$ENV_FILE" ]]; then
-  if grep -q '^DJANGO_HTTPS=' "$ENV_FILE"; then
-    sed -i 's/^DJANGO_HTTPS=.*/DJANGO_HTTPS=1/' "$ENV_FILE"
-  else
-    echo "DJANGO_HTTPS=1" >> "$ENV_FILE"
-  fi
-  systemctl restart fitlab
-fi
-
 echo ""
-echo "Origin SSL installed."
-echo "  1. Cloudflare → SSL/TLS → set mode to Full (not strict, unless using Origin Certificate)"
-echo "  2. Visit https://${DOMAIN}/"
-echo ""
-echo "For Full (strict), replace cert with Cloudflare Origin Certificate:"
-echo "  Cloudflare → SSL/TLS → Origin Server → Create Certificate"
+echo "Done. Use Cloudflare SSL mode: Flexible"
+echo "  http://${DOMAIN}/"
