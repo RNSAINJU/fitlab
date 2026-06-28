@@ -58,6 +58,16 @@ Fitlab runs on **port 8083** (port 80 is used by other sites on this server).
 
 **Change the default admin password immediately** after first login.
 
+Production uses `FITLAB_ADMIN_PASSWORD` in `.env` (generated on first VPS setup). After deploy, run on the server:
+
+```bash
+cd /var/www/fitlab
+# Set a new strong password in .env, then:
+sudo bash deploy/deploy.sh
+```
+
+Login brute-force protection is enabled via **django-axes** (5 failures, 30-minute lockout) and nginx rate limits on `/accounts/login/`.
+
 ### Update the live site
 
 1. Push your changes to GitHub (`main` branch).
