@@ -4,17 +4,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
-from django.db.models import Sum
+from django.db.models import Count, Sum
 
 from activity.services import log_activity
+from loyalty.forms import CustomRuleForm, PointRuleForm, SystemRuleForm
 from loyalty.helpers import get_membership_tier
-from loyalty.models import PointTransaction
+from loyalty.models import PointRule, PointRuleKind, PointRuleTrigger, PointTransaction
+from loyalty.rule_engine import award_rule_points, ensure_default_point_rules, get_point_rule, on_user_approved
 from loyalty.services import admin_adjust_points, deduct_points, get_balance
 from rewards.forms import RewardForm
 from rewards.models import RedemptionRequest, Reward
 
 from .decorators import staff_required, superuser_required
-from .forms import CreateAdminForm, PromoteAdminForm
+from .forms import CreateAdminForm, DistributePointsForm, PaymentPointsForm, PromoteAdminForm
 
 User = get_user_model()
 
@@ -94,6 +96,7 @@ def registration_approvals(request):
         if action == "approve":
             user.approval_status = User.ApprovalStatus.APPROVED
             user.save(update_fields=["approval_status"])
+            on_user_approved(user)
             messages.success(request, f"Approved {user.display_name}.")
         elif action == "reject":
             user.approval_status = User.ApprovalStatus.REJECTED
@@ -320,5 +323,159 @@ def points_ledger(request):
             "total_redemptions": total_redemptions,
             "redemption_rate": redemption_rate,
             "top_rewards": top_rewards,
+        },
+    )
+
+
+@staff_required
+def point_rules(request):
+    ensure_default_point_rules()
+    rules = PointRule.objects.annotate(award_count=Count("transactions"))
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "create_rule":
+            form = PointRuleForm(request.POST)
+            if form.is_valid():
+                rule = form.save(commit=False)
+                rule.trigger = PointRuleTrigger.MANUAL
+                rule.rule_kind = PointRuleKind.FIXED
+                rule.save()
+                messages.success(request, f'Point rule "{rule.title}" created.')
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:point_rules")
+
+        if action == "update_rule":
+            rule = get_object_or_404(PointRule, pk=request.POST.get("rule_id"))
+            post_data = request.POST.copy()
+            if "is_active" not in post_data:
+                post_data["is_active"] = False
+            if rule.is_system:
+                form = SystemRuleForm(post_data, instance=rule)
+            else:
+                form = CustomRuleForm(post_data, instance=rule)
+            if form.is_valid():
+                updated = form.save()
+                messages.success(
+                    request,
+                    f'Updated "{updated.title}" — now awards {updated.points_amount} TFL Points.',
+                )
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:point_rules")
+
+        if action == "toggle_active":
+            rule = get_object_or_404(PointRule, pk=request.POST.get("rule_id"))
+            rule.is_active = not rule.is_active
+            rule.save(update_fields=["is_active"])
+            state = "activated" if rule.is_active else "deactivated"
+            messages.success(request, f'Rule "{rule.title}" {state}.')
+            return redirect("admin_portal:point_rules")
+
+        if action == "delete":
+            rule = get_object_or_404(PointRule, pk=request.POST.get("rule_id"), is_system=False)
+            title = rule.title
+            rule.delete()
+            messages.success(request, f'Rule "{title}" deleted.')
+            return redirect("admin_portal:point_rules")
+
+        if action == "distribute":
+            form = DistributePointsForm(request.POST)
+            if form.is_valid():
+                rule = form.cleaned_data["rule"]
+                customers = form.cleaned_data["customers"]
+                note = form.cleaned_data["note"]
+                custom_points = form.cleaned_data.get("custom_points")
+                awarded = 0
+                total_points = 0
+                for customer in customers:
+                    tx = award_rule_points(
+                        customer,
+                        rule,
+                        request.user,
+                        note=note,
+                        custom_points=custom_points,
+                    )
+                    if tx:
+                        awarded += 1
+                        total_points += tx.amount
+                messages.success(
+                    request,
+                    f"Awarded {total_points} TFL Points to {awarded} customer(s) via \"{rule.title}\".",
+                )
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:point_rules")
+
+        if action == "payment":
+            form = PaymentPointsForm(request.POST)
+            if form.is_valid():
+                rule = get_point_rule("payment")
+                if not rule:
+                    messages.error(request, "Payment reward rule is not configured.")
+                else:
+                    customer = form.cleaned_data["customer"]
+                    amount_spent = form.cleaned_data["amount_spent"]
+                    note = form.cleaned_data["note"]
+                    tx = award_rule_points(
+                        customer,
+                        rule,
+                        request.user,
+                        note=note,
+                        amount_spent=amount_spent,
+                    )
+                    if tx:
+                        messages.success(
+                            request,
+                            f"Awarded {tx.amount} TFL Points to {customer.display_name} "
+                            f"for {amount_spent} spent.",
+                        )
+                    else:
+                        messages.error(request, "Spend amount is too low to earn points.")
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:point_rules")
+
+    rule_form = PointRuleForm(initial={"is_active": True, "icon_emoji": "🏆"})
+    distribute_form = DistributePointsForm()
+    payment_form = PaymentPointsForm()
+    payment_rule = get_point_rule("payment")
+    gym_activity_rule = get_point_rule("gym_activity")
+    automatic_rules = rules.filter(
+        is_system=True,
+        trigger__in=[
+            PointRuleTrigger.ON_APPROVAL,
+            PointRuleTrigger.ON_DAILY_LOGIN,
+            PointRuleTrigger.ON_REFERRAL,
+        ],
+    )
+    recent_awards = (
+        PointTransaction.objects.filter(transaction_type=PointTransaction.TransactionType.RULE)
+        .select_related("user", "rule", "created_by")
+        .order_by("-created_at")[:20]
+    )
+    active_rules = rules.filter(is_active=True).count()
+    total_distributed = (
+        PointTransaction.objects.filter(transaction_type=PointTransaction.TransactionType.RULE, amount__gt=0)
+        .aggregate(total=Sum("amount"))["total"]
+        or 0
+    )
+
+    return render(
+        request,
+        "admin_portal/point_rules.html",
+        {
+            "rules": rules,
+            "rule_form": rule_form,
+            "distribute_form": distribute_form,
+            "payment_form": payment_form,
+            "payment_rule": payment_rule,
+            "gym_activity_rule": gym_activity_rule,
+            "automatic_rules": automatic_rules,
+            "recent_awards": recent_awards,
+            "active_rules": active_rules,
+            "total_distributed": total_distributed,
         },
     )

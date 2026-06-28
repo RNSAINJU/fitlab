@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 from accounts.security import get_admin_password_from_env, is_weak_password, production_security_enabled
 from loyalty.models import PointTransaction
+from loyalty.rule_engine import ensure_default_point_rules
 from loyalty.services import award_points
 from rewards.models import Reward
 
@@ -40,6 +41,8 @@ class Command(BaseCommand):
                     "Set FITLAB_ADMIN_PASSWORD for production."
                 )
             )
+
+        ensure_default_point_rules()
 
         admin, created = User.objects.get_or_create(
             username=admin_email,
