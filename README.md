@@ -53,8 +53,9 @@ Fitlab runs on **port 8083** (port 80 is used by other sites on this server).
 
 | URL | Purpose |
 |-----|---------|
-| http://82.197.69.121:8083/ | Customer app |
-| http://82.197.69.121:8083/admin-portal/ | Admin portal |
+| https://thefitlab.com.np/ | Customer app (domain) |
+| http://82.197.69.121:8083/ | Customer app (IP fallback) |
+| https://thefitlab.com.np/admin-portal/ | Admin portal |
 
 **Change the default admin password immediately** after first login.
 
@@ -121,16 +122,50 @@ sudo systemctl restart fitlab
 
 Social sign-up creates a pending account (same approval flow as email registration). Referral codes from the register page or `?ref=CODE` are applied automatically.
 
+### Connect a custom domain
+
+Point DNS **A records** to `82.197.69.121`:
+
+| Type | Name | Value |
+|------|------|-------|
+| A | `@` | `82.197.69.121` |
+| A | `www` | `82.197.69.121` |
+
+If the domain uses **Cloudflare**, add those A records in the Cloudflare DNS panel. Orange-cloud (proxied) is fine once the origin responds on port 80.
+
+On the VPS:
+
+```bash
+cd /var/www/fitlab
+sudo FITLAB_DOMAIN=thefitlab.com.np bash deploy/setup-domain.sh
+```
+
+That configures nginx on port 80, updates Django `.env`, and requests a Let's Encrypt certificate. If certbot fails, fix DNS first, then re-run:
+
+```bash
+sudo certbot --nginx -d thefitlab.com.np -d www.thefitlab.com.np
+```
+
+Set `DJANGO_HTTPS=1` in `.env` after HTTPS works, then `sudo systemctl restart fitlab`.
+
+Update Google/Apple OAuth redirect URIs to `https://thefitlab.com.np/oauth/...`.
+
 ### HTTPS (optional, when you have a domain)
 
 Point DNS to `82.197.69.121`, then on the VPS:
 
 ```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d yourdomain.com
+sudo FITLAB_DOMAIN=thefitlab.com.np bash deploy/setup-domain.sh
 ```
 
-Set in `.env`: `DJANGO_HTTPS=1` and update `DJANGO_CSRF_TRUSTED_ORIGINS` to `https://...`, then:
+Or manually:
+
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d thefitlab.com.np -d www.thefitlab.com.np
+```
+
+Set in `.env`: `DJANGO_HTTPS=1` and update `DJANGO_CSRF_TRUSTED_ORIGINS` to include `https://thefitlab.com.np`, then:
 
 ```bash
 sudo systemctl restart fitlab
