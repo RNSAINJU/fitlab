@@ -3,6 +3,7 @@ python-dotenv>=1.0.0
 gunicorn>=22.0.0
 whitenoise>=6.6.0
 django-allauth>=65.0.0
+django-axes>=7.0.0,<8.0.0
 requests>=2.31.0
 PyJWT>=2.8.0
 cryptography>=42.0.0

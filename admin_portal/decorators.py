@@ -10,8 +10,10 @@ User = get_user_model()
 def staff_required(view_func):
     @wraps(view_func)
     def _wrapped(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_staff:
+        if not request.user.is_authenticated:
             return redirect("accounts:login")
+        if not request.user.is_staff:
+            return redirect("accounts:dashboard")
         return view_func(request, *args, **kwargs)
 
     return _wrapped
@@ -20,8 +22,10 @@ def staff_required(view_func):
 def superuser_required(view_func):
     @wraps(view_func)
     def _wrapped(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_staff:
+        if not request.user.is_authenticated:
             return redirect("accounts:login")
+        if not request.user.is_staff:
+            return redirect("accounts:dashboard")
         if not request.user.is_superuser:
             messages.error(request, "Only superusers can manage admin roles.")
             return redirect("admin_portal:dashboard")

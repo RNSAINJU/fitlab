@@ -1,6 +1,8 @@
-from django.core.management.base import BaseCommand
+from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth import get_user_model
 
+from accounts.security import get_admin_password_from_env, is_weak_password, production_security_enabled
 from loyalty.models import PointTransaction
 from loyalty.services import award_points
 from rewards.models import Reward
@@ -13,12 +15,31 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--admin-email", default="admin@fitlab.com")
-        parser.add_argument("--admin-password", default="admin123")
+        parser.add_argument("--admin-password", default="")
         parser.add_argument("--with-customer", action="store_true")
 
     def handle(self, *args, **options):
         admin_email = options["admin_email"].lower()
-        admin_password = options["admin_password"]
+        admin_password = options["admin_password"] or get_admin_password_from_env()
+
+        if production_security_enabled():
+            if not admin_password:
+                raise CommandError(
+                    "FITLAB_ADMIN_PASSWORD must be set in production before running setup_fitlab."
+                )
+            if is_weak_password(admin_password):
+                raise CommandError(
+                    "FITLAB_ADMIN_PASSWORD is too weak for production. "
+                    "Use at least 12 characters."
+                )
+        elif not admin_password:
+            admin_password = "admin123"
+            self.stdout.write(
+                self.style.WARNING(
+                    "Using development-only default admin password. "
+                    "Set FITLAB_ADMIN_PASSWORD for production."
+                )
+            )
 
         admin, created = User.objects.get_or_create(
             username=admin_email,
@@ -34,7 +55,10 @@ class Command(BaseCommand):
         if created:
             admin.set_password(admin_password)
             admin.save()
-            self.stdout.write(self.style.SUCCESS(f"Created admin: {admin_email} / {admin_password}"))
+            if production_security_enabled():
+                self.stdout.write(self.style.SUCCESS(f"Created admin: {admin_email}"))
+            else:
+                self.stdout.write(self.style.SUCCESS(f"Created admin: {admin_email} / {admin_password}"))
         else:
             self.stdout.write(f"Admin already exists: {admin_email}")
 
@@ -57,6 +81,15 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Sample rewards ready"))
 
         if options["with_customer"]:
+            if production_security_enabled():
+                self.stdout.write(
+                    self.style.WARNING(
+                        "Skipping demo customer creation in production. "
+                        "Use --with-customer only for local development."
+                    )
+                )
+                return
+
             email = "customer@fitlab.com"
             user, created = User.objects.get_or_create(
                 username=email,
