@@ -68,7 +68,7 @@ class Command(BaseCommand):
         rewards_data = [
             ("Free protein shake", "Redeem at the front desk", 250, "🥤"),
             ("Guest pass", "Bring a friend for one session", 500, "🎟️"),
-            ("Fitlab tee", "Branded gym t-shirt", 800, "👕"),
+            ("The Fitlab tee", "Branded gym t-shirt", 800, "👕"),
             ("1 month upgrade", "Premium membership upgrade", 1500, "⭐"),
         ]
         for title, desc, cost, emoji in rewards_data:
