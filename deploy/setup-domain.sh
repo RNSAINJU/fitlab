@@ -48,6 +48,8 @@ update_env() {
 update_env "DJANGO_ALLOWED_HOSTS" "${SERVER_IP},${DOMAIN},www.${DOMAIN},localhost,127.0.0.1"
 update_env "FITLAB_SITE_DOMAIN" "${DOMAIN}"
 update_env "DJANGO_CSRF_TRUSTED_ORIGINS" "http://${SERVER_IP}:8083,http://${SERVER_IP},http://${DOMAIN},http://www.${DOMAIN},https://${DOMAIN},https://www.${DOMAIN},http://localhost"
+# Secure cookies for HTTPS visitors; do not enable FITLAB_SSL_REDIRECT behind Cloudflare (redirect loop).
+update_env "FITLAB_SSL_REDIRECT" "0"
 chmod 640 "$ENV_FILE"
 
 echo "==> Update Django Site framework domain"
@@ -59,18 +61,29 @@ print('Site domain set to ${DOMAIN}')
 
 if command -v certbot >/dev/null 2>&1; then
   echo "==> Requesting Let's Encrypt certificate"
-  if certbot --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --non-interactive --agree-tos --register-unsafely-without-email --redirect 2>/dev/null; then
+  if certbot --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --non-interactive --agree-tos --register-unsafely-without-email --no-redirect 2>/dev/null; then
     update_env "DJANGO_HTTPS" "1"
-    echo "HTTPS enabled."
+    echo "HTTPS enabled (origin cert installed; use Cloudflare Full strict)."
   else
     echo "WARN: certbot failed (DNS may not point here yet). Site will work on HTTP until DNS propagates."
-    echo "      Re-run: sudo certbot --nginx -d ${DOMAIN} -d www.${DOMAIN}"
+    echo "      Re-run: sudo certbot --nginx -d ${DOMAIN} -d www.${DOMAIN} --no-redirect"
     update_env "DJANGO_HTTPS" "0"
   fi
 else
   echo "WARN: certbot not installed. Run: apt install certbot python3-certbot-nginx"
-  update_env "DJANGO_HTTPS" "0"
+  if [[ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]]; then
+    update_env "DJANGO_HTTPS" "1"
+  else
+    update_env "DJANGO_HTTPS" "0"
+  fi
 fi
+
+# Re-apply domain nginx (includes HTTPS block) after certbot may have modified files
+sed -e "s/__FITLAB_DOMAIN__/${DOMAIN}/g" \
+    -e "s/__FITLAB_GUNICORN_PORT__/${GUNICORN_PORT}/g" \
+    deploy/nginx-fitlab-domain.conf > /etc/nginx/sites-available/fitlab-domain
+nginx -t
+systemctl reload nginx
 
 chown -R www-data:www-data "$APP_DIR"
 systemctl restart fitlab
