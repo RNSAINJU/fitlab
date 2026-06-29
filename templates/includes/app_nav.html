@@ -7,6 +7,7 @@
     </button>
   </div>
   <a href="{% url 'accounts:dashboard' %}" class="{% active_nav request 'accounts' 'dashboard' %}">Dashboard</a>
+  <a href="{% url 'accounts:profile' %}" class="{% active_nav request 'accounts' 'profile' %}">Profile</a>
   <a href="{% url 'activity:feed' %}" class="{% active_nav request 'activity' 'feed' %}">Activity</a>
   <a href="{% url 'rewards:marketplace' %}" class="{% active_nav request 'rewards' 'marketplace' %}">Rewards</a>
   <a href="{% url 'referrals:hub' %}" class="{% active_nav request 'referrals' 'hub' %}">Referrals</a>

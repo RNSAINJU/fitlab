@@ -1,0 +1,11 @@
+{
+  "name": "fitlab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "stitch:fetch": "node scripts/fetch-stitch-screen.mjs"
+  },
+  "dependencies": {
+    "@google/stitch-sdk": "^0.3.5"
+  }
+}

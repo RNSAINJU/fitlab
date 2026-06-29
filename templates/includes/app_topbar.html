@@ -4,7 +4,7 @@
     <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-label="Open menu" aria-expanded="false">
       <span class="sidebar-icon sidebar-icon--menu" aria-hidden="true"></span>
     </button>
-    <div class="app-avatar app-avatar--desktop">{{ user.first_name|slice:":1"|default:"F" }}</div>
+    <a href="{% url 'accounts:profile' %}" class="app-avatar app-avatar--desktop" aria-label="Your profile">{{ user.first_name|slice:":1"|default:"F" }}</a>
   </div>
   <a href="{% url 'accounts:dashboard' %}" class="app-topbar__logo">Fitlab</a>
   <button type="button" class="app-icon-btn" aria-label="Notifications">

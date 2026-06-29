@@ -52,6 +52,27 @@ Match the reference screenshots and DESIGN.md tokens exactly.
 npx @google/design.md lint DESIGN.md
 ```
 
+## Fetch screen assets (screenshot + HTML)
+
+Requires `STITCH_API_KEY` from https://stitch.withgoogle.com/settings
+
+```bash
+export STITCH_API_KEY="your-key"
+npm install
+node scripts/fetch-stitch-screen.mjs <projectId> <screenId> [outputDir]
+```
+
+Example for **User Profile - Kinetic Elite**:
+
+```bash
+node scripts/fetch-stitch-screen.mjs \
+  621195919616162436 \
+  9d0d808403364e2284a30b449b0c4678 \
+  stitch/fitlab-loyalty-rewards/user-profile-kinetic-elite
+```
+
+See `stitch/fitlab-loyalty-rewards/README.md`.
+
 Export tokens to Tailwind (optional):
 
 ```bash
