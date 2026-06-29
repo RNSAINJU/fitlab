@@ -11,7 +11,12 @@
     {% csrf_token %}
 
     <div class="profile-photo-block">
-      <div class="profile-photo-preview">
+      <div
+        class="profile-photo-preview"
+        id="profile-photo-preview"
+        data-initial="{{ user.profile_initial }}"
+        {% if user.profile_photo %}data-original-src="{{ user.profile_photo.url }}"{% endif %}
+      >
         {% if user.profile_photo %}
           <img src="{{ user.profile_photo.url }}" alt="Your profile photo" class="profile-photo-preview__img">
         {% else %}
@@ -21,7 +26,7 @@
       <div class="profile-photo-fields">
         <label class="profile-label" for="id_profile_photo">Profile photo</label>
         {{ form.profile_photo }}
-        <p class="profile-hint">JPG, PNG, or WebP. Max 5 MB.</p>
+        <p class="profile-hint" id="profile-photo-hint">JPG, PNG, or WebP. Compressed automatically before upload.</p>
         {% if form.profile_photo.errors %}
           <ul class="auth-errorlist">{% for e in form.profile_photo.errors %}<li>{{ e }}</li>{% endfor %}</ul>
         {% endif %}
@@ -75,4 +80,10 @@
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+{{ block.super }}
+<script src="{% static 'js/profile-photo-compress.js' %}"></script>
 {% endblock %}

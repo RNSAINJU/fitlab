@@ -2225,6 +2225,19 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-dim);
 }
 
+.profile-hint--ok {
+  color: #86efac;
+}
+
+.profile-hint--error {
+  color: #f87171;
+}
+
+.profile-form button[type="submit"]:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 .profile-check {
   display: flex;
   align-items: center;
