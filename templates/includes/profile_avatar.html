@@ -3,6 +3,6 @@
   {% if user.profile_photo %}
     <img src="{{ user.profile_photo.url }}" alt="" class="app-avatar app-avatar--photo">
   {% else %}
-    <div class="app-avatar app-avatar--desktop">{{ user.profile_initial }}</div>
+    <div class="app-avatar">{{ user.profile_initial }}</div>
   {% endif %}
 </a>
