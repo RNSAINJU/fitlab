@@ -11,7 +11,7 @@ class SecurityHeadersMiddleware:
         "form-action 'self'; "
         "frame-ancestors 'none'; "
         "object-src 'none'; "
-        "img-src 'self' data:; "
+        "img-src 'self' data: blob:; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
         "script-src 'self'; "

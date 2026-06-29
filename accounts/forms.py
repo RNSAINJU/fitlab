@@ -6,6 +6,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import FileExtensionValidator
 
+from accounts.images import optimize_profile_photo
+
 User = get_user_model()
 
 INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
@@ -199,8 +201,8 @@ class ProfileEditForm(forms.Form):
     profile_photo = forms.ImageField(
         required=False,
         label="Profile photo",
-        validators=[FileExtensionValidator(["jpg", "jpeg", "png", "webp"])],
-        widget=forms.FileInput(attrs={**FILE_PROFILE, "accept": "image/jpeg,image/png,image/webp"}),
+        validators=[FileExtensionValidator(["jpg", "jpeg", "png", "webp", "gif", "heic", "heif"])],
+        widget=forms.FileInput(attrs={**FILE_PROFILE, "accept": "image/*"}),
     )
     remove_profile_photo = forms.BooleanField(
         required=False,
@@ -240,9 +242,14 @@ class ProfileEditForm(forms.Form):
 
     def clean_profile_photo(self):
         photo = self.cleaned_data.get("profile_photo")
-        if photo and photo.size > 5 * 1024 * 1024:
-            raise forms.ValidationError("Profile photo must be 5 MB or smaller.")
-        return photo
+        if not photo:
+            return photo
+        if photo.size > 15 * 1024 * 1024:
+            raise forms.ValidationError("Profile photo must be 15 MB or smaller.")
+        try:
+            return optimize_profile_photo(photo)
+        except ValueError as exc:
+            raise forms.ValidationError(str(exc)) from exc
 
     def save(self):
         user = self.user

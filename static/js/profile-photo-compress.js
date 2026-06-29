@@ -2,11 +2,23 @@
   var MAX_EDGE = 1200;
   var JPEG_QUALITY = 0.82;
   var MAX_BYTES = 5 * 1024 * 1024;
+  var ALLOWED_EXT = ["jpg", "jpeg", "png", "webp", "gif", "heic", "heif"];
 
   function formatSize(bytes) {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  function fileExtension(name) {
+    var parts = (name || "").toLowerCase().split(".");
+    return parts.length > 1 ? parts.pop() : "";
+  }
+
+  function isImageFile(file) {
+    if (!file) return false;
+    if (file.type && file.type.indexOf("image/") === 0) return true;
+    return ALLOWED_EXT.indexOf(fileExtension(file.name)) !== -1;
   }
 
   function setHint(el, message, isError) {
@@ -39,19 +51,35 @@
     input.files = transfer.files;
   }
 
-  function loadImageFromFile(file) {
+  function readFileAsDataUrl(file) {
     return new Promise(function (resolve, reject) {
-      var url = URL.createObjectURL(file);
-      var img = new Image();
-      img.onload = function () {
-        URL.revokeObjectURL(url);
-        resolve(img);
+      var reader = new FileReader();
+      reader.onload = function () {
+        resolve(reader.result);
       };
-      img.onerror = function () {
-        URL.revokeObjectURL(url);
-        reject(new Error("Could not read image."));
+      reader.onerror = function () {
+        reject(new Error("Could not read image file."));
       };
-      img.src = url;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function loadImageFromFile(file) {
+    return readFileAsDataUrl(file).then(function (dataUrl) {
+      return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () {
+          resolve(img);
+        };
+        img.onerror = function () {
+          reject(
+            new Error(
+              "This photo format is not supported in your browser. Try JPG or PNG, or use Settings > Camera > Most Compatible on iPhone."
+            )
+          );
+        };
+        img.src = dataUrl;
+      });
     });
   }
 
@@ -72,6 +100,10 @@
     var image = await loadImageFromFile(file);
     var width = image.naturalWidth || image.width;
     var height = image.naturalHeight || image.height;
+    if (!width || !height) {
+      throw new Error("Could not read image dimensions.");
+    }
+
     var scale = Math.min(MAX_EDGE / width, MAX_EDGE / height, 1);
     var targetW = Math.max(1, Math.round(width * scale));
     var targetH = Math.max(1, Math.round(height * scale));
@@ -80,6 +112,9 @@
     canvas.width = targetW;
     canvas.height = targetH;
     var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Could not prepare image for compression.");
+    }
     ctx.drawImage(image, 0, 0, targetW, targetH);
 
     var quality = JPEG_QUALITY;
@@ -98,6 +133,13 @@
     return new File([blob], baseName + ".jpg", {
       type: "image/jpeg",
       lastModified: Date.now(),
+    });
+  }
+
+  function previewFile(preview, file) {
+    return readFileAsDataUrl(file).then(function (dataUrl) {
+      setPreview(preview, dataUrl, "");
+      return dataUrl;
     });
   }
 
@@ -133,7 +175,7 @@
         return;
       }
 
-      if (!file.type || file.type.indexOf("image/") !== 0) {
+      if (!isImageFile(file)) {
         input.value = "";
         setHint(hint, "Please choose a JPG, PNG, or WebP image.", true);
         return;
@@ -147,7 +189,7 @@
         try {
           var compressed = await compressImage(file);
           replaceInputFile(input, compressed);
-          setPreview(preview, URL.createObjectURL(compressed), "");
+          await previewFile(preview, compressed);
           setHint(
             hint,
             "Compressed " +
@@ -157,9 +199,19 @@
               " before upload."
           );
         } catch (err) {
+          if (file.size <= MAX_BYTES) {
+            await previewFile(preview, file);
+            setHint(
+              hint,
+              "Browser could not compress this photo. The original will be optimized on the server when you save.",
+              false
+            );
+            compressTask = Promise.resolve();
+            return;
+          }
           input.value = "";
           setPreview(preview, originalSrc || null, originalSrc ? "" : initial);
-          setHint(hint, err.message || "Could not compress photo.", true);
+          setHint(hint, err.message || "Could not prepare photo for upload.", true);
           throw err;
         } finally {
           setBusy(false);

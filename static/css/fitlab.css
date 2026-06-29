@@ -2207,16 +2207,12 @@ a { color: inherit; text-decoration: none; }
   max-width: 280px;
 }
 
+.profile-upload-control {
+  width: 100%;
+}
+
 .profile-upload__input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  display: none !important;
 }
 
 .profile-upload-btn {
