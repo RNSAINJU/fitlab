@@ -33,6 +33,7 @@ class ApprovalRequiredMiddleware:
 
     EXEMPT_PREFIXES = (
         "/static/",
+        "/media/",
         "/django-admin/",
         "/admin-portal/",
         "/oauth/",

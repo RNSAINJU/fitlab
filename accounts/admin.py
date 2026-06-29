@@ -10,8 +10,8 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ("approval_status", "is_staff", "is_superuser")
     search_fields = ("username", "email", "phone", "referral_code")
     fieldsets = BaseUserAdmin.fieldsets + (
-        ("Fitlab", {"fields": ("phone", "approval_status", "referral_code", "referred_by")}),
+        ("Fitlab", {"fields": ("phone", "date_of_birth", "gender", "profile_photo", "approval_status", "referral_code", "referred_by")}),
     )
     add_fieldsets = BaseUserAdmin.add_fieldsets + (
-        ("Fitlab", {"fields": ("phone", "approval_status", "referral_code")}),
+        ("Fitlab", {"fields": ("phone", "date_of_birth", "gender", "profile_photo", "approval_status", "referral_code")}),
     )

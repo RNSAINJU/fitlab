@@ -1,0 +1,8 @@
+{% load fitlab_tags %}
+<a href="{% url 'accounts:profile' %}" class="app-avatar-link" aria-label="Edit profile">
+  {% if user.profile_photo %}
+    <img src="{{ user.profile_photo.url }}" alt="" class="app-avatar app-avatar--photo">
+  {% else %}
+    <div class="app-avatar app-avatar--desktop">{{ user.profile_initial }}</div>
+  {% endif %}
+</a>

@@ -10,6 +10,7 @@
   <a href="{% url 'activity:feed' %}" class="{% active_nav request 'activity' 'feed' %}">Activity</a>
   <a href="{% url 'rewards:marketplace' %}" class="{% active_nav request 'rewards' 'marketplace' %}">Rewards</a>
   <a href="{% url 'referrals:hub' %}" class="{% active_nav request 'referrals' 'hub' %}">Referrals</a>
+  <a href="{% url 'accounts:profile' %}" class="{% active_nav request 'accounts' 'profile' %}">My Profile</a>
   {% if user.is_staff %}
     <a href="{% url 'admin_portal:dashboard' %}">Admin portal</a>
   {% endif %}

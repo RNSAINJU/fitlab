@@ -18,6 +18,7 @@ echo "==> Install dependencies"
 echo "==> Migrate & static"
 .venv/bin/python manage.py migrate --noinput
 .venv/bin/python manage.py collectstatic --noinput
+mkdir -p "$APP_DIR/media/profile_photos"
 
 if [ -f .env ]; then
   set -a
