@@ -104,6 +104,9 @@ class DistributePointsForm(forms.Form):
             is_staff=False,
             approval_status=User.ApprovalStatus.APPROVED,
         ).order_by("email")
+        gym_rule = PointRule.objects.filter(slug="gym_activity", is_active=True).first()
+        if gym_rule:
+            self.fields["rule"].initial = gym_rule.pk
 
     def clean_customers(self):
         customers = self.cleaned_data["customers"]

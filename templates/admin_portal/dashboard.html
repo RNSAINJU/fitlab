@@ -36,8 +36,9 @@
     <h2>Quick Actions</h2>
   </div>
   <div class="admin-toolbar">
+    <a href="#gym-activity" class="admin-btn admin-btn--primary">Add Gym Activity</a>
     <a href="{% url 'admin_portal:customer_directory' %}" class="admin-btn admin-btn--outline">Open Directory</a>
-    <a href="{% url 'admin_portal:registration_approvals' %}" class="admin-btn admin-btn--primary">Review Queue</a>
+    <a href="{% url 'admin_portal:registration_approvals' %}" class="admin-btn admin-btn--outline">Review Queue</a>
     <a href="{% url 'admin_portal:reward_create' %}" class="admin-btn admin-btn--outline">Create Reward</a>
     <a href="{% url 'admin_portal:point_rules' %}" class="admin-btn admin-btn--outline">TFL Point Rules</a>
     {% if request.user.is_superuser %}
@@ -45,5 +46,46 @@
     {% endif %}
     <a href="{% url 'admin_portal:points_ledger' %}" class="admin-btn admin-btn--ghost">Points Ledger</a>
   </div>
+</div>
+
+<div class="admin-form-panel" id="gym-activity">
+  <h3>Add Gym Activity</h3>
+  <p class="admin-form-panel__sub">
+  {% if gym_activity_rule %}
+    Award <strong>{{ gym_activity_rule.points_amount }} TFL Points</strong> per activity to approved members.
+    <a href="{% url 'admin_portal:point_rules' %}#gym-activity">Edit default in Point Rules</a>
+  {% else %}
+    Gym activity rule is not configured.
+    <a href="{% url 'admin_portal:point_rules' %}">Set up in Point Rules</a>
+  {% endif %}
+  </p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="distribute">
+    <div class="admin-form-row">
+      <div>
+        <label for="id_rule">Activity rule</label>
+        {{ distribute_form.rule }}
+      </div>
+      <div>
+        <label for="id_custom_points">Override points (optional)</label>
+        {{ distribute_form.custom_points }}
+      </div>
+    </div>
+    <div class="admin-form-row">
+      <div>
+        <label for="id_note">Activity note (optional)</label>
+        {{ distribute_form.note }}
+      </div>
+    </div>
+    <div class="admin-form-row admin-form-row--full">
+      <div>
+        <label for="id_customers">Customers</label>
+        {{ distribute_form.customers }}
+        <p class="admin-form-hint">Hold Ctrl/Cmd to select multiple approved customers.</p>
+      </div>
+    </div>
+    <button type="submit" class="admin-btn admin-btn--primary">Award Activity Points</button>
+  </form>
 </div>
 {% endblock %}
