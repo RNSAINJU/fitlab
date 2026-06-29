@@ -23,3 +23,25 @@ def get_lifetime_earned(user):
         tx.amount
         for tx in user.point_transactions.filter(amount__gt=0)
     )
+
+
+def get_member_rank(user):
+    from accounts.models import User
+    from django.db.models import Q, Sum
+    from django.db.models.functions import Coalesce
+
+    from .services import get_balance
+
+    balance = get_balance(user)
+    ahead = (
+        User.objects.filter(
+            is_staff=False,
+            approval_status=User.ApprovalStatus.APPROVED,
+        )
+        .annotate(balance=Coalesce(Sum("point_transactions__amount"), 0))
+        .filter(
+            Q(balance__gt=balance) | (Q(balance=balance) & Q(pk__lt=user.pk))
+        )
+        .count()
+    )
+    return ahead + 1

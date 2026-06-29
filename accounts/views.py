@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 
 from activity.models import ActivityEvent
-from loyalty.helpers import get_lifetime_earned, get_membership_tier, get_tier_progress
+from loyalty.helpers import get_lifetime_earned, get_member_rank, get_membership_tier, get_tier_progress
 from loyalty.services import get_balance
 from rewards.models import RedemptionRequest
 
@@ -91,6 +91,9 @@ def profile(request):
 
     balance = get_balance(user)
     tier_progress, tier_remaining = get_tier_progress(balance)
+    latest_points_activity = (
+        user.activity_events.filter(event_type="points", points_amount__gt=0).first()
+    )
 
     return render(
         request,
@@ -101,6 +104,9 @@ def profile(request):
             "tier_progress": tier_progress,
             "tier_remaining": tier_remaining,
             "lifetime_earned": get_lifetime_earned(user),
+            "member_rank": get_member_rank(user),
+            "member_since_year": user.date_joined.year,
+            "latest_points_activity": latest_points_activity,
             "pending_redemptions": RedemptionRequest.objects.filter(
                 user=user, status=RedemptionRequest.Status.PENDING
             ).count(),
