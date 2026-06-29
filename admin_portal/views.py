@@ -21,13 +21,51 @@ from .forms import CreateAdminForm, DistributePointsForm, PaymentPointsForm, Pro
 User = get_user_model()
 
 
+def _distribute_activity_points(request, form, redirect_name):
+    if not form.is_valid():
+        messages.error(request, form.errors.as_text())
+        return redirect(redirect_name)
+
+    rule = form.cleaned_data["rule"]
+    customers = form.cleaned_data["customers"]
+    note = form.cleaned_data["note"]
+    custom_points = form.cleaned_data.get("custom_points")
+    awarded = 0
+    total_points = 0
+    for customer in customers:
+        tx = award_rule_points(
+            customer,
+            rule,
+            request.user,
+            note=note,
+            custom_points=custom_points,
+        )
+        if tx:
+            awarded += 1
+            total_points += tx.amount
+    messages.success(
+        request,
+        f"Awarded {total_points} TFL Points to {awarded} customer(s) via \"{rule.title}\".",
+    )
+    return redirect(redirect_name)
+
+
 @staff_required
 def dashboard(request):
+    ensure_default_point_rules()
     pending_users = User.objects.filter(approval_status=User.ApprovalStatus.PENDING).count()
     pending_redemptions = RedemptionRequest.objects.filter(status=RedemptionRequest.Status.PENDING).count()
     total_customers = User.objects.filter(is_staff=False).count()
     total_points = PointTransaction.objects.filter(amount__gt=0).aggregate(total=Sum("amount"))["total"] or 0
     approved_members = User.objects.filter(is_staff=False, approval_status=User.ApprovalStatus.APPROVED).count()
+
+    if request.method == "POST" and request.POST.get("action") == "distribute":
+        return _distribute_activity_points(
+            request,
+            DistributePointsForm(request.POST),
+            "admin_portal:dashboard",
+        )
+
     return render(
         request,
         "admin_portal/dashboard.html",
@@ -37,6 +75,8 @@ def dashboard(request):
             "total_customers": total_customers,
             "total_points_issued": total_points,
             "approved_members": approved_members,
+            "distribute_form": DistributePointsForm(),
+            "gym_activity_rule": get_point_rule("gym_activity"),
         },
     )
 
@@ -382,32 +422,11 @@ def point_rules(request):
             return redirect("admin_portal:point_rules")
 
         if action == "distribute":
-            form = DistributePointsForm(request.POST)
-            if form.is_valid():
-                rule = form.cleaned_data["rule"]
-                customers = form.cleaned_data["customers"]
-                note = form.cleaned_data["note"]
-                custom_points = form.cleaned_data.get("custom_points")
-                awarded = 0
-                total_points = 0
-                for customer in customers:
-                    tx = award_rule_points(
-                        customer,
-                        rule,
-                        request.user,
-                        note=note,
-                        custom_points=custom_points,
-                    )
-                    if tx:
-                        awarded += 1
-                        total_points += tx.amount
-                messages.success(
-                    request,
-                    f"Awarded {total_points} TFL Points to {awarded} customer(s) via \"{rule.title}\".",
-                )
-            else:
-                messages.error(request, form.errors.as_text())
-            return redirect("admin_portal:point_rules")
+            return _distribute_activity_points(
+                request,
+                DistributePointsForm(request.POST),
+                "admin_portal:point_rules",
+            )
 
         if action == "payment":
             form = PaymentPointsForm(request.POST)
