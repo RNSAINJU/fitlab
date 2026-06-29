@@ -1,61 +1,55 @@
 {% extends "customer_base.html" %}
 {% block title %}My Profile — Fitlab{% endblock %}
 {% block content %}
-<section class="profile-page">
-  <header class="profile-page__head">
-    <span class="dash-badge">Member</span>
-    <h1 class="profile-page__title">My <span class="accent">Profile</span></h1>
-    <p class="profile-page__lead">Update your details and photo for rewards, referrals, and check-in.</p>
-  </header>
+<h1 class="page-hero">Profile</h1>
+<p class="page-kicker">Your membership details</p>
 
-  <form method="post" enctype="multipart/form-data" class="profile-form">
-    {% csrf_token %}
+<form method="post" enctype="multipart/form-data" class="profile-form">
+  {% csrf_token %}
 
-    <div class="app-card profile-photo-card">
-      <div class="profile-photo-card__inner profile-photo-card__inner--compact">
-        <div
-          class="profile-avatar"
-          id="profile-photo-preview"
-          data-initial="{{ user.profile_initial }}"
-          {% if user.profile_photo %}data-original-src="{{ user.profile_photo.url }}"{% endif %}
-        >
-          {% if user.profile_photo %}
-            <img src="{{ user.profile_photo.url }}" alt="Your profile photo" class="profile-avatar__img">
-          {% else %}
-            <span class="profile-avatar__initial">{{ user.profile_initial }}</span>
-          {% endif %}
-        </div>
+  <div class="app-card profile-photo-card">
+    <div class="profile-photo-card__inner profile-photo-card__inner--compact">
+      <div
+        class="profile-avatar"
+        id="profile-photo-preview"
+        data-initial="{{ user.profile_initial }}"
+        {% if user.profile_photo %}data-original-src="{{ user.profile_photo.url }}"{% endif %}
+      >
+        {% if user.profile_photo %}
+          <img src="{{ user.profile_photo.url }}" alt="Your profile photo" class="profile-avatar__img">
+        {% else %}
+          <span class="profile-avatar__initial">{{ user.profile_initial }}</span>
+        {% endif %}
+      </div>
 
-        <div class="profile-photo-actions">
-          <div class="profile-upload-control">
-            {{ form.profile_photo }}
-            <label for="id_profile_photo" class="profile-upload-btn">
+      <div class="profile-photo-actions">
+        <div class="profile-upload-control">
+          {{ form.profile_photo }}
+          <label for="id_profile_photo" class="profile-upload-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
               <circle cx="12" cy="13" r="4"/>
             </svg>
             Choose photo
           </label>
-          </div>
-          <p class="profile-hint" id="profile-photo-hint">JPG, PNG, or WebP. Compressed automatically before upload.</p>
-          {% if form.profile_photo.errors %}
-            <ul class="auth-errorlist">{% for e in form.profile_photo.errors %}<li>{{ e }}</li>{% endfor %}</ul>
-          {% endif %}
-          {% if user.profile_photo %}
-            <label class="profile-remove-check">
-              {{ form.remove_profile_photo }}
-              <span>Remove current photo</span>
-            </label>
-          {% endif %}
         </div>
+        <p class="profile-hint" id="profile-photo-hint">JPG, PNG, or WebP. Compressed automatically before upload.</p>
+        {% if form.profile_photo.errors %}
+          <ul class="auth-errorlist">{% for e in form.profile_photo.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if user.profile_photo %}
+          <label class="profile-remove-check">
+            {{ form.remove_profile_photo }}
+            <span>Remove current photo</span>
+          </label>
+        {% endif %}
       </div>
     </div>
+  </div>
 
-    <div class="app-card profile-details-card">
-      <div class="profile-details-card__head">
-        <h2>Personal details</h2>
-      </div>
-
+  <section class="profile-section">
+    <div class="section-head"><span>Personal details</span></div>
+    <div class="app-card profile-fields-card">
       <div class="auth-field">
         <label class="auth-label auth-label--bold" for="id_full_name">Full name</label>
         <div class="auth-input-wrap auth-input-wrap--icon">
@@ -89,13 +83,11 @@
         {% if form.email.errors %}<ul class="auth-errorlist">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
       </div>
     </div>
+  </section>
 
-    <div class="app-card profile-details-card">
-      <div class="profile-details-card__head">
-        <h2>About you</h2>
-        <p>Optional details for your membership profile.</p>
-      </div>
-
+  <section class="profile-section">
+    <div class="section-head"><span>About you</span></div>
+    <div class="app-card profile-fields-card">
       <div class="profile-details-grid">
         <div class="auth-field">
           <label class="auth-label auth-label--bold" for="id_date_of_birth">Date of birth</label>
@@ -115,17 +107,17 @@
         </div>
       </div>
     </div>
+  </section>
 
-    {% if form.non_field_errors %}
-      <div class="auth-nonfield">{{ form.non_field_errors }}</div>
-    {% endif %}
+  {% if form.non_field_errors %}
+    <div class="auth-nonfield">{{ form.non_field_errors }}</div>
+  {% endif %}
 
-    <div class="profile-form__footer">
-      <button type="submit" class="dash-btn dash-btn--primary profile-save-btn">Save changes</button>
-      <a href="{% url 'accounts:dashboard' %}" class="dash-btn profile-cancel-btn">Cancel</a>
-    </div>
-  </form>
-</section>
+  <div class="profile-form__footer">
+    <button type="submit" class="dash-btn dash-btn--primary profile-save-btn">Save changes</button>
+    <a href="{% url 'accounts:dashboard' %}" class="dash-btn profile-cancel-btn">Cancel</a>
+  </div>
+</form>
 {% endblock %}
 
 {% block extra_js %}
