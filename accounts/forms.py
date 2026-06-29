@@ -4,11 +4,17 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
+from django.core.validators import FileExtensionValidator
+
+from accounts.images import optimize_profile_photo
 
 User = get_user_model()
 
 INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
 INPUT_REG = {"class": "auth-input auth-input--dark"}
+INPUT_PROFILE = {"class": "auth-input auth-input--dark"}
+SELECT_PROFILE = {"class": "auth-input auth-input--dark profile-select"}
+FILE_PROFILE = {"class": "profile-upload__input", "accept": "image/jpeg,image/png,image/webp"}
 
 
 def normalize_phone(value):
@@ -154,3 +160,119 @@ class LoginForm(AuthenticationForm):
         super().confirm_login_allowed(user)
         if not user.is_staff and user.approval_status == User.ApprovalStatus.REJECTED:
             raise forms.ValidationError("Your account was not approved.", code="inactive")
+
+
+class ProfileEditForm(forms.Form):
+    full_name = forms.CharField(
+        max_length=150,
+        required=True,
+        label="Full name",
+        widget=forms.TextInput(attrs={**INPUT_PROFILE, "placeholder": "John Doe", "autocomplete": "name"}),
+    )
+    email = forms.EmailField(
+        required=True,
+        label="Email address",
+        widget=forms.EmailInput(attrs={**INPUT_PROFILE, "placeholder": "you@example.com", "autocomplete": "email"}),
+    )
+    phone = forms.CharField(
+        label="Mobile number",
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                **INPUT_PROFILE,
+                "placeholder": "+977 98XXXXXXXX",
+                "autocomplete": "tel",
+                "inputmode": "tel",
+            }
+        ),
+    )
+    date_of_birth = forms.DateField(
+        required=False,
+        label="Date of birth",
+        widget=forms.DateInput(attrs={**INPUT_PROFILE, "type": "date"}),
+    )
+    gender = forms.ChoiceField(
+        required=False,
+        label="Gender",
+        choices=[("", "Select gender")] + list(User.Gender.choices),
+        widget=forms.Select(attrs=SELECT_PROFILE),
+    )
+    profile_photo = forms.ImageField(
+        required=False,
+        label="Profile photo",
+        validators=[FileExtensionValidator(["jpg", "jpeg", "png", "webp", "gif", "heic", "heif"])],
+        widget=forms.FileInput(attrs={**FILE_PROFILE, "accept": "image/*"}),
+    )
+    remove_profile_photo = forms.BooleanField(
+        required=False,
+        label="Remove current photo",
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+        self.fields["full_name"].initial = user.get_full_name().strip()
+        self.fields["email"].initial = user.email
+        self.fields["phone"].initial = user.phone
+        self.fields["date_of_birth"].initial = user.date_of_birth
+        self.fields["gender"].initial = user.gender
+        if not user.profile_photo:
+            self.fields["remove_profile_photo"].widget = forms.HiddenInput()
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].lower().strip()
+        if User.objects.filter(email__iexact=email).exclude(pk=self.user.pk).exists():
+            raise forms.ValidationError("An account with this email already exists.")
+        return email
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get("phone", "").strip()
+        if not phone:
+            raise forms.ValidationError("Mobile number is required.")
+        digits = normalize_phone(phone)
+        if len(digits) < 7 or len(digits) > 15:
+            raise forms.ValidationError("Enter a valid mobile number.")
+        for existing_pk, existing_phone in User.objects.exclude(phone="").exclude(pk=self.user.pk).values_list(
+            "pk", "phone"
+        ):
+            if normalize_phone(existing_phone) == digits:
+                raise forms.ValidationError("An account with this mobile number already exists.")
+        return phone
+
+    def clean_profile_photo(self):
+        photo = self.cleaned_data.get("profile_photo")
+        if not photo:
+            return photo
+        if photo.size > 15 * 1024 * 1024:
+            raise forms.ValidationError("Profile photo must be 15 MB or smaller.")
+        try:
+            return optimize_profile_photo(photo)
+        except ValueError as exc:
+            raise forms.ValidationError(str(exc)) from exc
+
+    def save(self):
+        user = self.user
+        user.email = self.cleaned_data["email"]
+        user.phone = self.cleaned_data["phone"]
+
+        name = self.cleaned_data["full_name"].strip()
+        parts = name.split(None, 1)
+        user.first_name = parts[0]
+        user.last_name = parts[1] if len(parts) > 1 else ""
+
+        user.date_of_birth = self.cleaned_data.get("date_of_birth")
+        user.gender = self.cleaned_data.get("gender") or ""
+
+        if self.cleaned_data.get("remove_profile_photo") and user.profile_photo:
+            user.profile_photo.delete(save=False)
+            user.profile_photo = None
+
+        photo = self.cleaned_data.get("profile_photo")
+        if photo:
+            if user.profile_photo:
+                user.profile_photo.delete(save=False)
+            user.profile_photo = photo
+
+        user.save()
+        return user

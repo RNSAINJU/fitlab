@@ -23,7 +23,7 @@ PUBLIC_URL="http://${SERVER_IP}:${NGINX_PORT}"
 echo "==> Installing system packages"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y -qq python3 python3-venv python3-pip nginx git curl
+apt-get install -y -qq python3 python3-venv python3-pip nginx git curl postgresql postgresql-contrib libpq-dev
 
 echo "==> Preparing app directory"
 mkdir -p "$APP_DIR"
@@ -68,6 +68,10 @@ EOF
   echo "Created .env with a new secret key and FITLAB_ADMIN_PASSWORD"
   echo "Admin password saved to ${APP_DIR}/.env (FITLAB_ADMIN_PASSWORD)"
 fi
+
+echo "==> PostgreSQL"
+POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-$(python3 -c "import secrets; print(secrets.token_urlsafe(24))")}"
+FITLAB_APP_DIR="$APP_DIR" POSTGRES_PASSWORD="$POSTGRES_PASSWORD" bash deploy/setup-postgres.sh
 
 echo "==> Django setup"
 .venv/bin/python manage.py migrate --noinput

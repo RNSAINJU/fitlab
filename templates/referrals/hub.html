@@ -1,5 +1,5 @@
 {% extends "customer_base.html" %}
-{% block title %}Referrals — Fitlab{% endblock %}
+{% block title %}Referrals — The Fitlab{% endblock %}
 {% block content %}
 <section class="ref-hero">
   <h2>Recruit your<br>squad</h2>
@@ -67,6 +67,7 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script>
 document.querySelectorAll("[data-copy-target]").forEach(function(btn) {
   btn.addEventListener("click", function() {

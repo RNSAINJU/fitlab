@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,7 +10,7 @@ from loyalty.services import get_balance
 from rewards.models import RedemptionRequest
 
 from .auth_helpers import get_post_login_url
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, ProfileEditForm, RegistrationForm
 
 DEFAULT_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
 
@@ -116,6 +115,26 @@ def profile(request):
             "workout_count": user.activity_events.filter(event_type="points").count(),
         },
     )
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    if user.is_staff:
+        return redirect("admin_portal:dashboard")
+    if user.approval_status != user.ApprovalStatus.APPROVED:
+        return redirect("accounts:pending")
+
+    if request.method == "POST":
+        form = ProfileEditForm(user, request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile has been updated.")
+            return redirect("accounts:profile")
+    else:
+        form = ProfileEditForm(user)
+
+    return render(request, "accounts/profile_edit.html", {"form": form})
 
 
 @login_required

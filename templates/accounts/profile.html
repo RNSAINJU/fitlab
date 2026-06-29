@@ -1,6 +1,6 @@
 {% extends "customer_base.html" %}
 {% load fitlab_tags %}
-{% block title %}Profile — Fitlab{% endblock %}
+{% block title %}Profile — The Fitlab{% endblock %}
 {% block content %}
 <section class="profile-hero profile-hero--kinetic">
   <div class="profile-hero__avatar-wrap">
@@ -48,7 +48,7 @@
 <section class="profile-section profile-section--settings">
   <h2 class="profile-section__title profile-section__title--accent">Account Settings</h2>
   <div class="profile-settings">
-    <div class="profile-settings__item">
+    <a href="{% url 'accounts:profile_edit' %}" class="profile-settings__item profile-settings__item--link">
       <span class="profile-settings__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </span>
@@ -59,7 +59,7 @@
       <span class="profile-settings__chevron" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </span>
-    </div>
+    </a>
     <div class="profile-settings__item">
       <span class="profile-settings__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11v11h-11z"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
@@ -89,7 +89,7 @@
 
 <a href="{% url 'accounts:logout' %}" class="profile-signout profile-signout--kinetic">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-  <span>Log Out of Fitlab</span>
+  <span>Log Out of The Fitlab</span>
 </a>
-<p class="profile-version">Fitlab Loyalty Rewards</p>
+<p class="profile-version">The Fitlab Loyalty Rewards</p>
 {% endblock %}

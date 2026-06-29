@@ -9,6 +9,7 @@ urlpatterns = [
     path("register", views.register, name="register_short"),
     path("accounts/login/", views.FitlabLoginView.as_view(), name="login"),
     path("accounts/register/", views.register, name="register"),
+    path("accounts/profile/edit/", views.edit_profile, name="profile_edit"),
     path("accounts/profile/", views.profile, name="profile"),
     path("accounts/pending/", views.pending_approval, name="pending"),
     path("accounts/logout/", views.logout_view, name="logout"),
