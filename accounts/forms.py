@@ -10,9 +10,9 @@ User = get_user_model()
 
 INPUT_LOGIN = {"class": "auth-input", "placeholder": "athlete@fitlab.com"}
 INPUT_REG = {"class": "auth-input auth-input--dark"}
-INPUT_PROFILE = {"class": "profile-input"}
-SELECT_PROFILE = {"class": "profile-input profile-input--select"}
-FILE_PROFILE = {"class": "profile-input profile-input--file"}
+INPUT_PROFILE = {"class": "auth-input auth-input--dark"}
+SELECT_PROFILE = {"class": "auth-input auth-input--dark profile-select"}
+FILE_PROFILE = {"class": "profile-upload__input", "accept": "image/jpeg,image/png,image/webp"}
 
 
 def normalize_phone(value):

@@ -23,11 +23,11 @@
       var img = document.createElement("img");
       img.src = src;
       img.alt = "Profile photo preview";
-      img.className = "profile-photo-preview__img";
+      img.className = "profile-avatar__img";
       preview.appendChild(img);
     } else if (initial) {
       var span = document.createElement("span");
-      span.className = "profile-photo-preview__initial";
+      span.className = "profile-avatar__initial";
       span.textContent = initial;
       preview.appendChild(span);
     }
@@ -106,7 +106,7 @@
     var input = document.getElementById("id_profile_photo");
     var preview = document.getElementById("profile-photo-preview");
     var hint = document.getElementById("profile-photo-hint");
-    var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+    var submitBtn = form ? form.querySelector(".profile-save-btn") : null;
     var initial = preview ? preview.getAttribute("data-initial") || "" : "";
     var originalSrc = preview ? preview.getAttribute("data-original-src") || "" : "";
 
@@ -119,7 +119,7 @@
       input.disabled = busy;
       if (submitBtn) {
         submitBtn.disabled = busy;
-        submitBtn.textContent = busy ? "Compressing photo…" : "Save profile";
+        submitBtn.textContent = busy ? "Compressing photo…" : "Save changes";
       }
     }
 
