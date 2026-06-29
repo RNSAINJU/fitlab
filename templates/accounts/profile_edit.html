@@ -12,7 +12,7 @@
     {% csrf_token %}
 
     <div class="app-card profile-photo-card">
-      <div class="profile-photo-card__inner">
+      <div class="profile-photo-card__inner profile-photo-card__inner--compact">
         <div
           class="profile-avatar"
           id="profile-photo-preview"
@@ -122,7 +122,7 @@
 
     <div class="profile-form__footer">
       <button type="submit" class="dash-btn dash-btn--primary profile-save-btn">Save changes</button>
-      <a href="{% url 'accounts:dashboard' %}" class="profile-cancel-link">Cancel</a>
+      <a href="{% url 'accounts:dashboard' %}" class="dash-btn profile-cancel-btn">Cancel</a>
     </div>
   </form>
 </section>
