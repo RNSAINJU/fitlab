@@ -30,6 +30,12 @@ if [ -f .env ]; then
   fi
 fi
 
+USER_COUNT=$(.venv/bin/python manage.py shell -c "from accounts.models import User; print(User.objects.count())")
+if [ "${USER_COUNT}" = "0" ] && [ -n "${FITLAB_ADMIN_PASSWORD:-}" ]; then
+  echo "==> No users found; running setup_fitlab"
+  .venv/bin/python manage.py setup_fitlab
+fi
+
 if [ -f deploy/nginx-fitlab.conf ] && [ -f /etc/nginx/sites-available/fitlab ]; then
   echo "==> Refresh nginx config"
   GUNICORN_PORT=$(grep -oP 'bind = "127\.0\.0\.1:\K[0-9]+' /etc/systemd/system/fitlab.service 2>/dev/null || echo "8004")
