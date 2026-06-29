@@ -82,6 +82,37 @@ def pending_approval(request):
 
 
 @login_required
+def profile(request):
+    user = request.user
+    if user.is_staff:
+        return redirect("admin_portal:dashboard")
+    if user.approval_status != user.ApprovalStatus.APPROVED:
+        return redirect("accounts:pending")
+
+    balance = get_balance(user)
+    tier_progress, tier_remaining = get_tier_progress(balance)
+
+    return render(
+        request,
+        "accounts/profile.html",
+        {
+            "balance": balance,
+            "membership_tier": get_membership_tier(balance),
+            "tier_progress": tier_progress,
+            "tier_remaining": tier_remaining,
+            "lifetime_earned": get_lifetime_earned(user),
+            "pending_redemptions": RedemptionRequest.objects.filter(
+                user=user, status=RedemptionRequest.Status.PENDING
+            ).count(),
+            "referral_count": user.referrals.filter(
+                approval_status=user.ApprovalStatus.APPROVED
+            ).count(),
+            "workout_count": user.activity_events.filter(event_type="points").count(),
+        },
+    )
+
+
+@login_required
 def dashboard(request):
     user = request.user
     if user.is_staff:
