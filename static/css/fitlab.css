@@ -3469,6 +3469,21 @@ a.app-avatar:hover {
   margin-bottom: 10px;
 }
 
+.home-cms-inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.admin-input--sort {
+  flex: 0 0 88px;
+  max-width: 88px;
+}
+
 .home-cms-add {
   margin-top: 16px;
   padding-top: 16px;
@@ -3522,4 +3537,161 @@ a.app-avatar:hover {
 .home-cms-delete {
   display: inline;
   margin: 0;
+}
+
+/* Shared inputs inside CMS editor (including .admin-input used in inline forms) */
+.home-cms-stack input[type="text"],
+.home-cms-stack input[type="url"],
+.home-cms-stack input[type="number"],
+.home-cms-stack input[type="email"],
+.home-cms-stack input[type="file"],
+.home-cms-stack select,
+.home-cms-stack textarea,
+.admin-input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border-radius: var(--pill);
+  border: 1px solid #27272a;
+  background: #0e0e0e;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+}
+
+.home-cms-stack input[type="text"],
+.home-cms-stack input[type="url"],
+.home-cms-stack input[type="number"],
+.home-cms-stack input[type="email"],
+.home-cms-stack select,
+.admin-input {
+  height: 44px;
+}
+
+.home-cms-stack textarea,
+.home-cms-stack .admin-form-row textarea {
+  min-height: 96px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  resize: vertical;
+}
+
+.home-cms-stack input[type="file"] {
+  height: auto;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.home-cms-add p {
+  margin: 0 0 14px;
+}
+
+.home-cms-add p label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #71717a;
+  margin-bottom: 6px;
+}
+
+.home-cms-add p input,
+.home-cms-add p select,
+.home-cms-add p textarea {
+  width: 100%;
+}
+
+.home-cms-item--inline > input,
+.home-cms-item--inline > select,
+.home-cms-item--inline > .admin-input {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.home-cms-tiers li {
+  margin-bottom: 8px;
+}
+
+.home-cms-tiers .home-cms-item--inline {
+  padding: 8px 0;
+}
+
+@media (max-width: 900px) {
+  .home-cms-nav {
+    position: sticky;
+    top: 57px;
+    z-index: 20;
+    margin-left: -4px;
+    margin-right: -4px;
+    border-radius: 10px;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .home-cms-nav a {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+
+  .home-cms-item__head {
+    flex-wrap: wrap;
+  }
+
+  .home-cms-item--inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .home-cms-inline-form {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .home-cms-item--inline > input,
+  .home-cms-item--inline > select,
+  .home-cms-item--inline > .admin-input,
+  .home-cms-item--inline > button,
+  .home-cms-inline-form > input,
+  .home-cms-inline-form > button {
+    width: 100%;
+    flex: none;
+    max-width: none;
+  }
+
+  .admin-input--sort {
+    max-width: none;
+  }
+
+  .home-cms-thumb {
+    max-width: 100%;
+    width: 100%;
+    max-height: 160px;
+    object-fit: cover;
+  }
+
+  .home-cms-plan {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-cms-nav {
+    top: 52px;
+  }
+
+  .home-cms-nav a {
+    flex: 1 1 calc(50% - 6px);
+    text-align: center;
+  }
+
+  .home-cms-item {
+    padding: 12px;
+  }
+
+  .admin-form-row {
+    grid-template-columns: 1fr;
+  }
 }

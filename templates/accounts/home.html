@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=4">
 {% endblock %}
 {% block body %}
 <div class="home-page">
@@ -372,18 +372,44 @@
   if (accordion) {
     accordion.querySelectorAll(".home-accordion__item").forEach(function (item) {
       item.addEventListener("mouseenter", function () {
-        accordion.querySelectorAll(".home-accordion__item").forEach(function (el) {
-          el.classList.remove("is-active");
-        });
-        item.classList.add("is-active");
+        if (window.matchMedia("(min-width: 769px)").matches) {
+          accordion.querySelectorAll(".home-accordion__item").forEach(function (el) {
+            el.classList.remove("is-active");
+          });
+          item.classList.add("is-active");
+        }
       });
       item.addEventListener("click", function () {
         accordion.querySelectorAll(".home-accordion__item").forEach(function (el) {
           el.classList.remove("is-active");
         });
         item.classList.add("is-active");
+        if (window.matchMedia("(max-width: 768px)").matches) {
+          item.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        }
       });
     });
+
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      accordion.addEventListener("scroll", function () {
+        var items = accordion.querySelectorAll(".home-accordion__item");
+        var center = accordion.scrollLeft + accordion.clientWidth / 2;
+        var closest = null;
+        var closestDist = Infinity;
+        items.forEach(function (item) {
+          var itemCenter = item.offsetLeft + item.offsetWidth / 2;
+          var dist = Math.abs(center - itemCenter);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = item;
+          }
+        });
+        if (closest) {
+          items.forEach(function (el) { el.classList.remove("is-active"); });
+          closest.classList.add("is-active");
+        }
+      }, { passive: true });
+    }
   }
 
   function initSlider(containerId) {

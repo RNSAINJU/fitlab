@@ -192,23 +192,24 @@
     </form>
     <h3>Service list</h3>
     {% for item in training_services %}
-      <form method="post" class="home-cms-item home-cms-item--inline">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_item">
-        <input type="hidden" name="item_type" value="training_service">
-        <input type="hidden" name="item_id" value="{{ item.pk }}">
-        <input type="text" name="title" value="{{ item.title }}" class="admin-input" style="flex:1">
-        <input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input" style="width:80px">
-        <input type="hidden" name="item_type" value="training_service">
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
-        <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='training_service';return confirm('Delete?')">×</button>
-      </form>
+      <div class="home-cms-item home-cms-item--inline">
+        <form method="post" class="home-cms-inline-form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="save_item">
+          <input type="hidden" name="item_type" value="training_service">
+          <input type="hidden" name="item_id" value="{{ item.pk }}">
+          <input type="text" name="title" value="{{ item.title }}" class="admin-input" aria-label="Service title">
+          <input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input admin-input--sort" aria-label="Sort order">
+          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
+        </form>
+        {% include "admin_portal/includes/cms_delete_button.html" with item_type="training_service" item_id=item.pk %}
+      </div>
     {% endfor %}
     <form method="post" class="home-cms-add home-cms-item--inline">
       {% csrf_token %}
       <input type="hidden" name="action" value="save_item">
       <input type="hidden" name="item_type" value="training_service">
-      <input type="text" name="title" placeholder="New service" class="admin-input" style="flex:1" required>
+      <input type="text" name="title" placeholder="New service" class="admin-input" required>
       <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Add</button>
     </form>
   </section>
@@ -224,23 +225,27 @@
       <button type="submit" class="admin-btn admin-btn--primary">Save schedule photo</button>
     </form>
     {% for item in schedule_slots %}
-      <form method="post" class="home-cms-item">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_item">
-        <input type="hidden" name="item_type" value="schedule_slot">
-        <input type="hidden" name="item_id" value="{{ item.pk }}">
-        <input type="hidden" name="item_type" value="schedule_slot">
-        <div class="admin-form-row">
-          <div><label>Title</label><input type="text" name="title" value="{{ item.title }}" class="admin-input"></div>
-          <div><label>Times</label><input type="text" name="time_info" value="{{ item.time_info }}" class="admin-input"></div>
+      <div class="home-cms-item">
+        <div class="home-cms-item__head">
+          <strong>{{ item.title }}</strong>
+          {% include "admin_portal/includes/cms_delete_button.html" with item_type="schedule_slot" item_id=item.pk %}
         </div>
-        <div class="admin-form-row">
-          <div><label>Days</label><input type="text" name="days_info" value="{{ item.days_info }}" class="admin-input"></div>
-          <div><label>Sort</label><input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input"></div>
-        </div>
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
-        <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='schedule_slot';return confirm('Delete?')">Delete</button>
-      </form>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="save_item">
+          <input type="hidden" name="item_type" value="schedule_slot">
+          <input type="hidden" name="item_id" value="{{ item.pk }}">
+          <div class="admin-form-row">
+            <div><label>Title</label><input type="text" name="title" value="{{ item.title }}" class="admin-input"></div>
+            <div><label>Times</label><input type="text" name="time_info" value="{{ item.time_info }}" class="admin-input"></div>
+          </div>
+          <div class="admin-form-row">
+            <div><label>Days</label><input type="text" name="days_info" value="{{ item.days_info }}" class="admin-input"></div>
+            <div><label>Sort</label><input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input"></div>
+          </div>
+          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
+        </form>
+      </div>
     {% endfor %}
     <form method="post" class="home-cms-add">
       {% csrf_token %}
