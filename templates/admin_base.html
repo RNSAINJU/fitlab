@@ -39,6 +39,7 @@
       </a>
       <div class="admin-sidebar__subnav" id="admin-settings-subnav">
         <a href="{% url 'admin_portal:site_settings' %}" class="{% active_nav request 'admin_portal' 'site_settings' %}">General</a>
+        <a href="{% url 'admin_portal:home_page_settings' %}" class="{% active_nav request 'admin_portal' 'home_page_settings' %}">Home Page</a>
         {% if request.user.is_superuser %}
         <a href="{% url 'admin_portal:role_management' %}" class="{% active_nav request 'admin_portal' 'role_management' %}">Roles &amp; Management</a>
         {% endif %}

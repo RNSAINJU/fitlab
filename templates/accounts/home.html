@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=3">
 {% endblock %}
 {% block body %}
 <div class="home-page">
@@ -47,60 +47,49 @@
     </div>
   </nav>
 
-  <section class="home-hero" id="top">
+  <section class="home-hero{% if hp.hero_media_type == 'video' and hp.hero_video %} home-hero--video{% endif %}" id="top"
+    {% if hp.hero_media_type != 'video' or not hp.hero_video %}
+    style="--hero-bg: url('{{ hp.hero_background_url }}')"
+    {% endif %}
+  >
+    {% if hp.hero_media_type == 'video' and hp.hero_video %}
+      <video class="home-hero__video" autoplay muted loop playsinline>
+        <source src="{{ hp.hero_video.url }}">
+      </video>
+    {% endif %}
     <div class="home-hero__overlay"></div>
     <div class="home-hero__content">
-      <h1>Ready to start?</h1>
-      <a href="{% url 'accounts:register' %}" class="home-btn home-btn--outline">Enquire Now</a>
+      <h1>{{ hp.hero_headline }}</h1>
+      <a href="{% url 'accounts:register' %}" class="home-btn home-btn--outline">{{ hp.hero_cta_text }}</a>
     </div>
   </section>
 
+  {% if powerlifters %}
   <section class="home-section home-powerlifters" id="powerlifters">
     <div class="home-container home-powerlifters__wrap">
       <div class="home-section-title">
-        <span class="home-watermark" aria-hidden="true">Iconic</span>
-        <h2>Powerlifters</h2>
+        {% if hp.powerlifters_watermark %}
+          <span class="home-watermark" aria-hidden="true">{{ hp.powerlifters_watermark }}</span>
+        {% endif %}
+        <h2>{{ hp.powerlifters_title }}</h2>
         <span class="home-section-title__line"></span>
       </div>
       <div class="home-accordion" id="powerlifter-accordion">
-        <article class="home-accordion__item is-active" data-index="0">
-          <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80" alt="Jenish Bhujel" loading="lazy">
+        {% for item in powerlifters %}
+        <article class="home-accordion__item{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}">
+          {% if item.display_image_url %}
+            <img src="{{ item.display_image_url }}" alt="{{ item.name }}" loading="lazy">
+          {% endif %}
           <div class="home-accordion__label">
-            <span class="home-accordion__icon" aria-hidden="true">⬡</span>
-            <span>Jenish Bhujel</span>
+            {% if forloop.first %}<span class="home-accordion__icon" aria-hidden="true">⬡</span>{% endif %}
+            <span>{{ item.name }}</span>
           </div>
         </article>
-        <article class="home-accordion__item" data-index="1">
-          <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400&q=80" alt="Athlete" loading="lazy">
-          <div class="home-accordion__label"><span>Powerlifter</span></div>
-        </article>
-        <article class="home-accordion__item" data-index="2">
-          <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&q=80" alt="Athlete" loading="lazy">
-          <div class="home-accordion__label"><span>Powerlifter</span></div>
-        </article>
-        <article class="home-accordion__item" data-index="3">
-          <img src="https://images.unsplash.com/photo-1594381898411-8465977c4a0a?w=400&q=80" alt="Athlete" loading="lazy">
-          <div class="home-accordion__label"><span>Powerlifter</span></div>
-        </article>
-        <article class="home-accordion__item" data-index="4">
-          <img src="https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?w=400&q=80" alt="Athlete" loading="lazy">
-          <div class="home-accordion__label"><span>Powerlifter</span></div>
-        </article>
-        <article class="home-accordion__item" data-index="5">
-          <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80" alt="Athlete" loading="lazy">
-          <div class="home-accordion__label"><span>Powerlifter</span></div>
-        </article>
-        <article class="home-accordion__item" data-index="6">
-          <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=400&q=80" alt="Athlete" loading="lazy">
-          <div class="home-accordion__label"><span>Powerlifter</span></div>
-        </article>
-        <article class="home-accordion__item" data-index="7">
-          <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80" alt="Athlete" loading="lazy">
-          <div class="home-accordion__label"><span>Powerlifter</span></div>
-        </article>
+        {% endfor %}
       </div>
     </div>
   </section>
+  {% endif %}
 
   <section class="home-section" id="about">
     <div class="home-container home-welcome">
@@ -109,48 +98,33 @@
           <h2>Welcome to {{ site_config.site_name }}</h2>
           <span class="home-section-title__line"></span>
         </div>
-        <p class="home-welcome__tagline">A Private Gym in Kathmandu</p>
-        <p>
-          At {{ site_config.site_name }}, we believe that fitness is not a one-size-fits-all approach.
-          We are a private gym in Kathmandu, dedicated to providing a personalized fitness experience
-          tailored to your unique goals and needs.
-        </p>
-        <p>
-          The concept of a private gym is fairly new in Nepal. To simply explain, in our gym, the
-          equipment and the trainer will be solely dedicated to you during your session. In a way,
-          {{ site_config.site_name }} will be your private gym during your session.
-        </p>
-        <p>
-          Step into one of the best fitness centers in Kathmandu, where you'll find a dynamic and
-          motivating environment designed to inspire and empower you on your fitness journey. Our
-          cutting-edge equipment, spacious workout areas, and expert trainers ensure that every visit
-          is an opportunity to push your limits and achieve remarkable results.
-        </p>
+        {% if hp.welcome_tagline %}<p class="home-welcome__tagline">{{ hp.welcome_tagline }}</p>{% endif %}
+        {% if hp.welcome_paragraph_1 %}<p>{{ hp.welcome_paragraph_1 }}</p>{% endif %}
+        {% if hp.welcome_paragraph_2 %}<p>{{ hp.welcome_paragraph_2 }}</p>{% endif %}
+        {% if hp.welcome_paragraph_3 %}<p>{{ hp.welcome_paragraph_3 }}</p>{% endif %}
       </div>
+      {% if trainers %}
       <div class="home-welcome__trainers">
         <div class="home-section-title">
-          <h2>Meet the Trainers</h2>
+          <h2>{{ hp.trainers_title }}</h2>
           <span class="home-section-title__line"></span>
         </div>
         <div class="home-slider" id="trainer-slider">
           <button type="button" class="home-slider__arrow home-slider__arrow--prev" data-slider="trainer-slider" aria-label="Previous trainer">&lsaquo;</button>
           <div class="home-slider__track">
-            <div class="home-slider__slide is-active">
-              <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=700&q=80" alt="Sandesh Rawol" loading="lazy">
-              <span class="home-slider__caption">Sandesh Rawol</span>
+            {% for item in trainers %}
+            <div class="home-slider__slide{% if forloop.first %} is-active{% endif %}">
+              {% if item.display_image_url %}
+                <img src="{{ item.display_image_url }}" alt="{{ item.name }}" loading="lazy">
+              {% endif %}
+              <span class="home-slider__caption">{{ item.name }}</span>
             </div>
-            <div class="home-slider__slide">
-              <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=700&q=80" alt="Trainer" loading="lazy">
-              <span class="home-slider__caption">Performance Coach</span>
-            </div>
-            <div class="home-slider__slide">
-              <img src="https://images.unsplash.com/photo-1594381898411-8465977c4a0a?w=700&q=80" alt="Trainer" loading="lazy">
-              <span class="home-slider__caption">Strength Coach</span>
-            </div>
+            {% endfor %}
           </div>
           <button type="button" class="home-slider__arrow home-slider__arrow--next" data-slider="trainer-slider" aria-label="Next trainer">&rsaquo;</button>
         </div>
       </div>
+      {% endif %}
     </div>
   </section>
 
@@ -158,285 +132,182 @@
     <div class="home-container home-training">
       <div class="home-training__copy">
         <div class="home-section-title">
-          <h2>Training</h2>
+          <h2>{{ hp.training_title }}</h2>
           <span class="home-section-title__line"></span>
         </div>
-        <p>
-          When you join {{ site_config.site_name }}, our trainer will take the time to understand your
-          aspirations, assess your current fitness level, and design a customized workout program that
-          aligns with your goals. Whether you're aiming to lose weight, build strength, improve endurance,
-          prepare for the game, or enhance overall fitness, our trainer will create a plan that optimizes
-          your progress.
-        </p>
+        {% if hp.training_intro %}<p>{{ hp.training_intro }}</p>{% endif %}
       </div>
+      {% if training_services %}
       <ul class="home-training__list">
-        <li>Weight Loss / Management</li>
-        <li>Resistance Training</li>
-        <li>Muscle Building</li>
-        <li>Planning &amp; Periodisation for Powerlifting Game</li>
-        <li>Speed, Strength, Power Development</li>
-        <li>Performance based nutrition consultation</li>
+        {% for item in training_services %}
+          <li>{{ item.title }}</li>
+        {% endfor %}
       </ul>
+      {% endif %}
     </div>
   </section>
 
+  {% if schedule_slots %}
   <section class="home-section home-schedule-section">
     <div class="home-container home-schedule">
       <div class="home-schedule__grid">
+        {% for item in schedule_slots %}
         <div class="home-schedule__cell">
-          <h3>One on One Session</h3>
-          <p>07:00 – 11:00 AM, 3:00 – 8:00 PM</p>
-          <p>Sunday – Friday</p>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.time_info }}</p>
+          <p>{{ item.days_info }}</p>
         </div>
-        <div class="home-schedule__cell">
-          <h3>Group Session</h3>
-          <p>07:00 – 08:00 AM, 05:00 – 06:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
-        <div class="home-schedule__cell">
-          <h3>Couple Session</h3>
-          <p>07:00 – 11:00 AM, 03:00 – 08:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
-        <div class="home-schedule__cell">
-          <h3>Powerlifting Training</h3>
-          <p>05:00 – 06:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
-        <div class="home-schedule__cell">
-          <h3>Hypertrophy Training</h3>
-          <p>07:00 – 11:00 AM, 03:00 – 08:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
-        <div class="home-schedule__cell">
-          <h3>General Fitness</h3>
-          <p>07:00 – 11:00 AM, 03:00 – 08:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
-        <div class="home-schedule__cell">
-          <h3>Basic Endurance Training</h3>
-          <p>07:00 – 11:00 AM, 03:00 – 08:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
-        <div class="home-schedule__cell">
-          <h3>Online Training</h3>
-          <p>03:00 – 05:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
-        <div class="home-schedule__cell">
-          <h3>Bodybuilding Contest Preparation</h3>
-          <p>07:00 – 08:00 AM, 05:00 – 06:00 PM</p>
-          <p>Sunday – Friday</p>
-        </div>
+        {% endfor %}
       </div>
       <div class="home-schedule__visual">
         <div class="home-schedule__frame">
-          <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80" alt="Trainer at {{ site_config.site_name }}" loading="lazy">
+          <img src="{{ hp.schedule_photo_url }}" alt="Trainer at {{ site_config.site_name }}" loading="lazy">
         </div>
       </div>
     </div>
   </section>
+  {% endif %}
 
+  {% if pricing_plans %}
   <section class="home-section" id="rates">
     <div class="home-container">
       <div class="home-section-title">
-        <h2>Training Session</h2>
+        <h2>{{ hp.rates_title }}</h2>
         <span class="home-section-title__line"></span>
       </div>
       <div class="home-pricing">
-        <article class="home-price-card" style="--card-bg: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80')">
+        {% for plan in pricing_plans %}
+        <article class="home-price-card" style="--card-bg: url('{{ plan.background_url }}')">
           <div class="home-price-card__inner">
-            <h3>Personal Training</h3>
+            <h3>{{ plan.title }}</h3>
+            {% if plan.features %}
             <ul class="home-price-card__features">
-              <li>Personal trainer</li>
-              <li>Customized exercise plan for best result</li>
-              <li>Performance based nutrition consultation</li>
+              {% for feature in plan.features %}
+                <li>{{ feature }}</li>
+              {% endfor %}
             </ul>
+            {% endif %}
+            {% for tier in plan.tiers.all %}
             <div class="home-price-card__tier">
-              <strong>3 Days a week – NRs. 23,000/-</strong>
-              <span>12 sessions (Valid for 40 days)</span>
+              <strong>{{ tier.price_label }}</strong>
+              {% if tier.sessions_label %}<span>{{ tier.sessions_label }}</span>{% endif %}
             </div>
-            <div class="home-price-card__tier">
-              <strong>4 Days a week – NRs. 28,000/-</strong>
-              <span>16 sessions (Valid for 40 days)</span>
-            </div>
-            <div class="home-price-card__tier">
-              <strong>5 Days a week – NRs. 33,000/-</strong>
-              <span>20 sessions (Valid for 40 days)</span>
-            </div>
+            {% endfor %}
             <a href="{% url 'accounts:register' %}" class="home-price-card__cta">Enquire Now &rsaquo;</a>
           </div>
         </article>
-        <article class="home-price-card" style="--card-bg: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80')">
-          <div class="home-price-card__inner">
-            <h3>Couple Training</h3>
-            <ul class="home-price-card__features">
-              <li>Personal trainer</li>
-              <li>Customized exercise plan for best result</li>
-              <li>Performance based nutrition consultation</li>
-            </ul>
-            <div class="home-price-card__tier">
-              <strong>3 Days a week – NRs. 33,500/-</strong>
-              <span>12 sessions (Valid for 40 days)</span>
-            </div>
-            <div class="home-price-card__tier">
-              <strong>4 Days a week – NRs. 40,000/-</strong>
-              <span>16 sessions (Valid for 40 days)</span>
-            </div>
-            <div class="home-price-card__tier">
-              <strong>5 Days a week – NRs. 48,000/-</strong>
-              <span>20 sessions (Valid for 40 days)</span>
-            </div>
-            <a href="{% url 'accounts:register' %}" class="home-price-card__cta">Enquire Now &rsaquo;</a>
-          </div>
-        </article>
-        <article class="home-price-card" style="--card-bg: url('https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&q=80')">
-          <div class="home-price-card__inner">
-            <h3>Group Training</h3>
-            <ul class="home-price-card__features">
-              <li>Trainer</li>
-              <li>Customized exercise plan for best result</li>
-              <li>Performance based nutrition consultation</li>
-            </ul>
-            <div class="home-price-card__tier">
-              <strong>3 Days a week – NRs. 6,000/-</strong>
-              <span>12 sessions (Valid for 35 days)</span>
-            </div>
-            <div class="home-price-card__tier">
-              <strong>4 Days a week – NRs. 8,000/-</strong>
-              <span>16 sessions (Valid for 35 days)</span>
-            </div>
-            <div class="home-price-card__tier">
-              <strong>5 Days a week – NRs. 9,000/-</strong>
-              <span>20 sessions (Valid for 35 days)</span>
-            </div>
-            <a href="{% url 'accounts:register' %}" class="home-price-card__cta">Enquire Now &rsaquo;</a>
-          </div>
-        </article>
+        {% endfor %}
       </div>
     </div>
   </section>
+  {% endif %}
 
+  {% if gallery_images %}
   <section class="home-section home-gallery-section" id="gallery">
     <div class="home-container">
       <div class="home-section-title">
-        <span class="home-watermark" aria-hidden="true">Gallery</span>
-        <h2>Training Gallery</h2>
+        {% if hp.gallery_watermark %}
+          <span class="home-watermark" aria-hidden="true">{{ hp.gallery_watermark }}</span>
+        {% endif %}
+        <h2>{{ hp.gallery_title }}</h2>
         <span class="home-section-title__line"></span>
       </div>
       <div class="home-slider home-slider--gallery" id="gallery-slider">
         <button type="button" class="home-slider__arrow home-slider__arrow--prev" data-slider="gallery-slider" aria-label="Previous image">&lsaquo;</button>
         <div class="home-slider__track home-slider__track--gallery">
-          <div class="home-slider__slide is-active">
-            <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=700&q=80" alt="Training session" loading="lazy">
+          {% for item in gallery_images %}
+          <div class="home-slider__slide{% if forloop.first %} is-active{% endif %}">
+            {% if item.display_image_url %}
+              <img src="{{ item.display_image_url }}" alt="{{ item.alt_text|default:'Training session' }}" loading="lazy">
+            {% endif %}
           </div>
-          <div class="home-slider__slide">
-            <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=700&q=80" alt="Weight training" loading="lazy">
-          </div>
-          <div class="home-slider__slide">
-            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=700&q=80" alt="Gym floor" loading="lazy">
-          </div>
-          <div class="home-slider__slide">
-            <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=700&q=80" alt="Coaching" loading="lazy">
-          </div>
+          {% endfor %}
         </div>
         <button type="button" class="home-slider__arrow home-slider__arrow--next" data-slider="gallery-slider" aria-label="Next image">&rsaquo;</button>
       </div>
     </div>
   </section>
+  {% endif %}
 
+  {% if testimonials %}
   <section class="home-section" id="testimonials">
     <div class="home-container">
       <div class="home-section-title">
-        <h2>What People Say About Us</h2>
+        <h2>{{ hp.testimonials_title }}</h2>
         <span class="home-section-title__line"></span>
       </div>
       <div class="home-quotes">
+        {% for item in testimonials %}
         <blockquote class="home-quote">
-          <p>"A premium private gym experience with real personal attention. Every session feels purposeful and I'm seeing real results."</p>
-          <footer>— Member</footer>
+          <p>"{{ item.quote }}"</p>
+          <footer>— {{ item.author }}</footer>
         </blockquote>
-        <blockquote class="home-quote">
-          <p>"The trainers understand my goals and push me every session. Best gym experience I've had in Kathmandu."</p>
-          <footer>— Personal Training Client</footer>
-        </blockquote>
-        <blockquote class="home-quote">
-          <p>"No crowds, no waiting — just focused training with expert coaching. Highly recommend."</p>
-          <footer>— Couple Training Member</footer>
-        </blockquote>
+        {% endfor %}
       </div>
     </div>
   </section>
+  {% endif %}
 
+  {% if clients_row_1 or clients_row_2 %}
   <section class="home-section home-clients-section" id="clients">
     <div class="home-container home-clients">
       <div class="home-clients__copy">
         <div class="home-section-title">
-          <h2>Our Clients</h2>
+          <h2>{{ hp.clients_title }}</h2>
           <span class="home-section-title__line"></span>
         </div>
-        <p>
-          At {{ site_config.site_name }}, we take pride in our ability to cater to a diverse range of clients.
-          Our personalized approach ensures that every individual receives tailored fitness programs and expert
-          guidance. We create an inclusive and supportive environment where all clients can achieve their fitness goals.
-        </p>
+        {% if hp.clients_intro %}<p>{{ hp.clients_intro }}</p>{% endif %}
       </div>
       <div class="home-clients__grid">
+        {% if clients_row_1 %}
         <div class="home-clients__row" id="clients-row-1">
           <button type="button" class="home-slider__arrow home-slider__arrow--prev home-slider__arrow--sm" data-slider="clients-row-1" aria-label="Previous">&lsaquo;</button>
           <div class="home-clients__track">
-            <figure class="home-client-card is-active">
-              <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80" alt="Client" loading="lazy">
-              <figcaption>Sarada Munikar – Civil Engineer</figcaption>
+            {% for item in clients_row_1 %}
+            <figure class="home-client-card{% if forloop.first %} is-active{% endif %}">
+              {% if item.display_image_url %}
+                <img src="{{ item.display_image_url }}" alt="{{ item.caption }}" loading="lazy">
+              {% endif %}
+              <figcaption>{{ item.caption }}</figcaption>
             </figure>
-            <figure class="home-client-card">
-              <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80" alt="Client" loading="lazy">
-              <figcaption>Riyaz Munikar – Student</figcaption>
-            </figure>
-            <figure class="home-client-card">
-              <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80" alt="Client" loading="lazy">
-              <figcaption>Shresha Munikar – Powerlifter</figcaption>
-            </figure>
+            {% endfor %}
           </div>
           <button type="button" class="home-slider__arrow home-slider__arrow--next home-slider__arrow--sm" data-slider="clients-row-1" aria-label="Next">&rsaquo;</button>
         </div>
+        {% endif %}
+        {% if clients_row_2 %}
         <div class="home-clients__row" id="clients-row-2">
           <button type="button" class="home-slider__arrow home-slider__arrow--prev home-slider__arrow--sm" data-slider="clients-row-2" aria-label="Previous">&lsaquo;</button>
           <div class="home-clients__track">
-            <figure class="home-client-card is-active">
-              <img src="https://images.unsplash.com/photo-1594381898411-8465977c4a0a?w=400&q=80" alt="Client" loading="lazy">
-              <figcaption>Sakshi Maskey – Makeup Artist</figcaption>
+            {% for item in clients_row_2 %}
+            <figure class="home-client-card{% if forloop.first %} is-active{% endif %}">
+              {% if item.display_image_url %}
+                <img src="{{ item.display_image_url }}" alt="{{ item.caption }}" loading="lazy">
+              {% endif %}
+              <figcaption>{{ item.caption }}</figcaption>
             </figure>
-            <figure class="home-client-card">
-              <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400&q=80" alt="Client" loading="lazy">
-              <figcaption>Shilpa Maskey – Actress / Entrepreneur</figcaption>
-            </figure>
-            <figure class="home-client-card">
-              <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&q=80" alt="Client" loading="lazy">
-              <figcaption>Sayujya Sharma – Financial Advisor</figcaption>
-            </figure>
+            {% endfor %}
           </div>
           <button type="button" class="home-slider__arrow home-slider__arrow--next home-slider__arrow--sm" data-slider="clients-row-2" aria-label="Next">&rsaquo;</button>
         </div>
+        {% endif %}
       </div>
     </div>
   </section>
+  {% endif %}
 
   <footer class="home-footer" id="contact">
     <div class="home-container home-footer__grid">
       <div class="home-footer__brand">
         {% include "includes/site_brand.html" %}
-        <p>
-          Experience the power of personalized fitness at {{ site_config.site_name }} and discover how it can
-          transform your body, mind, and overall well-being.
-        </p>
-        <p><strong>Join us today!</strong></p>
+        {% if hp.footer_blurb %}<p>{{ hp.footer_blurb }}</p>{% endif %}
+        {% if hp.footer_cta %}<p><strong>{{ hp.footer_cta }}</strong></p>{% endif %}
       </div>
       <div class="home-footer__col">
         <h3>Contact Us</h3>
         <p>
-          Kathmandu, Nepal<br>
-          <a href="mailto:info@thefitlab.com.np">info@thefitlab.com.np</a>
+          {{ hp.contact_address|linebreaksbr }}
+          {% if hp.contact_email %}<br><a href="mailto:{{ hp.contact_email }}">{{ hp.contact_email }}</a>{% endif %}
         </p>
       </div>
       <div class="home-footer__col">
@@ -449,15 +320,17 @@
           <li><a href="{% url 'accounts:login' %}">Member Login</a></li>
         </ul>
       </div>
+      {% if hp.map_embed_url %}
       <div class="home-footer__col home-footer__map">
         <h3>Find Us</h3>
         <iframe
-          title="Map – Kathmandu, Nepal"
-          src="https://maps.google.com/maps?q=Kathmandu%2C%20Nepal&z=13&output=embed"
+          title="Map – {{ site_config.site_name }}"
+          src="{{ hp.map_embed_url }}"
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
         ></iframe>
       </div>
+      {% endif %}
     </div>
     <div class="home-container home-footer__bottom">
       <span>Copyright &copy; {% now "Y" %} {{ site_config.site_name }}</span>
@@ -495,7 +368,6 @@
     if (header) header.classList.toggle("is-scrolled", window.scrollY > 24);
   }, { passive: true });
 
-  /* Powerlifter accordion */
   var accordion = document.getElementById("powerlifter-accordion");
   if (accordion) {
     accordion.querySelectorAll(".home-accordion__item").forEach(function (item) {
@@ -514,25 +386,20 @@
     });
   }
 
-  /* Generic sliders */
   function initSlider(containerId) {
     var container = document.getElementById(containerId);
     if (!container) return;
-
     var slides = container.querySelectorAll(".home-slider__slide, .home-client-card");
     if (!slides.length) return;
-
     var index = 0;
     var prev = container.querySelector(".home-slider__arrow--prev");
     var next = container.querySelector(".home-slider__arrow--next");
-
     function show(i) {
       index = (i + slides.length) % slides.length;
       slides.forEach(function (slide, n) {
         slide.classList.toggle("is-active", n === index);
       });
     }
-
     if (prev) prev.addEventListener("click", function () { show(index - 1); });
     if (next) next.addEventListener("click", function () { show(index + 1); });
   }

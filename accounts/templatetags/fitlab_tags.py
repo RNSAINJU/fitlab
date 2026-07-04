@@ -23,7 +23,7 @@ def in_settings_section(request):
     match = request.resolver_match
     if not match:
         return False
-    return match.url_name in ("site_settings", "role_management")
+    return match.url_name in ("site_settings", "role_management", "home_page_settings")
 
 
 @register.filter
