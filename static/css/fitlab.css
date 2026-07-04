@@ -1823,10 +1823,6 @@ a.app-avatar:hover {
   padding: 4px 0 0;
 }
 
-.admin-sidebar__subnav[hidden] {
-  display: none !important;
-}
-
 .admin-sidebar__group.is-open .admin-sidebar__subnav {
   display: flex;
 }
