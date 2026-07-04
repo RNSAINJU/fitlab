@@ -1765,6 +1765,8 @@ a.app-avatar:hover {
   text-transform: uppercase;
   color: #71717a;
   text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .admin-sidebar a.is-active,
@@ -1782,15 +1784,12 @@ a.app-avatar:hover {
 .admin-sidebar__group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
 .admin-sidebar__group-toggle {
   justify-content: space-between;
-  width: 100%;
   cursor: pointer;
-  font-family: inherit;
-  text-align: left;
 }
 
 .admin-sidebar__group-label {
@@ -1820,8 +1819,12 @@ a.app-avatar:hover {
 .admin-sidebar__subnav {
   display: none;
   flex-direction: column;
-  gap: 8px;
-  overflow: hidden;
+  gap: 0;
+  padding: 4px 0 0;
+}
+
+.admin-sidebar__subnav[hidden] {
+  display: none !important;
 }
 
 .admin-sidebar__group.is-open .admin-sidebar__subnav {
@@ -1830,6 +1833,8 @@ a.app-avatar:hover {
 
 .admin-sidebar__subnav a {
   padding-left: 28px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
 }
 
 .admin-sidebar__footer {

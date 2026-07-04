@@ -25,18 +25,19 @@
     <a href="{% url 'admin_portal:point_rules' %}" class="{% active_nav request 'admin_portal' 'point_rules' %}">TFL Point Rules</a>
     <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Points Ledger</a>
     {% in_settings_section request as settings_active %}
-    <div class="admin-sidebar__group" data-sidebar-group>
-      <button
-        type="button"
+    <div class="admin-sidebar__group{% if settings_active %} is-open{% endif %}" data-sidebar-group>
+      <a
+        href="#"
         class="admin-sidebar__link admin-sidebar__group-toggle{% if settings_active %} is-active{% endif %}"
         data-sidebar-group-toggle
-        aria-expanded="false"
+        role="button"
+        aria-expanded="{% if settings_active %}true{% else %}false{% endif %}"
         aria-controls="admin-settings-subnav"
       >
         <span class="admin-sidebar__group-label">Settings</span>
         <span class="admin-sidebar__chevron" aria-hidden="true"></span>
-      </button>
-      <div class="admin-sidebar__subnav" id="admin-settings-subnav">
+      </a>
+      <div class="admin-sidebar__subnav" id="admin-settings-subnav"{% if not settings_active %} hidden{% endif %}>
         <a href="{% url 'admin_portal:site_settings' %}" class="{% active_nav request 'admin_portal' 'site_settings' %}">General</a>
         {% if request.user.is_superuser %}
         <a href="{% url 'admin_portal:role_management' %}" class="{% active_nav request 'admin_portal' 'role_management' %}">Roles &amp; Management</a>
