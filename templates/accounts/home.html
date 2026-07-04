@@ -1,30 +1,50 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ site_config.site_name }} — Premium Fitness in Kathmandu{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=1">
+{% endblock %}
 {% block body %}
 <div class="home-page">
-  <header class="home-header">
+  <header class="home-header" id="home-header">
     <div class="home-header__inner">
       <a href="{% url 'accounts:home' %}" class="home-header__brand">
         {% include "includes/site_brand.html" with extra_class="site-logo--home" %}
       </a>
       <nav class="home-header__nav" aria-label="Main">
         <a href="#about">About</a>
+        <a href="#trainers">Trainers</a>
         <a href="#programs">Programs</a>
-        <a href="#why-us">Why Us</a>
+        <a href="#gallery">Gallery</a>
         <a href="#contact">Contact</a>
       </nav>
       <div class="home-header__actions">
         <a href="{% url 'accounts:login' %}" class="home-btn home-btn--ghost">Login</a>
         <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary">Join Now</a>
       </div>
+      <button type="button" class="home-menu-toggle" id="home-menu-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+      </button>
     </div>
   </header>
 
+  <nav class="home-mobile-nav" id="home-mobile-nav" aria-label="Mobile">
+    <a href="#about">About</a>
+    <a href="#trainers">Trainers</a>
+    <a href="#programs">Programs</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+    <div class="home-mobile-nav__actions">
+      <a href="{% url 'accounts:login' %}" class="home-btn home-btn--ghost">Login</a>
+      <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary">Join Now</a>
+    </div>
+  </nav>
+
   <section class="home-hero">
-    <div class="home-hero__overlay"></div>
     <div class="home-hero__content">
-      <p class="home-kicker">Welcome to {{ site_config.site_name }}</p>
-      <h1>A Private Gym Experience in Kathmandu</h1>
+      <p class="home-hero__welcome">Welcome to {{ site_config.site_name }}</p>
+      <h1>{{ site_config.site_name }}</h1>
+      <p class="home-hero__subtitle">A Private Gym Experience in Kathmandu</p>
       <p class="home-hero__lead">
         Personalized training, dedicated equipment, and expert coaching tailored to your goals.
         Earn TFL Points every time you train and unlock elite rewards.
@@ -36,10 +56,10 @@
     </div>
   </section>
 
-  <section class="home-section" id="about">
+  <section class="home-section home-section--light" id="about">
     <div class="home-container home-about">
       <div class="home-about__copy">
-        <p class="home-kicker">About Us</p>
+        <p class="home-kicker home-kicker--dark">About Us</p>
         <h2>Fitness built around you</h2>
         <p>
           At {{ site_config.site_name }}, we believe fitness is not one-size-fits-all. Our trainers
@@ -50,109 +70,281 @@
           During your session, the equipment and coach are dedicated to you. No waiting for racks,
           no crowded floors — just focused, high-performance training in a motivating environment.
         </p>
-      </div>
-      <div class="home-about__card">
-        <h3>What you get</h3>
-        <ul>
+        <ul class="home-about__list">
           <li>Personalized workout programming</li>
           <li>Nutrition &amp; performance guidance</li>
           <li>TFL Points loyalty rewards</li>
           <li>Progress tracking in the member app</li>
         </ul>
       </div>
+      <div class="home-about__media">
+        <img
+          src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80"
+          alt="Personal training at {{ site_config.site_name }}"
+          loading="lazy"
+          width="900"
+          height="1125"
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-section--dark" id="trainers">
+    <div class="home-container">
+      <div class="home-section__head">
+        <p class="home-kicker">Our Team</p>
+        <h2>Meet the trainers</h2>
+        <p>Expert coaches dedicated to helping you reach your full potential with programs built for your body and goals.</p>
+      </div>
+      <div class="home-trainers">
+        <article class="home-trainer">
+          <div class="home-trainer__photo">
+            <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=600&q=80" alt="Strength coach" loading="lazy" width="600" height="800">
+          </div>
+          <div class="home-trainer__body">
+            <p class="home-trainer__role">Head Coach</p>
+            <h3>Strength &amp; Conditioning</h3>
+            <p>Specializes in powerlifting, hypertrophy, and competition prep with years of hands-on coaching experience.</p>
+          </div>
+        </article>
+        <article class="home-trainer">
+          <div class="home-trainer__photo">
+            <img src="https://images.unsplash.com/photo-1594381898411-8465977c4a0a?w=600&q=80" alt="Fitness coach" loading="lazy" width="600" height="800">
+          </div>
+          <div class="home-trainer__body">
+            <p class="home-trainer__role">Performance Coach</p>
+            <h3>General Fitness</h3>
+            <p>Builds sustainable programs for fat loss, endurance, and everyday strength with nutrition support.</p>
+          </div>
+        </article>
+        <article class="home-trainer">
+          <div class="home-trainer__photo">
+            <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=600&q=80" alt="Training specialist" loading="lazy" width="600" height="800">
+          </div>
+          <div class="home-trainer__body">
+            <p class="home-trainer__role">Specialist</p>
+            <h3>Couple &amp; Group Training</h3>
+            <p>Creates motivating partner and small-group sessions so you stay accountable and progress together.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-section--light" id="training-types">
+    <div class="home-container">
+      <div class="home-section__head">
+        <p class="home-kicker home-kicker--dark">Training</p>
+        <h2>Programs for every goal</h2>
+        <p>From one-on-one coaching to group sessions — choose the format that fits your lifestyle.</p>
+      </div>
+      <div class="home-types">
+        <article class="home-type">
+          <div class="home-type__icon" aria-hidden="true">🏋️</div>
+          <h3>Personal Training</h3>
+          <p>One-on-one sessions with custom programming for your body and schedule.</p>
+        </article>
+        <article class="home-type">
+          <div class="home-type__icon" aria-hidden="true">👫</div>
+          <h3>Couple Training</h3>
+          <p>Train with a partner and get expert attention for both of you.</p>
+        </article>
+        <article class="home-type">
+          <div class="home-type__icon" aria-hidden="true">👥</div>
+          <h3>Group Sessions</h3>
+          <p>Small-group training with structured programs and community energy.</p>
+        </article>
+        <article class="home-type">
+          <div class="home-type__icon" aria-hidden="true">⭐</div>
+          <h3>TFL Rewards</h3>
+          <p>Earn points for check-ins, referrals, and milestones — redeem for perks.</p>
+        </article>
+      </div>
     </div>
   </section>
 
   <section class="home-section home-section--dark" id="programs">
     <div class="home-container">
-      <p class="home-kicker">Training Sessions</p>
-      <h2 class="home-section__title">Programs for every goal</h2>
-      <div class="home-cards">
-        <article class="home-card">
-          <span class="home-card__icon" aria-hidden="true">01</span>
+      <div class="home-section__head">
+        <p class="home-kicker">Training Sessions</p>
+        <h2>Choose your plan</h2>
+        <p>Flexible weekly packages designed for consistent progress. Contact us for current rates and availability.</p>
+      </div>
+      <div class="home-pricing">
+        <article class="home-price-card home-price-card--featured">
+          <span class="home-price-card__badge">Most Popular</span>
           <h3>Personal Training</h3>
-          <p>One-on-one coaching with programs built exclusively for your body, schedule, and targets.</p>
+          <p class="home-price-card__desc">Dedicated coach and equipment for every session. Programs built exclusively for you.</p>
+          <ul class="home-price-card__tiers">
+            <li><span>3 days / week</span><span>Contact us</span></li>
+            <li><span>4 days / week</span><span>Contact us</span></li>
+            <li><span>5 days / week</span><span>Contact us</span></li>
+          </ul>
+          <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary">Get Started</a>
         </article>
-        <article class="home-card">
-          <span class="home-card__icon" aria-hidden="true">02</span>
+        <article class="home-price-card">
           <h3>Couple Training</h3>
-          <p>Train with a partner and stay accountable while both of you get expert attention.</p>
+          <p class="home-price-card__desc">Train together with a partner. Shared motivation with individualized attention.</p>
+          <ul class="home-price-card__tiers">
+            <li><span>3 days / week</span><span>Contact us</span></li>
+            <li><span>4 days / week</span><span>Contact us</span></li>
+            <li><span>5 days / week</span><span>Contact us</span></li>
+          </ul>
+          <a href="{% url 'accounts:register' %}" class="home-btn home-btn--outline">Join as a Couple</a>
         </article>
-        <article class="home-card">
-          <span class="home-card__icon" aria-hidden="true">03</span>
-          <h3>Loyalty Rewards</h3>
-          <p>Earn TFL Points for check-ins, referrals, and milestones — redeem for exclusive perks.</p>
+        <article class="home-price-card">
+          <h3>Group Training</h3>
+          <p class="home-price-card__desc">Affordable small-group sessions with structured programming and expert oversight.</p>
+          <ul class="home-price-card__tiers">
+            <li><span>3 days / week</span><span>Contact us</span></li>
+            <li><span>4 days / week</span><span>Contact us</span></li>
+            <li><span>5 days / week</span><span>Contact us</span></li>
+          </ul>
+          <a href="{% url 'accounts:register' %}" class="home-btn home-btn--outline">Join a Group</a>
         </article>
       </div>
     </div>
   </section>
 
-  <section class="home-section" id="why-us">
-    <div class="home-container home-why">
-      <div>
-        <p class="home-kicker">Why {{ site_config.site_name }}</p>
-        <h2>Step into a gym designed to inspire</h2>
-        <p class="home-why__lead">
-          Cutting-edge equipment, spacious workout zones, and trainers who push you to achieve
-          remarkable results — every visit is an opportunity to level up.
-        </p>
-      </div>
-      <div class="home-stats">
-        <div class="home-stat">
-          <strong>100%</strong>
-          <span>Dedicated equipment during your session</span>
-        </div>
-        <div class="home-stat">
-          <strong>1:1</strong>
-          <span>Coach attention every workout</span>
-        </div>
-        <div class="home-stat">
-          <strong>TFL</strong>
-          <span>Points &amp; rewards for members</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="home-section home-section--dark">
+  <section class="home-section" id="gallery">
     <div class="home-container">
-      <p class="home-kicker">Testimonials</p>
-      <h2 class="home-section__title">What members say</h2>
+      <div class="home-section__head">
+        <p class="home-kicker">Gallery</p>
+        <h2>Inside the lab</h2>
+        <p>A premium private training environment built for focus, performance, and results.</p>
+      </div>
+      <div class="home-gallery">
+        <div class="home-gallery__item home-gallery__item--wide">
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" alt="Gym floor" loading="lazy" width="800" height="400">
+        </div>
+        <div class="home-gallery__item home-gallery__item--tall">
+          <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=500&q=80" alt="Weight training" loading="lazy" width="500" height="600">
+        </div>
+        <div class="home-gallery__item">
+          <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&q=80" alt="Training session" loading="lazy" width="500" height="400">
+        </div>
+        <div class="home-gallery__item">
+          <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=500&q=80" alt="Fitness equipment" loading="lazy" width="500" height="400">
+        </div>
+        <div class="home-gallery__item">
+          <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500&q=80" alt="Group workout" loading="lazy" width="500" height="400">
+        </div>
+        <div class="home-gallery__item home-gallery__item--wide">
+          <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&q=80" alt="Private gym" loading="lazy" width="800" height="400">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-section--light" id="testimonials">
+    <div class="home-container">
+      <div class="home-section__head">
+        <p class="home-kicker home-kicker--dark">Testimonials</p>
+        <h2>What members say</h2>
+      </div>
       <div class="home-quotes">
         <blockquote class="home-quote">
-          <p>"A premium private gym experience with real personal attention. Every session feels purposeful."</p>
+          <div class="home-quote__stars" aria-hidden="true">★★★★★</div>
+          <p>"A premium private gym experience with real personal attention. Every session feels purposeful and I'm seeing real results."</p>
           <footer>— Fitlab Member</footer>
         </blockquote>
         <blockquote class="home-quote">
-          <p>"The loyalty program keeps me motivated. I earn points, track progress, and actually enjoy showing up."</p>
+          <div class="home-quote__stars" aria-hidden="true">★★★★★</div>
+          <p>"The loyalty program keeps me motivated. I earn TFL Points, track progress in the app, and actually enjoy showing up."</p>
           <footer>— Loyalty Member</footer>
+        </blockquote>
+        <blockquote class="home-quote">
+          <div class="home-quote__stars" aria-hidden="true">★★★★★</div>
+          <p>"No crowds, no waiting — just me, my coach, and everything I need to push harder every week."</p>
+          <footer>— Personal Training Client</footer>
         </blockquote>
       </div>
     </div>
   </section>
 
+  <div class="home-container">
+    <div class="home-clients">
+      <p class="home-clients__label">Trusted by members across Kathmandu</p>
+      <span class="home-clients__item">Athletes</span>
+      <span class="home-clients__item">Professionals</span>
+      <span class="home-clients__item">Couples</span>
+      <span class="home-clients__item">Beginners</span>
+    </div>
+  </div>
+
   <section class="home-cta" id="contact">
-    <div class="home-container home-cta__inner">
-      <div>
-        <h2>Ready to join the lab?</h2>
-        <p>Create your account, get approved by our team, and start earning TFL Points from day one.</p>
-      </div>
+    <div class="home-container">
+      <h2>Ready to join the lab?</h2>
+      <p>Create your account, get approved by our team, and start earning TFL Points from day one.</p>
       <div class="home-cta__actions">
-        <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary home-btn--lg">Join the Elite</a>
+        <a href="{% url 'accounts:register' %}" class="home-btn home-btn--dark home-btn--lg">Join the Elite</a>
         <a href="{% url 'accounts:login' %}" class="home-btn home-btn--outline home-btn--lg">Member Login</a>
       </div>
     </div>
   </section>
 
   <footer class="home-footer">
-    <div class="home-container home-footer__inner">
-      <div class="home-footer__brand">{% include "includes/site_brand.html" %}</div>
-      <p>Kathmandu, Nepal · Premium fitness &amp; loyalty rewards</p>
-      <p class="home-footer__links">
-        <a href="{% url 'accounts:login' %}">Login</a>
-        <a href="{% url 'accounts:register' %}">Register</a>
-      </p>
+    <div class="home-container">
+      <div class="home-footer__grid">
+        <div class="home-footer__brand">
+          {% include "includes/site_brand.html" %}
+          <p>Premium private fitness in Kathmandu. Personalized coaching, loyalty rewards, and a gym built around you.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#programs">Programs</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="{% url 'accounts:register' %}">Register</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li>Kathmandu, Nepal</li>
+            <li><a href="{% url 'accounts:login' %}">Member Login</a></li>
+            <li><a href="{% url 'accounts:register' %}">Join Now</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="home-footer__bottom">
+        <span>&copy; {% now "Y" %} {{ site_config.site_name }}. All rights reserved.</span>
+        <span>Premium fitness &amp; loyalty rewards</span>
+      </div>
     </div>
   </footer>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+  var header = document.getElementById("home-header");
+  var toggle = document.getElementById("home-menu-toggle");
+  var mobileNav = document.getElementById("home-mobile-nav");
+
+  function closeMenu() {
+    if (!mobileNav || !toggle) return;
+    mobileNav.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open menu");
+  }
+
+  if (toggle && mobileNav) {
+    toggle.addEventListener("click", function () {
+      var open = mobileNav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+    mobileNav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", closeMenu);
+    });
+  }
+
+  window.addEventListener("scroll", function () {
+    if (!header) return;
+    header.classList.toggle("is-scrolled", window.scrollY > 24);
+  }, { passive: true });
+})();
+</script>
 {% endblock %}
