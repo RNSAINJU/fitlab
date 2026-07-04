@@ -27,7 +27,7 @@
     {% in_settings_section request as settings_active %}
     <div class="admin-sidebar__group{% if settings_active %} is-open{% endif %}" data-sidebar-group>
       <a
-        href="#"
+        href="#settings-nav"
         class="admin-sidebar__link admin-sidebar__group-toggle{% if settings_active %} is-active{% endif %}"
         data-sidebar-group-toggle
         role="button"
@@ -37,7 +37,7 @@
         <span class="admin-sidebar__group-label">Settings</span>
         <span class="admin-sidebar__chevron" aria-hidden="true"></span>
       </a>
-      <div class="admin-sidebar__subnav" id="admin-settings-subnav"{% if not settings_active %} hidden{% endif %}>
+      <div class="admin-sidebar__subnav" id="admin-settings-subnav">
         <a href="{% url 'admin_portal:site_settings' %}" class="{% active_nav request 'admin_portal' 'site_settings' %}">General</a>
         {% if request.user.is_superuser %}
         <a href="{% url 'admin_portal:role_management' %}" class="{% active_nav request 'admin_portal' 'role_management' %}">Roles &amp; Management</a>
