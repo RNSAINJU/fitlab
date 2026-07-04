@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.db.models import Count, Sum
 
 from accounts.models import SiteConfiguration
+from .home_views import home_page_settings  # noqa: F401
 from activity.services import log_activity
 from loyalty.forms import CustomRuleForm, PointRuleForm, SystemRuleForm
 from loyalty.helpers import get_membership_tier

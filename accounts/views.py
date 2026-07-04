@@ -140,7 +140,9 @@ def edit_profile(request):
 def home(request):
     if request.user.is_authenticated:
         return redirect(get_post_login_url(request.user))
-    return render(request, "accounts/home.html")
+    from accounts.home_content import get_home_page_context
+
+    return render(request, "accounts/home.html", get_home_page_context())
 
 
 @login_required

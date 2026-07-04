@@ -17,5 +17,6 @@ urlpatterns = [
     path("ledger/", views.points_ledger, name="points_ledger"),
     path("point-rules/", views.point_rules, name="point_rules"),
     path("settings/", views.site_settings, name="site_settings"),
+    path("settings/home/", views.home_page_settings, name="home_page_settings"),
     path("settings/roles/", views.role_management, name="role_management"),
 ]

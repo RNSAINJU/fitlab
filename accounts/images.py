@@ -6,6 +6,7 @@ from PIL import Image, UnidentifiedImageError
 
 MAX_PROFILE_EDGE = 1200
 MAX_LOGO_EDGE = 512
+MAX_HOME_EDGE = 1920
 JPEG_QUALITY = 82
 
 
@@ -18,6 +19,12 @@ def optimize_site_logo(uploaded_file):
     """Resize and compress the site logo for topbars and auth screens."""
     base_name = (uploaded_file.name or "logo").rsplit(".", 1)[0]
     return _optimize_image_body(uploaded_file, "logo", base_name, MAX_LOGO_EDGE)
+
+
+def optimize_home_image(uploaded_file, field_name="home_image"):
+    """Resize and compress home page photos (hero, gallery, trainers, etc.)."""
+    base_name = (uploaded_file.name or field_name).rsplit(".", 1)[0]
+    return _optimize_image_body(uploaded_file, field_name, base_name, MAX_HOME_EDGE)
 
 
 def _optimize_image_body(uploaded_file, field_name, file_stem, max_edge):

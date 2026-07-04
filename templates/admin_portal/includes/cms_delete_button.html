@@ -1,0 +1,7 @@
+<form method="post" class="home-cms-delete" onsubmit="return confirm('{{ confirm_message|default:'Delete this item?' }}');">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="delete_item">
+  <input type="hidden" name="item_type" value="{{ item_type }}">
+  <input type="hidden" name="item_id" value="{{ item_id }}">
+  <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Delete</button>
+</form>
