@@ -1,0 +1,13 @@
+{% extends "admin_base.html" %}
+{% block title %}Settings — {{ site_config.admin_title }}{% endblock %}
+{% block admin_page_title %}Settings{% endblock %}
+{% block content %}
+{% include "includes/settings_nav.html" %}
+{% block settings_content %}{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+{% load static %}
+<script src="{% static 'js/settings-nav.js' %}"></script>
+{% endblock %}
