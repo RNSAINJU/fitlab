@@ -1,5 +1,7 @@
 import csv
 import io
+import re
+import secrets
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
@@ -129,6 +131,35 @@ def _split_name(name):
     return parts[0], parts[1] if len(parts) > 1 else ""
 
 
+def _generate_username(member_id=None, phone=None, name=None):
+    candidates = []
+    if member_id:
+        safe = re.sub(r"[^\w.-]", "", member_id)[:40]
+        if safe:
+            candidates.append(f"member-{safe}")
+    if phone:
+        digits = re.sub(r"\D", "", phone)
+        if digits:
+            candidates.append(f"phone-{digits}")
+    if name:
+        slug = re.sub(r"[^\w]", "", name.lower().replace(" ", ""))[:20]
+        if slug:
+            candidates.append(f"member-{slug}")
+
+    for base in candidates:
+        username = base
+        suffix = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base}-{suffix}"
+            suffix += 1
+        return username
+
+    while True:
+        username = f"import-{secrets.token_hex(4)}"
+        if not User.objects.filter(username=username).exists():
+            return username
+
+
 def _row_to_dict(reader_row, field_map):
     data = {}
     for src, dest in field_map.items():
@@ -182,8 +213,8 @@ def import_customers_csv(uploaded_file):
         if normalized in CSV_HEADERS:
             field_map[header] = normalized
 
-    if "email" not in field_map.values() and "member_id" not in field_map.values():
-        return 0, 0, ["CSV must include at least an email or member_id column."]
+    if not any(v in field_map.values() for v in ("email", "member_id", "phone")):
+        return 0, 0, ["CSV must include at least a member_id, email, or phone column."]
 
     for line_no, row in enumerate(reader, start=2):
         if not any((value or "").strip() for value in row.values()):
@@ -193,6 +224,7 @@ def import_customers_csv(uploaded_file):
         try:
             member_id = data.get("member_id") or None
             email = data.get("email", "").lower()
+            phone = data.get("phone", "")
             name = data.get("name", "")
 
             user = None
@@ -200,12 +232,15 @@ def import_customers_csv(uploaded_file):
                 user = User.objects.filter(member_id=member_id, is_staff=False).first()
             if user is None and email:
                 user = User.objects.filter(email__iexact=email, is_staff=False).first()
+            if user is None and phone:
+                user = User.objects.filter(phone=phone, is_staff=False).first()
 
             is_new = user is None
             if is_new:
-                if not email:
-                    raise ValueError("Email is required for new members.")
-                user = User(email=email, username=email)
+                if not email and not member_id and not phone:
+                    raise ValueError("New members need member_id, email, or phone.")
+                username = _generate_username(member_id, phone, name)
+                user = User(username=username, email=email)
                 user.set_unusable_password()
                 user.approval_status = User.ApprovalStatus.APPROVED
 
@@ -216,8 +251,7 @@ def import_customers_csv(uploaded_file):
 
             if email:
                 user.email = email
-                if not user.username or user.username == user.email:
-                    user.username = email
+                user.username = email
 
             if member_id:
                 user.member_id = member_id
@@ -250,7 +284,7 @@ def import_customers_csv(uploaded_file):
             else:
                 updated += 1
         except Exception as exc:
-            label = data.get("email") or data.get("member_id") or f"row {line_no}"
+            label = data.get("email") or data.get("member_id") or data.get("phone") or f"row {line_no}"
             errors.append(f"Line {line_no} ({label}): {exc}")
 
     return created, updated, errors
