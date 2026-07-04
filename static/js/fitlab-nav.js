@@ -37,16 +37,20 @@
         e.stopPropagation();
         var group = btn.closest("[data-sidebar-group]");
         if (!group) return;
+        var subnav = group.querySelector(".admin-sidebar__subnav");
         var open = !group.classList.contains("is-open");
         document.querySelectorAll("[data-sidebar-group].is-open").forEach(function (other) {
           if (other !== group) {
             other.classList.remove("is-open");
             var otherToggle = other.querySelector("[data-sidebar-group-toggle]");
+            var otherSubnav = other.querySelector(".admin-sidebar__subnav");
             if (otherToggle) otherToggle.setAttribute("aria-expanded", "false");
+            if (otherSubnav) otherSubnav.hidden = true;
           }
         });
         group.classList.toggle("is-open", open);
         btn.setAttribute("aria-expanded", open ? "true" : "false");
+        if (subnav) subnav.hidden = !open;
       });
     });
 
