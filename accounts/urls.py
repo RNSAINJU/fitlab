@@ -5,7 +5,8 @@ from . import views
 app_name = "accounts"
 
 urlpatterns = [
-    path("", views.dashboard, name="dashboard"),
+    path("", views.home, name="home"),
+    path("dashboard/", views.dashboard, name="dashboard"),
     path("register", views.register, name="register_short"),
     path("accounts/login/", views.FitlabLoginView.as_view(), name="login"),
     path("accounts/register/", views.register, name="register"),

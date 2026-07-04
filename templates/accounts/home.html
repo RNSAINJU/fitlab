@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}{{ site_config.site_name }} — Premium Fitness in Kathmandu{% endblock %}
+{% block body %}
+<div class="home-page">
+  <header class="home-header">
+    <div class="home-header__inner">
+      <a href="{% url 'accounts:home' %}" class="home-header__brand">
+        {% include "includes/site_brand.html" with extra_class="site-logo--home" %}
+      </a>
+      <nav class="home-header__nav" aria-label="Main">
+        <a href="#about">About</a>
+        <a href="#programs">Programs</a>
+        <a href="#why-us">Why Us</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="home-header__actions">
+        <a href="{% url 'accounts:login' %}" class="home-btn home-btn--ghost">Login</a>
+        <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary">Join Now</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="home-hero">
+    <div class="home-hero__overlay"></div>
+    <div class="home-hero__content">
+      <p class="home-kicker">Welcome to {{ site_config.site_name }}</p>
+      <h1>A Private Gym Experience in Kathmandu</h1>
+      <p class="home-hero__lead">
+        Personalized training, dedicated equipment, and expert coaching tailored to your goals.
+        Earn TFL Points every time you train and unlock elite rewards.
+      </p>
+      <div class="home-hero__actions">
+        <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary home-btn--lg">Start Your Journey</a>
+        <a href="{% url 'accounts:login' %}" class="home-btn home-btn--outline home-btn--lg">Member Login</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section" id="about">
+    <div class="home-container home-about">
+      <div class="home-about__copy">
+        <p class="home-kicker">About Us</p>
+        <h2>Fitness built around you</h2>
+        <p>
+          At {{ site_config.site_name }}, we believe fitness is not one-size-fits-all. Our trainers
+          assess your goals, design custom programs, and guide you through every session — whether
+          you want to lose weight, build strength, improve endurance, or prepare for competition.
+        </p>
+        <p>
+          During your session, the equipment and coach are dedicated to you. No waiting for racks,
+          no crowded floors — just focused, high-performance training in a motivating environment.
+        </p>
+      </div>
+      <div class="home-about__card">
+        <h3>What you get</h3>
+        <ul>
+          <li>Personalized workout programming</li>
+          <li>Nutrition &amp; performance guidance</li>
+          <li>TFL Points loyalty rewards</li>
+          <li>Progress tracking in the member app</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-section--dark" id="programs">
+    <div class="home-container">
+      <p class="home-kicker">Training Sessions</p>
+      <h2 class="home-section__title">Programs for every goal</h2>
+      <div class="home-cards">
+        <article class="home-card">
+          <span class="home-card__icon" aria-hidden="true">01</span>
+          <h3>Personal Training</h3>
+          <p>One-on-one coaching with programs built exclusively for your body, schedule, and targets.</p>
+        </article>
+        <article class="home-card">
+          <span class="home-card__icon" aria-hidden="true">02</span>
+          <h3>Couple Training</h3>
+          <p>Train with a partner and stay accountable while both of you get expert attention.</p>
+        </article>
+        <article class="home-card">
+          <span class="home-card__icon" aria-hidden="true">03</span>
+          <h3>Loyalty Rewards</h3>
+          <p>Earn TFL Points for check-ins, referrals, and milestones — redeem for exclusive perks.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section" id="why-us">
+    <div class="home-container home-why">
+      <div>
+        <p class="home-kicker">Why {{ site_config.site_name }}</p>
+        <h2>Step into a gym designed to inspire</h2>
+        <p class="home-why__lead">
+          Cutting-edge equipment, spacious workout zones, and trainers who push you to achieve
+          remarkable results — every visit is an opportunity to level up.
+        </p>
+      </div>
+      <div class="home-stats">
+        <div class="home-stat">
+          <strong>100%</strong>
+          <span>Dedicated equipment during your session</span>
+        </div>
+        <div class="home-stat">
+          <strong>1:1</strong>
+          <span>Coach attention every workout</span>
+        </div>
+        <div class="home-stat">
+          <strong>TFL</strong>
+          <span>Points &amp; rewards for members</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-section--dark">
+    <div class="home-container">
+      <p class="home-kicker">Testimonials</p>
+      <h2 class="home-section__title">What members say</h2>
+      <div class="home-quotes">
+        <blockquote class="home-quote">
+          <p>"A premium private gym experience with real personal attention. Every session feels purposeful."</p>
+          <footer>— Fitlab Member</footer>
+        </blockquote>
+        <blockquote class="home-quote">
+          <p>"The loyalty program keeps me motivated. I earn points, track progress, and actually enjoy showing up."</p>
+          <footer>— Loyalty Member</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-cta" id="contact">
+    <div class="home-container home-cta__inner">
+      <div>
+        <h2>Ready to join the lab?</h2>
+        <p>Create your account, get approved by our team, and start earning TFL Points from day one.</p>
+      </div>
+      <div class="home-cta__actions">
+        <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary home-btn--lg">Join the Elite</a>
+        <a href="{% url 'accounts:login' %}" class="home-btn home-btn--outline home-btn--lg">Member Login</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="home-footer">
+    <div class="home-container home-footer__inner">
+      <div class="home-footer__brand">{% include "includes/site_brand.html" %}</div>
+      <p>Kathmandu, Nepal · Premium fitness &amp; loyalty rewards</p>
+      <p class="home-footer__links">
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a href="{% url 'accounts:register' %}">Register</a>
+      </p>
+    </div>
+  </footer>
+</div>
+{% endblock %}

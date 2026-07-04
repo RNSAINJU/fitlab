@@ -183,7 +183,7 @@ SOCIAL_AUTH_APPLE_ENABLED = _social_flags["apple"]
 
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "accounts:dashboard"
-LOGOUT_REDIRECT_URL = "accounts:login"
+LOGOUT_REDIRECT_URL = "accounts:home"
 
 # Fitlab business defaults
 REFERRAL_BONUS_POINTS = int(os.environ.get("REFERRAL_BONUS_POINTS", "5"))
