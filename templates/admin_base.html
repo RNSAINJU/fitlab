@@ -25,9 +25,10 @@
     <a href="{% url 'admin_portal:point_rules' %}" class="{% active_nav request 'admin_portal' 'point_rules' %}">TFL Point Rules</a>
     <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Points Ledger</a>
     {% if request.user.is_superuser %}
-    <a href="{% url 'admin_portal:role_management' %}" class="{% active_nav request 'admin_portal' 'role_management' %}">Roles</a>
-    {% endif %}
+    <a href="{% url 'admin_portal:site_settings' %}" class="{% if request.resolver_match.url_name == 'site_settings' or request.resolver_match.url_name == 'role_management' %}is-active{% endif %}">Settings</a>
+    {% else %}
     <a href="{% url 'admin_portal:site_settings' %}" class="{% active_nav request 'admin_portal' 'site_settings' %}">Settings</a>
+    {% endif %}
     <div class="admin-sidebar__footer">
       <a href="{% url 'accounts:dashboard' %}">Customer App</a>
       <a href="{% url 'accounts:logout' %}">Logout</a>

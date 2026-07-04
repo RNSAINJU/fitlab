@@ -28,7 +28,7 @@ def superuser_required(view_func):
             return redirect("accounts:dashboard")
         if not request.user.is_superuser:
             messages.error(request, "Only superusers can manage admin roles.")
-            return redirect("admin_portal:dashboard")
+            return redirect("admin_portal:site_settings")
         return view_func(request, *args, **kwargs)
 
     return _wrapped
