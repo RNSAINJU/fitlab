@@ -137,6 +137,12 @@ def edit_profile(request):
     return render(request, "accounts/profile_edit.html", {"form": form})
 
 
+def home(request):
+    if request.user.is_authenticated:
+        return redirect(get_post_login_url(request.user))
+    return render(request, "accounts/home.html")
+
+
 @login_required
 def dashboard(request):
     user = request.user
@@ -178,7 +184,7 @@ def dashboard(request):
 def logout_view(request):
     logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect("accounts:login")
+    return redirect("accounts:home")
 
 
 def connection_lost(request):
