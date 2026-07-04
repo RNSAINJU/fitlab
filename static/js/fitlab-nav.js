@@ -37,7 +37,15 @@
         e.stopPropagation();
         var group = btn.closest("[data-sidebar-group]");
         if (!group) return;
-        var open = group.classList.toggle("is-open");
+        var open = !group.classList.contains("is-open");
+        document.querySelectorAll("[data-sidebar-group].is-open").forEach(function (other) {
+          if (other !== group) {
+            other.classList.remove("is-open");
+            var otherToggle = other.querySelector("[data-sidebar-group-toggle]");
+            if (otherToggle) otherToggle.setAttribute("aria-expanded", "false");
+          }
+        });
+        group.classList.toggle("is-open", open);
         btn.setAttribute("aria-expanded", open ? "true" : "false");
       });
     });

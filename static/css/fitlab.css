@@ -1793,13 +1793,18 @@ a.app-avatar:hover {
   text-align: left;
 }
 
-.admin-sidebar__group.is-open > .admin-sidebar__group-toggle {
+.admin-sidebar__group-label {
+  flex: 1;
+}
+
+.admin-sidebar__group.is-open > .admin-sidebar__group-toggle:not(.is-active) {
   color: var(--text);
 }
 
 .admin-sidebar__chevron {
   width: 7px;
   height: 7px;
+  margin-left: auto;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
   transform: rotate(45deg);
@@ -1816,6 +1821,7 @@ a.app-avatar:hover {
   display: none;
   flex-direction: column;
   gap: 8px;
+  overflow: hidden;
 }
 
 .admin-sidebar__group.is-open .admin-sidebar__subnav {
