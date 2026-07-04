@@ -32,6 +32,8 @@
 .home-section-title {
   position: relative;
   margin-bottom: 32px;
+  padding-top: 8px;
+  overflow: hidden;
 }
 
 .home-section-title h2 {
@@ -54,10 +56,11 @@
 
 .home-watermark {
   position: absolute;
-  top: -20px;
+  top: -8px;
   left: 0;
+  right: 0;
   font-family: var(--home-font-display);
-  font-size: clamp(80px, 14vw, 160px);
+  font-size: clamp(48px, 12vw, 140px);
   font-weight: 700;
   text-transform: uppercase;
   color: transparent;
@@ -66,6 +69,9 @@
   pointer-events: none;
   user-select: none;
   z-index: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 .home-section-title h2 {
@@ -295,6 +301,9 @@
 
 .home-hero__content {
   position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 900px;
   padding: calc(var(--home-header-h) + 40px) 24px 80px;
 }
 
@@ -317,6 +326,7 @@
 /* ── Powerlifters accordion ── */
 .home-powerlifters__wrap {
   position: relative;
+  overflow: hidden;
 }
 
 .home-accordion {
@@ -449,20 +459,25 @@
 
 .home-slider__arrow {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: none;
-  background: transparent;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
   color: #fff;
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1;
   cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  opacity: 0.9;
+  transition: opacity 0.2s, background 0.2s;
+  z-index: 2;
 }
 
-.home-slider__arrow:hover { opacity: 1; }
+.home-slider__arrow:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.65);
+}
 
 .home-slider__arrow--sm {
   font-size: 22px;
@@ -682,9 +697,15 @@
   overflow: hidden;
 }
 
+.home-gallery-section .home-container {
+  overflow: hidden;
+}
+
 .home-slider--gallery {
-  max-width: 480px;
+  position: relative;
+  max-width: min(480px, 100%);
   margin: 0 auto;
+  padding: 0 44px;
 }
 
 .home-slider__track--gallery {
@@ -696,11 +717,10 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
 }
 
-.home-slider--gallery .home-slider__arrow--prev { left: -48px; }
-.home-slider--gallery .home-slider__arrow--next { right: -48px; }
+.home-slider--gallery .home-slider__arrow--prev { left: 0; }
+.home-slider--gallery .home-slider__arrow--next { right: 0; }
 
 /* ── Testimonials ── */
 .home-quotes {
@@ -762,6 +782,7 @@
 
 .home-clients__track {
   flex: 1;
+  min-width: 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
@@ -874,7 +895,7 @@
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
-  .home-accordion { height: 320px; }
+  .home-accordion { height: 300px; }
 
   .home-welcome,
   .home-training,
@@ -896,45 +917,155 @@
     margin-right: auto;
   }
 
+  .home-price-card {
+    min-height: auto;
+  }
+
   .home-footer__grid {
     grid-template-columns: 1fr 1fr;
   }
 
-  .home-slider--gallery .home-slider__arrow--prev { left: 0; }
-  .home-slider--gallery .home-slider__arrow--next { right: 0; }
+  .home-clients__track {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
+  :root {
+    --home-container: min(1200px, calc(100% - 32px));
+    --home-header-h: 64px;
+  }
+
   .home-header__nav,
   .home-header__actions { display: none; }
 
   .home-menu-toggle { display: inline-flex; }
 
-  .home-section { padding: 64px 0; }
-
-  .home-accordion {
-    flex-direction: column;
-    height: auto;
+  .home-header__brand .site-name {
+    font-size: 15px;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
+
+  .home-section { padding: 56px 0; }
+
+  .home-section-title {
+    margin-bottom: 24px;
+    padding-top: 12px;
+  }
+
+  .home-watermark {
+    font-size: clamp(40px, 16vw, 72px);
+    top: 0;
+  }
+
+  /* Horizontal scroll accordion on mobile */
+  .home-accordion {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    height: 300px;
+    gap: 8px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .home-accordion::-webkit-scrollbar { display: none; }
 
   .home-accordion__item,
   .home-accordion__item.is-active {
-    flex: none;
-    height: 80px;
+    flex: 0 0 78%;
+    min-width: 78%;
+    height: 100%;
+    scroll-snap-align: center;
   }
 
-  .home-accordion__item.is-active { height: 280px; }
+  .home-accordion__label {
+    opacity: 1;
+    font-size: 12px;
+    padding: 14px 12px;
+  }
+
+  .home-welcome__trainers { order: 0; }
+
+  .home-slider {
+    gap: 8px;
+  }
+
+  .home-slider__track {
+    min-height: 320px;
+  }
+
+  .home-slider__caption {
+    font-size: 18px;
+    bottom: 16px;
+    padding: 0 12px;
+  }
+
+  .home-schedule-section {
+    background-attachment: scroll;
+    padding: 56px 0;
+  }
 
   .home-schedule__grid { grid-template-columns: 1fr; }
 
-  .home-schedule__visual { order: -1; }
+  .home-schedule__cell {
+    border-right: none;
+    padding: 18px 4px;
+  }
+
+  .home-schedule__visual {
+    order: -1;
+    margin-bottom: 8px;
+  }
+
+  .home-schedule__frame img {
+    width: min(220px, 70vw);
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  .home-pricing {
+    margin-top: 24px;
+  }
+
+  .home-price-card__inner {
+    padding: 22px 18px;
+  }
+
+  .home-slider--gallery {
+    padding: 0 36px;
+  }
+
+  .home-clients__row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
   .home-clients__track {
     grid-template-columns: 1fr;
+    width: 100%;
   }
 
-  .home-client-card { display: none; }
-  .home-client-card.is-active { display: block; }
+  .home-client-card {
+    display: none;
+    opacity: 1;
+  }
+
+  .home-client-card.is-active {
+    display: block;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .home-clients__row .home-slider__arrow--sm {
+    width: 36px;
+    height: 36px;
+  }
 
   .home-footer__grid { grid-template-columns: 1fr; }
 
@@ -942,10 +1073,47 @@
     flex-direction: column;
     text-align: center;
   }
+
+  .home-footer {
+    padding-top: 48px;
+  }
 }
 
 @media (max-width: 480px) {
-  :root { --home-container: calc(100% - 32px); }
+  :root { --home-container: calc(100% - 24px); }
 
-  .home-hero h1 { font-size: 42px; }
+  .home-hero {
+    min-height: 85vh;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(36px, 11vw, 48px);
+    margin-bottom: 24px;
+    line-height: 1.05;
+  }
+
+  .home-hero__content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .home-hero .home-btn--outline {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .home-accordion__item,
+  .home-accordion__item.is-active {
+    flex: 0 0 88%;
+    min-width: 88%;
+  }
+
+  .home-quote {
+    padding: 20px;
+  }
+
+  .home-training__list li {
+    font-size: 13px;
+    padding-left: 20px;
+  }
 }
