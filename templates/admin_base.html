@@ -28,11 +28,11 @@
     <div class="admin-sidebar__group {% if settings_active %}is-open{% endif %}" data-sidebar-group>
       <button
         type="button"
-        class="admin-sidebar__group-toggle {% if settings_active %}is-active{% endif %}"
+        class="admin-sidebar__link admin-sidebar__group-toggle"
         data-sidebar-group-toggle
         aria-expanded="{% if settings_active %}true{% else %}false{% endif %}"
       >
-        Settings
+        <span>Settings</span>
         <span class="admin-sidebar__chevron" aria-hidden="true"></span>
       </button>
       <div class="admin-sidebar__subnav">

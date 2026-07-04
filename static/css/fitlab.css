@@ -1750,38 +1750,11 @@ a.app-avatar:hover {
   font-weight: 700;
 }
 
-.admin-sidebar a {
+.admin-sidebar a,
+.admin-sidebar__link {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #71717a;
-}
-
-.admin-sidebar a.is-active {
-  background: rgba(227, 6, 19, 0.12);
-  color: var(--accent);
-  border: 1px solid rgba(227, 6, 19, 0.25);
-}
-
-.admin-sidebar a:hover { color: var(--text); }
-
-.admin-sidebar__group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.admin-sidebar__group-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid transparent;
@@ -1791,43 +1764,58 @@ a.app-avatar:hover {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #71717a;
-  cursor: pointer;
-  text-align: left;
+  text-decoration: none;
 }
 
-.admin-sidebar__group-toggle:hover {
-  color: var(--text);
-}
-
-.admin-sidebar__group-toggle.is-active {
+.admin-sidebar a.is-active,
+.admin-sidebar__link.is-active {
   background: rgba(227, 6, 19, 0.12);
   color: var(--accent);
   border-color: rgba(227, 6, 19, 0.25);
 }
 
+.admin-sidebar a:hover,
+.admin-sidebar__link:hover {
+  color: var(--text);
+}
+
+.admin-sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-sidebar__group-toggle {
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.admin-sidebar__group.is-open > .admin-sidebar__group-toggle {
+  color: var(--text);
+}
+
 .admin-sidebar__chevron {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
   transform: rotate(45deg);
   transition: transform 0.2s ease;
   flex-shrink: 0;
-  margin-top: -2px;
+  opacity: 0.7;
 }
 
 .admin-sidebar__group.is-open .admin-sidebar__chevron {
   transform: rotate(-135deg);
-  margin-top: 2px;
 }
 
 .admin-sidebar__subnav {
   display: none;
   flex-direction: column;
-  gap: 4px;
-  padding-left: 10px;
-  margin-left: 6px;
-  border-left: 1px solid #27272a;
+  gap: 8px;
 }
 
 .admin-sidebar__group.is-open .admin-sidebar__subnav {
@@ -1835,8 +1823,7 @@ a.app-avatar:hover {
 }
 
 .admin-sidebar__subnav a {
-  padding: 10px 14px;
-  font-size: 10px;
+  padding-left: 28px;
 }
 
 .admin-sidebar__footer {
