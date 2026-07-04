@@ -25,7 +25,7 @@ if [ -f .env ]; then
   # shellcheck disable=SC1091
   source .env
   set +a
-  if [ -n "${FITLAB_ADMIN_PASSWORD:-}" ]; then
+  if [ -n "${FITLAB_ADMIN_PASSWORD:-}" ] && [ "${FITLAB_ROTATE_ADMIN_PASSWORD:-0}" = "1" ]; then
     echo "==> Rotate admin password from FITLAB_ADMIN_PASSWORD"
     .venv/bin/python manage.py rotate_admin_password || true
   fi
