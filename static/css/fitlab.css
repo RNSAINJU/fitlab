@@ -1882,6 +1882,42 @@ a.app-avatar:hover {
   letter-spacing: 0.05em;
 }
 
+.admin-panel__head--split {
+  align-items: flex-start;
+}
+
+.admin-directory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-import-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-import-form__file {
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+}
+
+.admin-import-form__file input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+.admin-import-form__label {
+  pointer-events: none;
+}
+
 .admin-toolbar {
   display: flex;
   gap: 12px;

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -15,6 +16,7 @@ from loyalty.services import admin_adjust_points, deduct_points, get_balance
 from rewards.forms import RewardForm
 from rewards.models import RedemptionRequest, Reward
 
+from .customer_csv import export_customers_csv, import_customers_csv
 from .decorators import staff_required, superuser_required
 from .forms import CreateAdminForm, DistributePointsForm, PaymentPointsForm, PromoteAdminForm
 
@@ -115,10 +117,54 @@ def customer_directory(request):
     )
 
 
+@staff_required
+def customer_export(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="thefitlab-customers.csv"'
+    export_customers_csv(response)
+    return response
+
+
+@staff_required
+def customer_import(request):
+    if request.method != "POST":
+        return redirect("admin_portal:customer_directory")
+
+    csv_file = request.FILES.get("csv_file")
+    if not csv_file:
+        messages.error(request, "Please choose a CSV file to import.")
+        return redirect("admin_portal:customer_directory")
+
+    if not csv_file.name.lower().endswith(".csv"):
+        messages.error(request, "Upload a .csv file.")
+        return redirect("admin_portal:customer_directory")
+
+    created, updated, errors = import_customers_csv(csv_file)
+    if created or updated:
+        messages.success(
+            request,
+            f"Import complete: {created} created, {updated} updated.",
+        )
+    if errors:
+        preview = "; ".join(errors[:5])
+        suffix = f" (+{len(errors) - 5} more)" if len(errors) > 5 else ""
+        messages.warning(request, f"{len(errors)} row(s) skipped: {preview}{suffix}")
+    elif not created and not updated:
+        messages.info(request, "No customer rows were found in the CSV.")
+
+    return redirect("admin_portal:customer_directory")
+
+
 def models_q(q):
     from django.db.models import Q
 
-    return Q(email__icontains=q) | Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(phone__icontains=q)
+    return (
+        Q(email__icontains=q)
+        | Q(first_name__icontains=q)
+        | Q(last_name__icontains=q)
+        | Q(phone__icontains=q)
+        | Q(member_id__icontains=q)
+    )
 
 
 @staff_required
