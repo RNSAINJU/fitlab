@@ -24,7 +24,7 @@
     <a href="{% url 'admin_portal:rewards_list' %}" class="{% if request.resolver_match.url_name == 'rewards_list' or request.resolver_match.url_name == 'reward_create' %}is-active{% endif %}">Rewards</a>
     <a href="{% url 'admin_portal:point_rules' %}" class="{% active_nav request 'admin_portal' 'point_rules' %}">TFL Point Rules</a>
     <a href="{% url 'admin_portal:points_ledger' %}" class="{% active_nav request 'admin_portal' 'points_ledger' %}">Points Ledger</a>
-    {% with settings_active=request.resolver_match.url_name == 'site_settings' or request.resolver_match.url_name == 'role_management' %}
+    {% in_settings_section request as settings_active %}
     <div class="admin-sidebar__group {% if settings_active %}is-open{% endif %}" data-sidebar-group>
       <button
         type="button"
@@ -42,7 +42,6 @@
         {% endif %}
       </div>
     </div>
-    {% endwith %}
     <div class="admin-sidebar__footer">
       <a href="{% url 'accounts:dashboard' %}">Customer App</a>
       <a href="{% url 'accounts:logout' %}">Logout</a>
