@@ -18,6 +18,14 @@ def active_nav(request, app_name, url_name=""):
     return ""
 
 
+@register.simple_tag
+def in_settings_section(request):
+    match = request.resolver_match
+    if not match:
+        return False
+    return match.url_name in ("site_settings", "role_management")
+
+
 @register.filter
 def points_from_title(title):
     if "+" in str(title) and "TFL" in str(title):
