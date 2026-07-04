@@ -324,7 +324,6 @@ def role_management(request):
             "promote_form": promote_form,
             "create_form": create_form,
             "eligible_users": eligible_users,
-            "settings_section": "roles",
         },
     )
 
@@ -599,6 +598,5 @@ def site_settings(request):
             "settings_form": SiteSettingsForm(instance=config),
             "wipe_form": WipeAllDataForm(),
             "site_config": config,
-            "settings_section": "general",
         },
     )

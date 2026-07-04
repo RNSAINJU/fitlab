@@ -31,6 +31,17 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-sidebar-group-toggle]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var group = btn.closest("[data-sidebar-group]");
+        if (!group) return;
+        var open = group.classList.toggle("is-open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    });
+
     document.querySelectorAll("[data-sidebar-toggle]").forEach(function (btn) {
       btn.addEventListener("click", function (e) {
         e.preventDefault();
