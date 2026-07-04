@@ -131,6 +131,9 @@ if not DEBUG:
     if os.environ.get("DJANGO_HTTPS", "0") == "1":
         SESSION_COOKIE_SECURE = True
         CSRF_COOKIE_SECURE = True
+
+    # Only force HTTP→HTTPS redirect when explicitly enabled (not when behind Cloudflare Flexible).
+    if os.environ.get("FITLAB_SSL_REDIRECT", "0") == "1":
         SECURE_SSL_REDIRECT = True
         SECURE_HSTS_SECONDS = 31536000
         SECURE_HSTS_INCLUDE_SUBDOMAINS = True
