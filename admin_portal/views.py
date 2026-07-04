@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from django.db.models import Count, Sum
 
+from accounts.models import SiteConfiguration
 from activity.services import log_activity
 from loyalty.forms import CustomRuleForm, PointRuleForm, SystemRuleForm
 from loyalty.helpers import get_membership_tier
@@ -18,7 +19,15 @@ from rewards.models import RedemptionRequest, Reward
 
 from .customer_csv import export_customers_csv, import_customers_csv
 from .decorators import staff_required, superuser_required
-from .forms import CreateAdminForm, DistributePointsForm, PaymentPointsForm, PromoteAdminForm
+from .forms import (
+    CreateAdminForm,
+    DistributePointsForm,
+    PaymentPointsForm,
+    PromoteAdminForm,
+    SiteSettingsForm,
+    WipeAllDataForm,
+)
+from .site_services import wipe_all_application_data
 
 User = get_user_model()
 
@@ -542,5 +551,52 @@ def point_rules(request):
             "recent_awards": recent_awards,
             "active_rules": active_rules,
             "total_distributed": total_distributed,
+        },
+    )
+
+
+@staff_required
+def site_settings(request):
+    config = SiteConfiguration.load()
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "branding":
+            form = SiteSettingsForm(request.POST, request.FILES, instance=config)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Site name and logo updated.")
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:site_settings")
+
+        if action == "wipe":
+            if not request.user.is_superuser:
+                messages.error(request, "Only superusers can delete all application data.")
+                return redirect("admin_portal:site_settings")
+
+            form = WipeAllDataForm(request.POST)
+            if form.is_valid():
+                stats = wipe_all_application_data()
+                messages.success(
+                    request,
+                    "All customer and loyalty data was removed. "
+                    f"Deleted {stats['customers_deleted']} customer account(s), "
+                    f"{stats['transactions_deleted']} point transaction(s), "
+                    f"{stats['rewards_deleted']} reward(s), and related records. "
+                    "Admin accounts and site settings were kept.",
+                )
+            else:
+                messages.error(request, form.errors.as_text())
+            return redirect("admin_portal:site_settings")
+
+    return render(
+        request,
+        "admin_portal/site_settings.html",
+        {
+            "settings_form": SiteSettingsForm(instance=config),
+            "wipe_form": WipeAllDataForm(),
+            "site_config": config,
         },
     )

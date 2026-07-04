@@ -2,9 +2,55 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
+from accounts.images import optimize_site_logo
+from accounts.models import SiteConfiguration
 from loyalty.models import PointRule, PointRuleKind, PointRuleTrigger
 
 User = get_user_model()
+
+WIPE_CONFIRM_PHRASE = "DELETE ALL DATA"
+
+
+class SiteSettingsForm(forms.ModelForm):
+    remove_logo = forms.BooleanField(required=False, label="Remove current logo")
+
+    class Meta:
+        model = SiteConfiguration
+        fields = ["site_name", "logo"]
+        widgets = {
+            "site_name": forms.TextInput(attrs={"placeholder": "e.g. The Fitlab"}),
+        }
+
+    def clean_logo(self):
+        logo = self.cleaned_data.get("logo")
+        if not logo or not hasattr(logo, "read"):
+            return logo
+        try:
+            return optimize_site_logo(logo)
+        except ValueError as exc:
+            raise forms.ValidationError(str(exc)) from exc
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.cleaned_data.get("remove_logo") and instance.logo:
+            instance.logo.delete(save=False)
+            instance.logo = None
+        if commit:
+            instance.save()
+        return instance
+
+
+class WipeAllDataForm(forms.Form):
+    confirm_phrase = forms.CharField(
+        label=f'Type "{WIPE_CONFIRM_PHRASE}" to confirm',
+        widget=forms.TextInput(attrs={"autocomplete": "off", "placeholder": WIPE_CONFIRM_PHRASE}),
+    )
+
+    def clean_confirm_phrase(self):
+        phrase = self.cleaned_data["confirm_phrase"]
+        if phrase != WIPE_CONFIRM_PHRASE:
+            raise forms.ValidationError(f'You must type exactly: {WIPE_CONFIRM_PHRASE}')
+        return phrase
 
 
 class PromoteAdminForm(forms.Form):

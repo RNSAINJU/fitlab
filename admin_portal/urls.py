@@ -15,4 +15,5 @@ urlpatterns = [
     path("roles/", views.role_management, name="role_management"),
     path("ledger/", views.points_ledger, name="points_ledger"),
     path("point-rules/", views.point_rules, name="point_rules"),
+    path("settings/", views.site_settings, name="site_settings"),
 ]

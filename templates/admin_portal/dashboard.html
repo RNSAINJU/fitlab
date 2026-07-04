@@ -1,9 +1,9 @@
 {% extends "admin_base.html" %}
-{% block title %}Admin — The Fitlab{% endblock %}
+{% block title %}Admin — {{ site_config.site_name }}{% endblock %}
 {% block admin_page_title %}Command Center{% endblock %}
 {% block content %}
 <div class="admin-hero">
-  <p class="admin-kicker">The Fitlab Admin</p>
+  <p class="admin-kicker">{{ site_config.admin_title }}</p>
   <h1>Command Center</h1>
   <p>Monitor members, approve registrations, and manage TFL Points across the loyalty program.</p>
 </div>

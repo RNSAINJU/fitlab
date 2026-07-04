@@ -592,6 +592,50 @@ a { color: inherit; text-decoration: none; }
   white-space: nowrap;
 }
 
+.site-logo {
+  display: block;
+  max-height: 36px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+}
+
+.site-logo--topbar {
+  margin: 0 auto;
+  max-height: 32px;
+}
+
+.site-logo--auth {
+  max-height: 40px;
+}
+
+.site-logo--preview {
+  max-height: 64px;
+  margin-bottom: 12px;
+}
+
+.settings-logo-preview {
+  margin-bottom: 8px;
+}
+
+.site-name {
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+}
+
+.admin-panel--danger {
+  border-color: #450a0a;
+}
+
+.admin-danger-copy {
+  margin: 0 0 16px;
+  color: #a1a1aa;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .app-avatar {
   width: 40px;
   height: 40px;

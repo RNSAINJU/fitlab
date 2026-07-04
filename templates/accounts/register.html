@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Join Elite — The Fitlab{% endblock %}
+{% block title %}Join Elite — {{ site_config.site_name }}{% endblock %}
 {% block body %}
 <div class="auth-page auth-page--register">
   <div class="auth-bg-radial"></div>
 
   <header class="auth-topbar">
-    <a href="{% url 'accounts:login' %}" class="auth-topbar__logo">The Fitlab</a>
+    <a href="{% url 'accounts:login' %}" class="auth-topbar__logo">{% include "includes/site_brand.html" with extra_class="site-logo--auth" %}</a>
     <div class="auth-topbar__actions">
       <button type="button" class="auth-icon-btn" aria-label="Notifications">
         <svg width="16" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

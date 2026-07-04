@@ -14,6 +14,41 @@ def profile_photo_path(instance, filename):
     return f"profile_photos/user_{instance.pk}/{filename}"
 
 
+def site_logo_path(instance, filename):
+    return f"site/logo_{filename}"
+
+
+class SiteConfiguration(models.Model):
+    site_name = models.CharField(max_length=120, default="The Fitlab")
+    logo = models.ImageField(upload_to=site_logo_path, blank=True)
+
+    class Meta:
+        verbose_name = "Site configuration"
+        verbose_name_plural = "Site configuration"
+
+    def __str__(self):
+        return self.site_name
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+        from django.contrib.sites.models import Site
+
+        Site.objects.filter(pk=1).update(name=self.site_name)
+
+    def delete(self, *args, **kwargs):
+        raise RuntimeError("Site configuration cannot be deleted.")
+
+    @classmethod
+    def load(cls):
+        obj, _ = cls.objects.get_or_create(pk=1, defaults={"site_name": "The Fitlab"})
+        return obj
+
+    @property
+    def admin_title(self):
+        return f"{self.site_name} Admin"
+
+
 class User(AbstractUser):
     class ApprovalStatus(models.TextChoices):
         PENDING = "pending", "Pending"
