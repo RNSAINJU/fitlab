@@ -1,0 +1,90 @@
+{% extends "admin_base.html" %}
+{% block title %}Settings — {{ site_config.admin_title }}{% endblock %}
+{% block admin_page_title %}Settings{% endblock %}
+{% block content %}
+<div class="admin-hero">
+  <p class="admin-kicker">Branding &amp; Data</p>
+  <h1>Site Settings</h1>
+  <p>Update the public site name and logo shown across the customer app and admin portal.</p>
+</div>
+
+<div class="ledger-grid">
+  <div>
+    <div class="admin-panel">
+      <div class="admin-panel__head">
+        <h2>Branding</h2>
+      </div>
+      <form method="post" enctype="multipart/form-data" class="admin-form-panel" style="border:0;padding:0;margin:0">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="branding">
+
+        <div class="admin-form-row admin-form-row--full">
+          <div>
+            <label for="{{ settings_form.site_name.id_for_label }}">Site name</label>
+            {{ settings_form.site_name }}
+            {{ settings_form.site_name.errors }}
+            <p class="admin-form-hint">Shown in the top bar, login screens, and page titles.</p>
+          </div>
+        </div>
+
+        <div class="admin-form-row admin-form-row--full">
+          <div>
+            <label for="{{ settings_form.logo.id_for_label }}">Logo</label>
+            {% if site_config.logo %}
+              <div class="settings-logo-preview">
+                <img src="{{ site_config.logo.url }}" alt="Current logo" class="site-logo site-logo--preview">
+              </div>
+            {% endif %}
+            {{ settings_form.logo }}
+            {{ settings_form.logo.errors }}
+            <p class="admin-form-hint">Optional. JPG, PNG, or WebP. Resized to max 512px on upload.</p>
+          </div>
+        </div>
+
+        {% if site_config.logo %}
+          <label style="display:flex;align-items:center;gap:8px;margin:0 0 16px;cursor:pointer;font-size:13px">
+            {{ settings_form.remove_logo }}
+            <span>{{ settings_form.remove_logo.label }}</span>
+          </label>
+        {% endif %}
+
+        <button type="submit" class="admin-btn admin-btn--primary">Save branding</button>
+      </form>
+    </div>
+  </div>
+
+  {% if request.user.is_superuser %}
+  <div>
+    <div class="admin-panel admin-panel--danger">
+      <div class="admin-panel__head">
+        <h2>Delete all data</h2>
+      </div>
+      <p class="admin-danger-copy">
+        Permanently removes every customer account, point transaction, reward, redemption,
+        referral record, and activity event. Admin accounts, site settings, and default point
+        rules are preserved.
+      </p>
+      <form
+        method="post"
+        class="admin-form-panel"
+        style="border:0;padding:0;margin:0"
+        onsubmit="return confirm('This cannot be undone. Delete all customer and loyalty data?');"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="action" value="wipe">
+
+        <div class="admin-form-row admin-form-row--full">
+          <div>
+            <label for="{{ wipe_form.confirm_phrase.id_for_label }}">{{ wipe_form.confirm_phrase.label }}</label>
+            {{ wipe_form.confirm_phrase }}
+            {{ wipe_form.confirm_phrase.errors }}
+          </div>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn--danger">Delete all application data</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

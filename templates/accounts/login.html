@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Join the Lab — The Fitlab{% endblock %}
+{% block title %}Join the Lab — {{ site_config.site_name }}{% endblock %}
 {% block body %}
 <div class="auth-page auth-page--login">
   <div class="auth-bg-gradient"></div>
@@ -7,7 +7,7 @@
 
   <main class="auth-main">
     <header class="auth-brand">
-      <p class="auth-brand-kicker">The Fitlab Ecosystem</p>
+      <p class="auth-brand-kicker">{{ site_config.site_name }} Ecosystem</p>
       <h1 class="auth-brand-headline">
         Unleash<br><span class="accent">Intensity</span>
       </h1>

@@ -1,0 +1,9 @@
+{% if site_config.logo %}
+  <img
+    src="{{ site_config.logo.url }}"
+    alt="{{ site_config.site_name }}"
+    class="site-logo{% if extra_class %} {{ extra_class }}{% endif %}"
+  >
+{% else %}
+  <span class="site-name{% if extra_class %} {{ extra_class }}{% endif %}">{{ site_config.site_name }}</span>
+{% endif %}
