@@ -27,6 +27,8 @@ class User(AbstractUser):
         PREFER_NOT = "prefer_not", "Prefer not to say"
 
     phone = models.CharField(max_length=20, blank=True)
+    member_id = models.CharField(max_length=32, blank=True, null=True, unique=True)
+    address = models.TextField(blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(
         max_length=20,

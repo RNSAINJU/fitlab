@@ -27,17 +27,31 @@
 </div>
 
 <div class="admin-panel">
-  <div class="admin-panel__head">
-    <h2>All Members</h2>
-    <form method="get" class="admin-search">
-      <input type="search" name="q" value="{{ q }}" placeholder="Search name, email, or phone">
-    </form>
+  <div class="admin-panel__head admin-panel__head--split">
+    <div>
+      <h2>All Members</h2>
+      <form method="get" class="admin-search">
+        <input type="search" name="q" value="{{ q }}" placeholder="Search name, email, phone, or member ID">
+      </form>
+    </div>
+    <div class="admin-directory-actions">
+      <a href="{% url 'admin_portal:customer_export' %}" class="admin-btn admin-btn--outline">Export CSV</a>
+      <form method="post" action="{% url 'admin_portal:customer_import' %}" enctype="multipart/form-data" class="admin-import-form">
+        {% csrf_token %}
+        <label class="admin-btn admin-btn--outline admin-import-form__file">
+          <span class="admin-import-form__label">Choose CSV</span>
+          <input type="file" name="csv_file" accept=".csv,text/csv" required>
+        </label>
+        <button type="submit" class="admin-btn admin-btn--primary">Import CSV</button>
+      </form>
+    </div>
   </div>
 
   <table class="admin-table">
     <thead>
       <tr>
         <th>Member</th>
+        <th>Member ID</th>
         <th>Tier</th>
         <th>Balance</th>
         <th>Status</th>
@@ -58,6 +72,7 @@
               </div>
             </div>
           </td>
+          <td>{{ c.member_id|default:"—" }}</td>
           <td>
             <span class="tier-chip {% if 'Platinum' in row.tier %}tier-chip--platinum{% elif 'Gold' in row.tier %}tier-chip--gold{% endif %}">
               {{ row.tier }}
@@ -76,7 +91,7 @@
         </tr>
         {% endwith %}
       {% empty %}
-        <tr><td colspan="6" style="color:#71717a">No customers found.</td></tr>
+        <tr><td colspan="7" style="color:#71717a">No customers found.</td></tr>
       {% endfor %}
     </tbody>
   </table>
