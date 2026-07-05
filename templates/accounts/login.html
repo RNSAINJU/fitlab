@@ -7,6 +7,9 @@
 
   <main class="auth-main">
     <header class="auth-brand">
+      <a href="{% url 'accounts:home' %}" class="auth-brand__logo">
+        {% include "includes/site_brand.html" with extra_class="site-logo--auth-brand" %}
+      </a>
       <p class="auth-brand-kicker">{{ site_config.site_name }} Ecosystem</p>
       <h1 class="auth-brand-headline">
         Unleash<br><span class="accent">Intensity</span>

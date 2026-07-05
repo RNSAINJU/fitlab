@@ -167,6 +167,20 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ── Login brand header ── */
+.auth-brand__logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 20px;
+}
+
+.site-logo--auth-brand {
+  height: 52px;
+  max-height: 52px;
+  max-width: 210px;
+  width: auto;
+  object-fit: contain;
+}
+
 .auth-brand-kicker {
   text-align: center;
   font-size: 14px;
