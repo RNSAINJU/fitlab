@@ -27,9 +27,9 @@ html:has(.home-page) {
   --home-nav-link: rgba(255, 255, 255, 0.82);
   --home-heading: #ffffff;
   --home-hero-line: #ffffff;
-  --home-btn-primary-bg: #ffffff;
-  --home-btn-primary-text: #18181b;
-  --home-btn-primary-hover: #e4e4e7;
+  --home-btn-primary-bg: var(--home-accent);
+  --home-btn-primary-text: #ffffff;
+  --home-btn-primary-hover: var(--home-accent-hover);
   --home-ghost-text: #ffffff;
   --home-ghost-border: rgba(255, 255, 255, 0.35);
 }
