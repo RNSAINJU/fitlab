@@ -177,6 +177,9 @@
   --home-hero-line: #18181b;
   --home-ghost-text: #18181b;
   --home-ghost-border: #d4d4d8;
+  --home-btn-primary-bg: var(--home-accent);
+  --home-btn-primary-text: #ffffff;
+  --home-btn-primary-hover: var(--home-accent-hover);
 }
 
 [data-theme="light"] .home-header__nav a {
