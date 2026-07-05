@@ -328,8 +328,8 @@ body.home-nav-open {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  justify-content: flex-start;
+  text-align: left;
   background-color: #000;
   background-image:
     linear-gradient(180deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.92) 100%),
@@ -366,14 +366,14 @@ body.home-nav-open {
   position: relative;
   z-index: 2;
   width: var(--home-container);
-  max-width: 720px;
   margin: 0 auto;
+  max-width: none;
   padding: calc(var(--home-header-h) + 48px) 0 80px;
-  text-align: center;
+  text-align: left;
 }
 
 .home-hero h1 {
-  margin: 0 auto 20px;
+  margin: 0 0 20px;
   font-family: var(--home-font-display);
   font-size: clamp(32px, 7vw, 56px);
   font-weight: 900;
@@ -392,8 +392,8 @@ body.home-nav-open {
 }
 
 .home-hero__lead {
-  margin: 0 auto 28px;
-  max-width: 480px;
+  margin: 0 0 28px;
+  max-width: 420px;
   font-size: 16px;
   line-height: 1.55;
   font-weight: 500;
@@ -1201,8 +1201,8 @@ body.home-nav-open {
   }
 
   .home-hero__content {
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .home-hero .home-btn--outline {
