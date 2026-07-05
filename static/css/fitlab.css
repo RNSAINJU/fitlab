@@ -2436,6 +2436,11 @@ a.app-avatar:hover {
   .admin-main { padding: 20px; }
   .admin-header-bar { padding: 16px 20px; gap: 12px; }
   .admin-header-bar__title { flex: 1; min-width: 0; }
+  .site-logo--admin-header {
+    height: 24px;
+    max-height: 24px;
+    max-width: 96px;
+  }
   .sidebar-toggle { display: flex; }
   .admin-sidebar {
     display: flex;
