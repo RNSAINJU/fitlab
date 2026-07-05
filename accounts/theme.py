@@ -4,9 +4,9 @@ VALID_THEMES = frozenset({"dark", "light"})
 
 
 def resolve_theme(request):
-    """Resolve active theme: user preference, cookie, then dark default."""
+    """Resolve active theme: user preference, cookie, then light default."""
     if request.user.is_authenticated:
-        pref = getattr(request.user, "theme_preference", "") or "dark"
+        pref = getattr(request.user, "theme_preference", "") or "light"
         if pref in VALID_THEMES:
             return pref
 
@@ -14,4 +14,4 @@ def resolve_theme(request):
     if cookie_theme in VALID_THEMES:
         return cookie_theme
 
-    return "dark"
+    return "light"

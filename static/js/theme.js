@@ -29,7 +29,7 @@
   }
 
   function applyTheme(theme) {
-    if (!VALID[theme]) theme = "dark";
+    if (!VALID[theme]) theme = "light";
     document.documentElement.setAttribute("data-theme", theme);
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
       var isLight = theme === "light";
@@ -63,7 +63,7 @@
   }
 
   function toggleTheme() {
-    var current = document.documentElement.getAttribute("data-theme") || "dark";
+    var current = document.documentElement.getAttribute("data-theme") || "light";
     setTheme(current === "light" ? "dark" : "light");
   }
 
@@ -78,7 +78,7 @@
     var initial =
       document.documentElement.getAttribute("data-theme") ||
       readStoredTheme() ||
-      "dark";
+      "light";
     applyTheme(initial);
     persistTheme(initial);
 

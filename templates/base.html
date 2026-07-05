@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="{{ theme|default:'dark' }}">
+<html lang="en" data-theme="{{ theme|default:'light' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="fitlab-authenticated" content="{% if user.is_authenticated %}1{% else %}0{% endif %}">
-  <meta name="fitlab-theme" content="{{ theme|default:'dark' }}">
+  <meta name="fitlab-theme" content="{{ theme|default:'light' }}">
   <title>{% block title %}{{ site_config.site_name }}{% endblock %}</title>
   {% load static %}
   <script>
@@ -29,7 +29,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="{% static 'css/fitlab.css' %}?v=4">
-  <link rel="stylesheet" href="{% static 'css/themes.css' %}?v=1">
+  <link rel="stylesheet" href="{% static 'css/themes.css' %}?v=2">
   {% block extra_head %}{% endblock %}
 </head>
 <body data-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
@@ -37,7 +37,7 @@
     {% include "includes/theme_toggle.html" %}
   </div>
   {% block body %}{% endblock %}
-  <script src="{% static 'js/theme.js' %}?v=1"></script>
+  <script src="{% static 'js/theme.js' %}?v=2"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

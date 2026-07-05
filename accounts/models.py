@@ -363,7 +363,7 @@ class User(AbstractUser):
     theme_preference = models.CharField(
         max_length=10,
         choices=[("dark", "Dark"), ("light", "Light")],
-        default="dark",
+        default="light",
     )
 
     @property
