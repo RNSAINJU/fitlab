@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&display=swap');
 
-:root {
+:root,
+[data-theme="dark"] {
   --bg: #131313;
   --bg-login: #0a0a0a;
   --card: #1c1b1b;
@@ -20,6 +21,17 @@
   --font: "Lexend", "Segoe UI", system-ui, sans-serif;
   --pill: 9999px;
   --radius-lg: 32px;
+  --shell-bg: #0a0a0a;
+  --shell-topbar: #09090b;
+  --shell-sidebar: #09090b;
+  --shell-border: #18181b;
+  --shell-border-strong: #27272a;
+  --shell-nav-muted: #71717a;
+  --shell-bottomnav: rgba(24, 24, 27, 0.95);
+  --shell-input-bg: #0e0e0e;
+  --shell-message-bg: #262626;
+  --shell-overlay: rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -569,8 +581,8 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: #09090b;
-  border-bottom: 1px solid #18181b;
+  background: var(--shell-topbar);
+  border-bottom: 1px solid var(--shell-border);
 }
 
 .app-topbar__start {
@@ -711,8 +723,8 @@ a.app-avatar:hover {
   justify-content: space-between;
   gap: 4px;
   padding: 13px 12px 12px;
-  background: rgba(24, 24, 27, 0.95);
-  border-top: 1px solid #27272a;
+  background: var(--shell-bottomnav);
+  border-top: 1px solid var(--shell-border-strong);
   border-radius: 32px 32px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
@@ -723,7 +735,7 @@ a.app-avatar:hover {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -893,7 +905,7 @@ a.app-avatar:hover {
 }
 
 .dash-stat__unit {
-  color: #71717a;
+  color: var(--shell-nav-muted);
   font-size: 12px;
 }
 
@@ -945,7 +957,7 @@ a.app-avatar:hover {
 }
 
 .activity-row__meta {
-  color: #71717a;
+  color: var(--shell-nav-muted);
   font-size: 12px;
 }
 
@@ -958,7 +970,7 @@ a.app-avatar:hover {
 .activity-row__points small {
   display: block;
   font-size: 8px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   letter-spacing: 0.05em;
 }
 
@@ -1330,7 +1342,7 @@ a.app-avatar:hover {
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   padding-bottom: 20px;
 }
 
@@ -1430,7 +1442,7 @@ a.app-avatar:hover {
 .timeline-card__points small {
   display: block;
   font-size: 8px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   letter-spacing: 0.05em;
 }
 
@@ -1439,7 +1451,7 @@ a.app-avatar:hover {
   font-size: 16px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #71717a;
+  color: var(--shell-nav-muted);
 }
 
 .rewards-balance-line {
@@ -1688,7 +1700,7 @@ a.app-avatar:hover {
 
 .ref-stat-card .lbl {
   font-size: 12px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   text-transform: uppercase;
   margin-top: 3px;
 }
@@ -1737,14 +1749,14 @@ a.app-avatar:hover {
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: #0a0a0a;
+  background: var(--shell-bg);
 }
 
 .admin-sidebar {
   width: 260px;
   flex-shrink: 0;
-  background: #09090b;
-  border-right: 1px solid #18181b;
+  background: var(--shell-sidebar);
+  border-right: 1px solid var(--shell-border);
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
@@ -1761,14 +1773,14 @@ a.app-avatar:hover {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 8px 12px 24px;
-  border-bottom: 1px solid #18181b;
+  border-bottom: 1px solid var(--shell-border);
   margin-bottom: 8px;
 }
 
 .admin-sidebar__brand small {
   display: block;
   font-size: 10px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   letter-spacing: 0.15em;
   margin-top: 4px;
   font-weight: 700;
@@ -1787,7 +1799,7 @@ a.app-avatar:hover {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   text-decoration: none;
   width: 100%;
   box-sizing: border-box;
@@ -1860,7 +1872,7 @@ a.app-avatar:hover {
 .admin-sidebar__footer {
   margin-top: auto;
   padding-top: 16px;
-  border-top: 1px solid #18181b;
+  border-top: 1px solid var(--shell-border);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1876,8 +1888,8 @@ a.app-avatar:hover {
   align-items: center;
   justify-content: space-between;
   padding: 20px 32px;
-  border-bottom: 1px solid #18181b;
-  background: rgba(9, 9, 11, 0.95);
+  border-bottom: 1px solid var(--shell-border);
+  background: var(--shell-topbar);
   backdrop-filter: blur(8px);
   position: sticky;
   top: 0;
@@ -1960,7 +1972,7 @@ a.app-avatar:hover {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   font-weight: 700;
 }
 
@@ -2067,8 +2079,8 @@ a.app-avatar:hover {
   height: 44px;
   padding: 0 20px 0 44px;
   border-radius: var(--pill);
-  border: 1px solid #27272a;
-  background: #0e0e0e;
+  border: 1px solid var(--shell-border-strong);
+  background: var(--shell-input-bg);
   color: var(--text);
   font-family: var(--font);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='m14 14 4 4'/%3E%3C/svg%3E");
@@ -2085,7 +2097,7 @@ a.app-avatar:hover {
 .admin-table th {
   text-align: left;
   padding: 14px 12px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -2229,7 +2241,7 @@ a.app-avatar:hover {
 }
 
 .approval-card__email {
-  color: #71717a;
+  color: var(--shell-nav-muted);
   font-size: 14px;
 }
 
@@ -2413,7 +2425,7 @@ a.app-avatar:hover {
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #71717a;
+  color: var(--shell-nav-muted);
 }
 
 .redemption-item {
@@ -2429,7 +2441,7 @@ a.app-avatar:hover {
 
 .redemption-item__count {
   font-size: 11px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   text-transform: uppercase;
 }
 
@@ -2462,7 +2474,7 @@ a.app-avatar:hover {
 .admin-form-hint {
   margin: 6px 0 0;
   font-size: 12px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
 }
 
 .admin-form-row--full {
@@ -2481,7 +2493,7 @@ a.app-avatar:hover {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   margin-bottom: 6px;
 }
 
@@ -2491,8 +2503,8 @@ a.app-avatar:hover {
   width: 100%;
   padding: 0 16px;
   border-radius: var(--pill);
-  border: 1px solid #27272a;
-  background: #0e0e0e;
+  border: 1px solid var(--shell-border-strong);
+  background: var(--shell-input-bg);
   color: var(--text);
   font-family: var(--font);
 }
@@ -2515,7 +2527,7 @@ a.app-avatar:hover {
   justify-content: space-between;
   margin-top: 20px;
   font-size: 12px;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -2537,7 +2549,7 @@ a.app-avatar:hover {
 }
 
 .messages { list-style: none; padding: 0; margin: 0 0 1rem; max-width: 448px; margin-left: auto; margin-right: auto; }
-.messages li { padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 0.5rem; background: #262626; font-size: 14px; }
+.messages li { padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 0.5rem; background: var(--shell-message-bg); font-size: 14px; }
 .messages .success { border-left: 3px solid #22c55e; }
 .messages .error { border-left: 3px solid var(--accent); }
 .messages .info { border-left: 3px solid #f59e0b; }
@@ -2562,8 +2574,8 @@ a.app-avatar:hover {
   flex-direction: column;
   gap: 8px;
   padding: 24px 16px;
-  background: #09090b;
-  border-right: 1px solid #18181b;
+  background: var(--shell-sidebar);
+  border-right: 1px solid var(--shell-border);
 }
 
 .app-sidebar a {
@@ -2573,7 +2585,7 @@ a.app-avatar:hover {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #71717a;
+  color: var(--shell-nav-muted);
 }
 
 .app-sidebar a:hover {
@@ -3162,8 +3174,8 @@ a.app-avatar:hover {
   box-sizing: border-box;
   padding: 0 16px;
   border-radius: var(--pill);
-  border: 1px solid #27272a;
-  background: #0e0e0e;
+  border: 1px solid var(--shell-border-strong);
+  background: var(--shell-input-bg);
   color: var(--text);
   font-family: var(--font);
   font-size: 14px;
@@ -3201,7 +3213,7 @@ a.app-avatar:hover {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #71717a;
+  color: var(--shell-nav-muted);
   margin-bottom: 6px;
 }
 

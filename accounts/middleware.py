@@ -39,6 +39,7 @@ class ApprovalRequiredMiddleware:
         "/oauth/",
         "/accounts/login",
         "/accounts/register",
+        "/accounts/theme",
         "/register",
         "/accounts/pending",
         "/accounts/logout",

@@ -1,6 +1,7 @@
 from django.conf import settings
 
 from accounts.models import SiteConfiguration
+from accounts.theme import resolve_theme
 
 
 def social_auth(request):
@@ -12,3 +13,11 @@ def social_auth(request):
 
 def site_branding(request):
     return {"site_config": SiteConfiguration.load()}
+
+
+def theme(request):
+    active = resolve_theme(request)
+    return {
+        "theme": active,
+        "theme_is_light": active == "light",
+    }

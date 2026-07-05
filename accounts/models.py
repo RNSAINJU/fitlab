@@ -360,6 +360,11 @@ class User(AbstractUser):
         on_delete=models.SET_NULL,
         related_name="referrals",
     )
+    theme_preference = models.CharField(
+        max_length=10,
+        choices=[("dark", "Dark"), ("light", "Light")],
+        default="dark",
+    )
 
     @property
     def is_approved(self):

@@ -83,6 +83,7 @@ TEMPLATES = [
                 "loyalty.context_processors.points_balance",
                 "accounts.context_processors.social_auth",
                 "accounts.context_processors.site_branding",
+                "accounts.context_processors.theme",
             ],
         },
     },

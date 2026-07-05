@@ -2,7 +2,10 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
+import json
 
 from activity.models import ActivityEvent
 from loyalty.helpers import get_lifetime_earned, get_member_rank, get_membership_tier, get_tier_progress
@@ -11,6 +14,7 @@ from rewards.models import RedemptionRequest
 
 from .auth_helpers import get_post_login_url
 from .forms import LoginForm, ProfileEditForm, RegistrationForm
+from .theme import THEME_COOKIE, VALID_THEMES
 
 DEFAULT_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
 
@@ -191,3 +195,23 @@ def logout_view(request):
 
 def connection_lost(request):
     return render(request, "accounts/connection_lost.html")
+
+
+@require_POST
+def set_theme(request):
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"error": "invalid payload"}, status=400)
+
+    theme = payload.get("theme", "")
+    if theme not in VALID_THEMES:
+        return JsonResponse({"error": "invalid theme"}, status=400)
+
+    if request.user.is_authenticated:
+        request.user.theme_preference = theme
+        request.user.save(update_fields=["theme_preference"])
+
+    response = JsonResponse({"theme": theme})
+    response.set_cookie(THEME_COOKIE, theme, max_age=31536000, samesite="Lax")
+    return response

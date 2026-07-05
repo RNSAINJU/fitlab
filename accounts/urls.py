@@ -14,5 +14,6 @@ urlpatterns = [
     path("accounts/profile/", views.profile, name="profile"),
     path("accounts/pending/", views.pending_approval, name="pending"),
     path("accounts/logout/", views.logout_view, name="logout"),
+    path("accounts/theme/", views.set_theme, name="set_theme"),
     path("connection-lost/", views.connection_lost, name="connection_lost"),
 ]
