@@ -126,8 +126,8 @@ html:has(.home-page) {
 }
 
 .site-logo--home {
-  max-height: 38px;
-  max-width: 150px;
+  max-height: 46px;
+  max-width: 175px;
   width: auto;
   object-fit: contain;
   display: block;
