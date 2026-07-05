@@ -9,6 +9,18 @@ urlpatterns = [
     path("dashboard/", views.dashboard, name="dashboard"),
     path("register", views.register, name="register_short"),
     path("accounts/login/", views.FitlabLoginView.as_view(), name="login"),
+    path("accounts/password/forgot/", views.FitlabPasswordResetView.as_view(), name="password_reset"),
+    path("accounts/password/sent/", views.FitlabPasswordResetDoneView.as_view(), name="password_reset_done"),
+    path(
+        "accounts/password/reset/<uidb64>/<token>/",
+        views.FitlabPasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path(
+        "accounts/password/complete/",
+        views.FitlabPasswordResetCompleteView.as_view(),
+        name="password_reset_complete",
+    ),
     path("accounts/register/", views.register, name="register"),
     path("accounts/profile/edit/", views.edit_profile, name="profile_edit"),
     path("accounts/profile/", views.profile, name="profile"),

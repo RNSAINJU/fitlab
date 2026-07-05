@@ -1,9 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import (
+    LoginView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 import json
 
@@ -13,7 +20,13 @@ from loyalty.services import get_balance
 from rewards.models import RedemptionRequest
 
 from .auth_helpers import get_post_login_url
-from .forms import LoginForm, ProfileEditForm, RegistrationForm
+from .forms import (
+    LoginForm,
+    PasswordResetConfirmForm,
+    PasswordResetRequestForm,
+    ProfileEditForm,
+    RegistrationForm,
+)
 from .theme import THEME_COOKIE, VALID_THEMES
 
 DEFAULT_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
@@ -55,6 +68,28 @@ class FitlabLoginView(LoginView):
 
             try_award_daily_login_points(user)
         return response
+
+
+class FitlabPasswordResetView(PasswordResetView):
+    template_name = "accounts/password_reset_form.html"
+    email_template_name = "accounts/password_reset_email.txt"
+    subject_template_name = "accounts/password_reset_subject.txt"
+    form_class = PasswordResetRequestForm
+    success_url = reverse_lazy("accounts:password_reset_done")
+
+
+class FitlabPasswordResetDoneView(PasswordResetDoneView):
+    template_name = "accounts/password_reset_done.html"
+
+
+class FitlabPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = "accounts/password_reset_confirm.html"
+    form_class = PasswordResetConfirmForm
+    success_url = reverse_lazy("accounts:password_reset_complete")
+
+
+class FitlabPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = "accounts/password_reset_complete.html"
 
 
 def register(request):

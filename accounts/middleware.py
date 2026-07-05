@@ -40,6 +40,7 @@ class ApprovalRequiredMiddleware:
         "/accounts/login",
         "/accounts/register",
         "/accounts/theme",
+        "/accounts/password",
         "/register",
         "/accounts/pending",
         "/accounts/logout",

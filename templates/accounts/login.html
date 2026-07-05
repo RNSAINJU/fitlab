@@ -39,7 +39,7 @@
       <div class="auth-field">
         <div class="auth-field__row">
           <label class="auth-label" for="id_password">Password</label>
-          <a class="auth-link" href="#">Forgot?</a>
+          <a class="auth-link" href="{% url 'accounts:password_reset' %}">Forgot password?</a>
         </div>
         <div class="auth-input-wrap">
           {{ form.password }}

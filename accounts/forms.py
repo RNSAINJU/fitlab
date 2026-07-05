@@ -2,7 +2,7 @@ import re
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import FileExtensionValidator
 
@@ -160,6 +160,45 @@ class LoginForm(AuthenticationForm):
         super().confirm_login_allowed(user)
         if not user.is_staff and user.approval_status == User.ApprovalStatus.REJECTED:
             raise forms.ValidationError("Your account was not approved.", code="inactive")
+
+
+class PasswordResetRequestForm(PasswordResetForm):
+    email = forms.EmailField(
+        label="Email address",
+        max_length=254,
+        widget=forms.EmailInput(
+            attrs={
+                **INPUT_LOGIN,
+                "placeholder": "email@example.com",
+                "autocomplete": "email",
+            }
+        ),
+    )
+
+
+class PasswordResetConfirmForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="New password",
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={
+                **INPUT_LOGIN,
+                "placeholder": "••••••••",
+                "autocomplete": "new-password",
+            }
+        ),
+    )
+    new_password2 = forms.CharField(
+        label="Confirm new password",
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={
+                **INPUT_LOGIN,
+                "placeholder": "••••••••",
+                "autocomplete": "new-password",
+            }
+        ),
+    )
 
 
 class ProfileEditForm(forms.Form):
