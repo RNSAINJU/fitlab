@@ -659,6 +659,18 @@ a { color: inherit; text-decoration: none; }
   max-width: 150px;
 }
 
+.site-logo--admin-header {
+  height: 28px;
+  max-height: 28px;
+  max-width: 120px;
+}
+
+.site-logo--admin-sidebar {
+  height: 34px;
+  max-height: 34px;
+  max-width: 150px;
+}
+
 .site-logo--preview {
   max-height: 64px;
   margin-bottom: 12px;
@@ -1781,14 +1793,19 @@ a.app-avatar:hover {
 }
 
 .admin-sidebar__brand {
-  font-size: 18px;
-  font-weight: 900;
-  color: var(--accent);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
   padding: 8px 12px 24px;
   border-bottom: 1px solid var(--shell-border);
   margin-bottom: 8px;
+  text-decoration: none;
+}
+
+.admin-sidebar__brand--mobile {
+  flex-direction: row;
+  align-items: center;
 }
 
 .admin-sidebar__brand small {
@@ -1911,13 +1928,34 @@ a.app-avatar:hover {
 }
 
 .admin-header-bar__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.admin-header-bar__title span { color: var(--accent); }
+.admin-header-bar__brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.admin-header-bar__sep {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.admin-header-bar__page {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .admin-header-bar__actions {
   display: flex;

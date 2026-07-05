@@ -6,15 +6,15 @@
 
   <aside class="admin-sidebar">
     <div class="mobile-sidebar__head">
-      <a href="{% url 'admin_portal:dashboard' %}" class="admin-sidebar__brand" style="padding:0;border:0;margin:0">
-        {{ site_config.admin_title }}
+      <a href="{% url 'admin_portal:dashboard' %}" class="admin-sidebar__brand admin-sidebar__brand--mobile" style="padding:0;border:0;margin:0">
+        {% include "includes/site_brand.html" with extra_class="site-logo--admin-sidebar" %}
       </a>
       <button type="button" class="mobile-sidebar__close" data-sidebar-close aria-label="Close menu">
         <span class="sidebar-icon sidebar-icon--close" aria-hidden="true"></span>
       </button>
     </div>
     <a href="{% url 'admin_portal:dashboard' %}" class="admin-sidebar__brand admin-sidebar__brand--desktop">
-      {{ site_config.admin_title }}
+      {% include "includes/site_brand.html" with extra_class="site-logo--admin-sidebar" %}
       <small>Loyalty Command</small>
     </a>
     <a href="{% url 'admin_portal:dashboard' %}" class="{% active_nav request 'admin_portal' 'dashboard' %}">Overview</a>
@@ -57,7 +57,11 @@
         <span class="sidebar-icon sidebar-icon--menu" aria-hidden="true"></span>
       </button>
       <div class="admin-header-bar__title">
-        <span>{{ site_config.site_name|upper }}</span> / {% block admin_page_title %}Admin{% endblock %}
+        <a href="{% url 'admin_portal:dashboard' %}" class="admin-header-bar__brand">
+          {% include "includes/site_brand.html" with extra_class="site-logo--admin-header" %}
+        </a>
+        <span class="admin-header-bar__sep">/</span>
+        <span class="admin-header-bar__page">{% block admin_page_title %}Admin{% endblock %}</span>
       </div>
       <div class="admin-header-bar__actions">
         <span>{{ request.user.email }}</span>
