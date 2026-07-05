@@ -344,7 +344,7 @@ body.home-nav-open {
   text-align: left;
   background-color: #000;
   background-image:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.92) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.52) 0%, rgba(0, 0, 0, 0.72) 100%),
     var(--hero-bg, none);
   background-position: center;
   background-size: cover;
@@ -368,7 +368,7 @@ body.home-nav-open {
   display: block;
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55));
+  background: linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.48));
   z-index: 1;
 }
 

@@ -207,13 +207,13 @@
 
 [data-theme="light"] .home-hero {
   background-image:
-    linear-gradient(180deg, rgba(250, 250, 250, 0.78) 0%, rgba(245, 245, 245, 0.88) 100%),
+    linear-gradient(180deg, rgba(250, 250, 250, 0.58) 0%, rgba(245, 245, 245, 0.72) 100%),
     var(--hero-bg, none);
 }
 
 [data-theme="light"] .home-hero--video .home-hero__overlay {
   display: block;
-  background: linear-gradient(rgba(250, 250, 250, 0.75), rgba(245, 245, 245, 0.85));
+  background: linear-gradient(rgba(250, 250, 250, 0.55), rgba(245, 245, 245, 0.68));
 }
 
 [data-theme="light"] .home-hero__line {
