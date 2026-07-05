@@ -434,12 +434,22 @@ body.home-nav-open {
   font-size: 18px;
 }
 
-/* ── Welcome + Trainers ── */
+/* ── Welcome ── */
 .home-welcome {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 56px;
-  align-items: start;
+  max-width: 720px;
+}
+
+.home-trainers {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.home-trainers .home-section-title {
+  text-align: center;
+}
+
+.home-trainers .home-slider {
+  margin-top: 8px;
 }
 
 .home-welcome__tagline {
@@ -960,6 +970,7 @@ body.home-nav-open {
   .home-accordion { height: 300px; }
 
   .home-welcome,
+  .home-trainers,
   .home-training,
   .home-schedule,
   .home-clients {
@@ -1050,8 +1061,6 @@ body.home-nav-open {
     font-size: 12px;
     padding: 14px 12px;
   }
-
-  .home-welcome__trainers { order: 0; }
 
   .home-slider {
     gap: 8px;

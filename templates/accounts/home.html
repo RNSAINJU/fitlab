@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=6">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=7">
 {% endblock %}
 {% block body %}
 <div class="home-page">
@@ -17,6 +17,7 @@
       <nav class="home-header__nav" aria-label="Main">
         <a href="{% url 'accounts:home' %}">Home</a>
         <a href="#about">About Us</a>
+        <a href="#trainers">Trainers</a>
         <a href="#powerlifters">Powerlifters</a>
         <a href="#rates">Rates</a>
         <a href="#gallery">Gallery</a>
@@ -37,6 +38,7 @@
   <nav class="home-mobile-nav" id="home-mobile-nav" aria-label="Mobile">
     <a href="{% url 'accounts:home' %}">Home</a>
     <a href="#about">About Us</a>
+    <a href="#trainers">Trainers</a>
     <a href="#powerlifters">Powerlifters</a>
     <a href="#rates">Rates</a>
     <a href="#gallery">Gallery</a>
@@ -65,6 +67,46 @@
     </div>
   </section>
 
+  <section class="home-section" id="about">
+    <div class="home-container home-welcome">
+      <div class="home-welcome__copy">
+        <div class="home-section-title">
+          <h2>Welcome to {{ site_config.site_name }}</h2>
+          <span class="home-section-title__line"></span>
+        </div>
+        {% if hp.welcome_tagline %}<p class="home-welcome__tagline">{{ hp.welcome_tagline }}</p>{% endif %}
+        {% if hp.welcome_paragraph_1 %}<p>{{ hp.welcome_paragraph_1 }}</p>{% endif %}
+        {% if hp.welcome_paragraph_2 %}<p>{{ hp.welcome_paragraph_2 }}</p>{% endif %}
+        {% if hp.welcome_paragraph_3 %}<p>{{ hp.welcome_paragraph_3 }}</p>{% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% if trainers %}
+  <section class="home-section home-section--elevated" id="trainers">
+    <div class="home-container home-trainers">
+      <div class="home-section-title">
+        <h2>{{ hp.trainers_title }}</h2>
+        <span class="home-section-title__line"></span>
+      </div>
+      <div class="home-slider" id="trainer-slider">
+        <button type="button" class="home-slider__arrow home-slider__arrow--prev" data-slider="trainer-slider" aria-label="Previous trainer">&lsaquo;</button>
+        <div class="home-slider__track">
+          {% for item in trainers %}
+          <div class="home-slider__slide{% if forloop.first %} is-active{% endif %}">
+            {% if item.display_image_url %}
+              <img src="{{ item.display_image_url }}" alt="{{ item.name }}" loading="lazy">
+            {% endif %}
+            <span class="home-slider__caption">{{ item.name }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="home-slider__arrow home-slider__arrow--next" data-slider="trainer-slider" aria-label="Next trainer">&rsaquo;</button>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
   {% if powerlifters %}
   <section class="home-section home-powerlifters" id="powerlifters">
     <div class="home-container home-powerlifters__wrap">
@@ -91,43 +133,6 @@
     </div>
   </section>
   {% endif %}
-
-  <section class="home-section" id="about">
-    <div class="home-container home-welcome">
-      <div class="home-welcome__copy">
-        <div class="home-section-title">
-          <h2>Welcome to {{ site_config.site_name }}</h2>
-          <span class="home-section-title__line"></span>
-        </div>
-        {% if hp.welcome_tagline %}<p class="home-welcome__tagline">{{ hp.welcome_tagline }}</p>{% endif %}
-        {% if hp.welcome_paragraph_1 %}<p>{{ hp.welcome_paragraph_1 }}</p>{% endif %}
-        {% if hp.welcome_paragraph_2 %}<p>{{ hp.welcome_paragraph_2 }}</p>{% endif %}
-        {% if hp.welcome_paragraph_3 %}<p>{{ hp.welcome_paragraph_3 }}</p>{% endif %}
-      </div>
-      {% if trainers %}
-      <div class="home-welcome__trainers">
-        <div class="home-section-title">
-          <h2>{{ hp.trainers_title }}</h2>
-          <span class="home-section-title__line"></span>
-        </div>
-        <div class="home-slider" id="trainer-slider">
-          <button type="button" class="home-slider__arrow home-slider__arrow--prev" data-slider="trainer-slider" aria-label="Previous trainer">&lsaquo;</button>
-          <div class="home-slider__track">
-            {% for item in trainers %}
-            <div class="home-slider__slide{% if forloop.first %} is-active{% endif %}">
-              {% if item.display_image_url %}
-                <img src="{{ item.display_image_url }}" alt="{{ item.name }}" loading="lazy">
-              {% endif %}
-              <span class="home-slider__caption">{{ item.name }}</span>
-            </div>
-            {% endfor %}
-          </div>
-          <button type="button" class="home-slider__arrow home-slider__arrow--next" data-slider="trainer-slider" aria-label="Next trainer">&rsaquo;</button>
-        </div>
-      </div>
-      {% endif %}
-    </div>
-  </section>
 
   <section class="home-section home-section--elevated" id="training">
     <div class="home-container home-training">
