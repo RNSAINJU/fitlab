@@ -103,11 +103,16 @@ a { color: inherit; text-decoration: none; }
 }
 
 .auth-topbar__logo {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  overflow: hidden;
   font-size: 24px;
   font-weight: 900;
   letter-spacing: -0.05em;
   color: var(--accent);
   text-transform: uppercase;
+  text-decoration: none;
 }
 
 .auth-topbar__actions {
@@ -583,6 +588,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 .app-topbar__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   font-size: 24px;
   font-weight: 900;
   letter-spacing: -0.05em;
@@ -590,23 +601,36 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
   text-align: center;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .site-logo {
   display: block;
-  max-height: 36px;
+  flex-shrink: 0;
+  height: 32px;
+  max-height: 32px;
   width: auto;
-  max-width: 180px;
+  max-width: 140px;
   object-fit: contain;
 }
 
 .site-logo--topbar {
   margin: 0 auto;
+  height: 32px;
   max-height: 32px;
+  max-width: 140px;
 }
 
 .site-logo--auth {
-  max-height: 40px;
+  height: 36px;
+  max-height: 36px;
+  max-width: 150px;
+}
+
+.site-logo--sidebar {
+  height: 34px;
+  max-height: 34px;
+  max-width: 150px;
 }
 
 .site-logo--preview {
@@ -2564,6 +2588,9 @@ a.app-avatar:hover {
 
 .app-sidebar__brand {
   display: none;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
   font-size: 20px;
   font-weight: 900;
   letter-spacing: -0.05em;
@@ -2910,6 +2937,13 @@ a.app-avatar:hover {
   .app-topbar__logo {
     font-size: 17px;
     letter-spacing: -0.04em;
+  }
+
+  .app-topbar__logo .site-logo,
+  .site-logo--topbar {
+    height: 28px;
+    max-height: 28px;
+    max-width: 120px;
   }
 
   .profile-upload-btn {
