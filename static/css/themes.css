@@ -277,23 +277,11 @@
   color-scheme: light;
 }
 
-/* Dark theme: black logo background */
-[data-theme="dark"] .site-brand {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* Dark theme: fill transparent logo areas with black */
+[data-theme="dark"] .site-logo {
   background-color: #000000;
-  padding: 5px 12px;
-  border-radius: 4px;
-  line-height: 0;
 }
 
-[data-theme="dark"] .home-footer__brand .site-brand {
-  margin-bottom: 16px;
-}
-
-[data-theme="light"] .site-brand {
+[data-theme="light"] .site-logo {
   background-color: transparent;
-  padding: 0;
-  border-radius: 0;
 }

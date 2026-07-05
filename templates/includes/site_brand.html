@@ -1,5 +1,4 @@
 {% load static %}
-<span class="site-brand{% if extra_class %} site-brand--{{ extra_class|cut:'site-logo--' }}{% endif %}">
 {% if site_config.logo %}
   <img
     src="{{ site_config.logo.url }}"
@@ -13,4 +12,3 @@
     class="site-logo{% if extra_class %} {{ extra_class }}{% endif %}"
   >
 {% endif %}
-</span>
