@@ -1790,6 +1790,9 @@ a.app-avatar:hover {
   position: sticky;
   top: 0;
   height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-sidebar__brand {
@@ -1834,6 +1837,21 @@ a.app-avatar:hover {
   text-decoration: none;
   width: 100%;
   box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.admin-sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.admin-sidebar__group-toggle {
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
 }
 
 .admin-sidebar a.is-active,
@@ -1846,17 +1864,6 @@ a.app-avatar:hover {
 .admin-sidebar a:hover,
 .admin-sidebar__link:hover {
   color: var(--text);
-}
-
-.admin-sidebar__group {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.admin-sidebar__group-toggle {
-  justify-content: space-between;
-  cursor: pointer;
 }
 
 .admin-sidebar__group-label {
@@ -1907,6 +1914,7 @@ a.app-avatar:hover {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .admin-content {

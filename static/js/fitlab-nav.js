@@ -30,15 +30,34 @@
     }
   }
 
+  function scrollGroupIntoSidebar(group) {
+    var sidebar = group && group.closest(".admin-sidebar, .app-sidebar");
+    if (!sidebar || !group) return;
+    window.requestAnimationFrame(function () {
+      var groupBottom = group.offsetTop + group.offsetHeight;
+      var visibleBottom = sidebar.scrollTop + sidebar.clientHeight;
+      if (groupBottom > visibleBottom) {
+        sidebar.scrollTop = groupBottom - sidebar.clientHeight + 8;
+      } else if (group.offsetTop < sidebar.scrollTop) {
+        sidebar.scrollTop = Math.max(0, group.offsetTop - 8);
+      }
+    });
+  }
+
   function setSettingsGroupOpen(group, open) {
     if (!group) return;
     var toggle = group.querySelector("[data-sidebar-group-toggle]");
+    var subnav = group.querySelector(".admin-sidebar__subnav");
     group.classList.toggle("is-open", open);
     if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (subnav) subnav.removeAttribute("hidden");
+    if (open) scrollGroupIntoSidebar(group);
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function initSidebarNav() {
     document.querySelectorAll("[data-sidebar-group-toggle]").forEach(function (toggle) {
+      if (toggle.dataset.sidebarBound === "true") return;
+      toggle.dataset.sidebarBound = "true";
       toggle.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -53,6 +72,8 @@
     });
 
     document.querySelectorAll("[data-sidebar-toggle]").forEach(function (btn) {
+      if (btn.dataset.sidebarBound === "true") return;
+      btn.dataset.sidebarBound = "true";
       btn.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -61,6 +82,8 @@
     });
 
     document.querySelectorAll("[data-sidebar-close]").forEach(function (el) {
+      if (el.dataset.sidebarBound === "true") return;
+      el.dataset.sidebarBound = "true";
       el.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -70,17 +93,33 @@
 
     document
       .querySelectorAll(
-        "[data-mobile-sidebar] .admin-sidebar a:not([data-sidebar-group-toggle]), [data-mobile-sidebar] .app-sidebar a"
+        "[data-mobile-sidebar] .admin-sidebar a, [data-mobile-sidebar] .app-sidebar a"
       )
       .forEach(function (link) {
+        if (link.dataset.sidebarBound === "true") return;
+        link.dataset.sidebarBound = "true";
         link.addEventListener("click", function () {
           closeSidebar(link.closest("[data-mobile-sidebar]"));
         });
       });
 
+    document.querySelectorAll("[data-sidebar-group].is-open").forEach(scrollGroupIntoSidebar);
+  }
+
+  function init() {
+    initSidebarNav();
+
+    if (window.__fitlabSidebarEscapeBound) return;
+    window.__fitlabSidebarEscapeBound = true;
     document.addEventListener("keydown", function (e) {
       if (e.key !== "Escape") return;
       document.querySelectorAll("[data-mobile-sidebar].is-mobile-sidebar-open").forEach(closeSidebar);
     });
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 })();
