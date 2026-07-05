@@ -24,6 +24,14 @@ html:has(.home-page) {
   color: var(--home-text);
   font-family: var(--home-font-body);
   overflow-x: hidden;
+  --home-nav-link: rgba(255, 255, 255, 0.82);
+  --home-heading: #ffffff;
+  --home-hero-line: #ffffff;
+  --home-btn-primary-bg: #ffffff;
+  --home-btn-primary-text: #18181b;
+  --home-btn-primary-hover: #e4e4e7;
+  --home-ghost-text: #ffffff;
+  --home-ghost-border: rgba(255, 255, 255, 0.35);
 }
 
 .home-page a { color: inherit; text-decoration: none; }
@@ -50,7 +58,7 @@ html:has(.home-page) {
   text-transform: uppercase;
   letter-spacing: 0.02em;
   line-height: 1.05;
-  color: #fff;
+  color: var(--home-heading);
 }
 
 .home-text-accent {
@@ -155,7 +163,7 @@ html:has(.home-page) {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--home-nav-link);
   transition: color 0.2s;
 }
 
@@ -264,7 +272,7 @@ body.home-nav-open {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border-bottom: 1px solid var(--home-border);
-  color: #fff;
+  color: var(--home-nav-link);
   transition: color 0.2s;
 }
 
@@ -296,23 +304,24 @@ body.home-nav-open {
 }
 
 .home-btn--primary {
-  background: var(--home-accent);
-  color: #fff;
-  border-color: var(--home-accent);
+  background: var(--home-btn-primary-bg);
+  color: var(--home-btn-primary-text);
+  border-color: var(--home-btn-primary-bg);
 }
 
 .home-btn--primary:hover {
-  background: var(--home-accent-hover);
-  border-color: var(--home-accent-hover);
+  background: var(--home-btn-primary-hover);
+  border-color: var(--home-btn-primary-hover);
+  color: var(--home-btn-primary-text);
 }
 
 .home-btn--ghost {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--home-ghost-text);
+  border-color: var(--home-ghost-border);
   background: transparent;
 }
 
-.home-btn--ghost:hover { border-color: #fff; }
+.home-btn--ghost:hover { border-color: var(--home-ghost-text); }
 
 .home-btn--outline {
   color: #fff;
@@ -387,7 +396,7 @@ body.home-nav-open {
 
 .home-hero__line {
   display: block;
-  color: #fff;
+  color: var(--home-hero-line);
 }
 
 .home-hero__line--accent {
@@ -614,7 +623,7 @@ body.home-nav-open {
   content: "›";
   position: absolute;
   left: 0;
-  color: #fff;
+  color: var(--home-heading);
   font-size: 18px;
   line-height: 1;
   top: 12px;
@@ -946,6 +955,7 @@ body.home-nav-open {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  color: var(--home-heading);
 }
 
 .home-footer__sr-only {
