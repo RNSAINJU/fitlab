@@ -126,8 +126,11 @@ html:has(.home-page) {
 }
 
 .site-logo--home {
-  max-height: 42px;
+  max-height: 38px;
+  max-width: 150px;
   width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .home-header__nav {
@@ -1049,6 +1052,11 @@ body.home-nav-open {
 
   html:has(.home-page) {
     scroll-padding-top: calc(var(--home-header-h) + 12px);
+  }
+
+  .home-header__brand .site-logo--home {
+    max-height: 34px;
+    max-width: 130px;
   }
 
   .home-header__brand .site-name {
