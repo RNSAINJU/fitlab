@@ -1,13 +1,14 @@
-/* The Fit Lab — iFit Nepal-style home page */
+/* The Fit Lab — bold red + black home theme */
 
 :root {
-  --home-bg: #0d0d0d;
-  --home-bg-elevated: #141414;
+  --home-bg: #000000;
+  --home-bg-elevated: #0a0a0a;
   --home-text: #ffffff;
-  --home-text-muted: #b0b0b0;
-  --home-accent: #e30613;
-  --home-border: #2a2a2a;
-  --home-font-display: "Oswald", "Arial Narrow", sans-serif;
+  --home-text-muted: #a9a9a9;
+  --home-accent: #e31e24;
+  --home-accent-hover: #c4191f;
+  --home-border: #1f1f1f;
+  --home-font-display: "Montserrat", "Inter", "Segoe UI", system-ui, sans-serif;
   --home-font-body: "Inter", "Segoe UI", system-ui, sans-serif;
   --home-container: min(1200px, calc(100% - 48px));
   --home-header-h: 70px;
@@ -45,10 +46,15 @@ html:has(.home-page) {
   margin: 0;
   font-family: var(--home-font-display);
   font-size: clamp(28px, 4vw, 42px);
-  font-weight: 700;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  color: #fff;
+}
+
+.home-text-accent {
+  color: var(--home-accent);
 }
 
 .home-section-title__line {
@@ -56,7 +62,7 @@ html:has(.home-page) {
   width: 48px;
   height: 3px;
   margin-top: 12px;
-  background: #fff;
+  background: var(--home-accent);
 }
 
 .home-watermark {
@@ -69,7 +75,7 @@ html:has(.home-page) {
   font-weight: 700;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+  -webkit-text-stroke: 1px rgba(227, 30, 36, 0.12);
   line-height: 1;
   pointer-events: none;
   user-select: none;
@@ -105,27 +111,18 @@ html:has(.home-page) {
 }
 
 .home-header.is-scrolled {
-  background: rgba(13, 13, 13, 0.95);
+  background: rgba(0, 0, 0, 0.96);
   backdrop-filter: blur(12px);
-}
-
-.home-header__inner {
-  width: var(--home-container);
-  height: 100%;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  border-bottom: 1px solid var(--home-border);
 }
 
 .home-header__brand .site-name {
   font-family: var(--home-font-display);
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #fff;
+  letter-spacing: 0.08em;
+  color: var(--home-accent);
 }
 
 .site-logo--home {
@@ -140,16 +137,26 @@ html:has(.home-page) {
   justify-content: center;
 }
 
+.home-header__inner {
+  width: var(--home-container);
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
 .home-header__nav a {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.82);
   transition: color 0.2s;
 }
 
-.home-header__nav a:hover { color: #fff; }
+.home-header__nav a:hover { color: var(--home-accent); }
 
 .home-header__actions {
   display: flex;
@@ -250,11 +257,16 @@ body.home-nav-open {
   display: block;
   padding: 14px 12px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border-bottom: 1px solid var(--home-border);
   color: #fff;
+  transition: color 0.2s;
+}
+
+.home-mobile-nav a:hover {
+  color: var(--home-accent);
 }
 
 .home-mobile-nav__actions {
@@ -271,9 +283,9 @@ body.home-nav-open {
   justify-content: center;
   padding: 12px 28px;
   font-family: var(--home-font-display);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   border: 1px solid transparent;
   cursor: pointer;
@@ -287,8 +299,8 @@ body.home-nav-open {
 }
 
 .home-btn--primary:hover {
-  background: #c00510;
-  border-color: #c00510;
+  background: var(--home-accent-hover);
+  border-color: var(--home-accent-hover);
 }
 
 .home-btn--ghost {
@@ -316,11 +328,15 @@ body.home-nav-open {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)),
-    var(--hero-bg, url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80")) center / cover no-repeat;
+  justify-content: flex-start;
+  text-align: left;
+  background-color: #000;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.92) 100%),
+    var(--hero-bg, none);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .home-hero--video {
@@ -349,25 +365,44 @@ body.home-nav-open {
 .home-hero__content {
   position: relative;
   z-index: 2;
-  width: 100%;
-  max-width: 900px;
-  padding: calc(var(--home-header-h) + 40px) 24px 80px;
+  width: var(--home-container);
+  margin: 0 auto;
+  max-width: none;
+  padding: calc(var(--home-header-h) + 48px) 0 80px;
 }
 
 .home-hero h1 {
-  margin: 0 0 36px;
+  margin: 0 0 20px;
   font-family: var(--home-font-display);
-  font-size: clamp(48px, 10vw, 96px);
-  font-weight: 700;
+  font-size: clamp(44px, 12vw, 88px);
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  line-height: 1;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+}
+
+.home-hero__line {
+  display: block;
   color: #fff;
 }
 
-.home-hero .home-btn--outline {
-  padding: 14px 36px;
-  font-size: 14px;
+.home-hero__line--accent {
+  color: var(--home-accent);
+}
+
+.home-hero__lead {
+  margin: 0 0 28px;
+  max-width: 420px;
+  font-size: 16px;
+  line-height: 1.55;
+  font-weight: 500;
+  color: var(--home-text-muted);
+}
+
+.home-hero .home-btn--primary {
+  padding: 14px 32px;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 /* ── Powerlifters accordion ── */
@@ -455,11 +490,11 @@ body.home-nav-open {
 .home-welcome__tagline {
   margin: 0 0 24px;
   font-family: var(--home-font-display);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--home-text-muted);
+  color: var(--home-accent);
 }
 
 .home-welcome__copy p {
@@ -885,8 +920,10 @@ body.home-nav-open {
 .home-footer__brand .site-name {
   font-family: var(--home-font-display);
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 900;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--home-accent);
   display: block;
   margin-bottom: 16px;
 }
@@ -930,7 +967,7 @@ body.home-nav-open {
 
 .home-footer__col li { margin-bottom: 8px; }
 
-.home-footer__col a:hover { color: #fff; }
+.home-footer__col a:hover { color: var(--home-accent); }
 
 .home-footer__map iframe {
   width: 100%;

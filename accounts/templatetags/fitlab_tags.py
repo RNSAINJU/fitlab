@@ -64,6 +64,31 @@ def activity_points(event):
 
 
 @register.filter
+def headline_primary(value):
+    parts = str(value).split(None, 1)
+    return parts[0].upper() if parts else str(value).upper()
+
+
+@register.filter
+def headline_accent(value):
+    parts = str(value).split(None, 1)
+    return parts[1].upper() if len(parts) > 1 else ""
+
+
+@register.filter
+def accent_last_word(value):
+    from django.utils.safestring import mark_safe
+
+    text = str(value).strip()
+    if not text:
+        return ""
+    parts = text.rsplit(None, 1)
+    if len(parts) == 2:
+        return mark_safe(f'{parts[0]} <span class="home-text-accent">{parts[1]}</span>')
+    return mark_safe(f'<span class="home-text-accent">{text}</span>')
+
+
+@register.filter
 def timesince_short(dt):
     if not dt:
         return ""

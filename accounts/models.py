@@ -86,7 +86,12 @@ class HomePageSettings(models.Model):
         IMAGE = "image", "Image"
         VIDEO = "video", "Video"
 
-    hero_headline = models.CharField(max_length=200, default="Ready to start?")
+    hero_headline = models.CharField(max_length=200, default="Recruit Yourself")
+    hero_subtext = models.CharField(
+        max_length=240,
+        blank=True,
+        default="Join the elite lab where data meets dedication.",
+    )
     hero_cta_text = models.CharField(max_length=80, default="Enquire Now")
     hero_image = models.ImageField(upload_to=home_hero_image_path, blank=True)
     hero_video = models.FileField(upload_to=home_hero_video_path, blank=True)

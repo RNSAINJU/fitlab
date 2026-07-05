@@ -32,6 +32,7 @@ class HomeHeroForm(forms.ModelForm):
         model = HomePageSettings
         fields = [
             "hero_headline",
+            "hero_subtext",
             "hero_cta_text",
             "hero_media_type",
             "hero_image",
