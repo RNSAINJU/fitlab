@@ -117,169 +117,168 @@
     if (next) next.addEventListener("click", function () { show(index + 1); });
   }
 
-  function initTrainerCarousel3D(containerId) {
-    var container = document.getElementById(containerId);
-    if (!container) return;
+  function initHero3dCarousel(containerId) {
+    var carousel = document.getElementById(containerId);
+    var viewport = document.getElementById("trainerCarouselViewport");
+    var stage = document.getElementById("trainer3dStage");
+    var dotsWrap = document.getElementById("trainerCarouselDots");
+    var prevBtn = document.getElementById("trainerCarouselPrev");
+    var nextBtn = document.getElementById("trainerCarouselNext");
+    if (!carousel || !viewport || !stage) return;
 
-    var viewport = container.querySelector("[data-trainer-viewport]");
-    var slides = Array.prototype.slice.call(
-      container.querySelectorAll(".home-slider__card")
-    );
+    var slides = Array.prototype.slice.call(stage.querySelectorAll("[data-hero-slide]"));
     if (!slides.length) return;
 
-    var dots = Array.prototype.slice.call(
-      container.querySelectorAll(".home-slider__dot")
-    );
-    var prev = container.querySelector(".home-slider__arrow--prev");
-    var next = container.querySelector(".home-slider__arrow--next");
-    var index = slides.findIndex(function (slide) {
-      return slide.classList.contains("is-active");
-    });
-    if (index < 0) index = 0;
-
+    var activeIndex = 0;
     var touchStartX = 0;
     var touchStartY = 0;
-    var touchDeltaX = 0;
-    var touchActive = false;
-    var swipeLocked = false;
+    var autoTimer = null;
+    var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    function mod(n, m) {
-      return ((n % m) + m) % m;
+    function slideSpacing() {
+      if (window.innerWidth >= 768) return 155;
+      if (window.innerWidth <= 480) return 108;
+      return 128;
     }
 
-    function setActive(nextIndex) {
-      index = mod(nextIndex, slides.length);
-      slides.forEach(function (slide, i) {
-        var offset = i - index;
-        if (offset > slides.length / 2) offset -= slides.length;
-        if (offset < -slides.length / 2) offset += slides.length;
-
-        slide.classList.remove("is-active", "is-prev", "is-next", "is-far", "is-dragging");
-        if (offset === 0) slide.classList.add("is-active");
-        else if (offset === -1) slide.classList.add("is-prev");
-        else if (offset === 1) slide.classList.add("is-next");
-        else slide.classList.add("is-far");
+    function buildDots() {
+      if (!dotsWrap || slides.length <= 1) return;
+      dotsWrap.innerHTML = "";
+      slides.forEach(function (_, index) {
+        var dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "hero-3d-dot" + (index === activeIndex ? " is-active" : "");
+        dot.setAttribute("role", "tab");
+        dot.setAttribute("aria-label", "Show trainer " + (index + 1));
+        dot.setAttribute("aria-selected", index === activeIndex ? "true" : "false");
+        dot.addEventListener("click", function () {
+          goTo(index);
+          restartAuto();
+        });
+        dotsWrap.appendChild(dot);
       });
+    }
 
-      dots.forEach(function (dot, i) {
-        var isActive = i === index;
+    function updateDots() {
+      if (!dotsWrap) return;
+      dotsWrap.querySelectorAll(".hero-3d-dot").forEach(function (dot, index) {
+        var isActive = index === activeIndex;
         dot.classList.toggle("is-active", isActive);
         dot.setAttribute("aria-selected", isActive ? "true" : "false");
       });
     }
 
-    function goTo(nextIndex) {
-      setActive(nextIndex);
+    function layoutSlides() {
+      var spacing = slideSpacing();
+      var time = Date.now() * 0.001;
+
+      slides.forEach(function (slide, index) {
+        var offset = index - activeIndex;
+        var total = slides.length;
+        if (offset > total / 2) offset -= total;
+        if (offset < -total / 2) offset += total;
+
+        var abs = Math.abs(offset);
+        var hidden = abs > 2;
+        var floatY = reducedMotion ? 0 : Math.sin(time * 1.2 + index) * (offset === 0 ? 8 : 4);
+        var translateX = offset * spacing;
+        var translateZ = offset === 0 ? 72 : Math.max(0, 48 - abs * 22);
+        var rotateY = offset * -38;
+        var rotateX = offset === 0 ? (reducedMotion ? 0 : Math.sin(time * 0.5) * 4) : 8;
+        var scale = offset === 0 ? 1 : Math.max(0.72, 0.9 - abs * 0.12);
+        var opacity = hidden ? 0 : Math.max(0.25, 1 - abs * 0.32);
+
+        slide.style.opacity = String(opacity);
+        slide.style.pointerEvents = abs <= 1 ? "auto" : "none";
+        slide.style.zIndex = String(100 - abs);
+        slide.style.transform =
+          "translate3d(calc(-50% + " + translateX + "px), calc(-50% + " + floatY + "px), " + translateZ + "px) " +
+          "rotateX(" + rotateX + "deg) rotateY(" + rotateY + "deg) scale(" + scale + ")";
+
+        slide.setAttribute("aria-hidden", offset === 0 ? "false" : "true");
+        if (offset === 0) {
+          slide.setAttribute("aria-current", "true");
+        } else {
+          slide.removeAttribute("aria-current");
+        }
+
+        var image = slide.querySelector(".hero-3d-card-image");
+        if (image && offset === 0) {
+          image.style.transform = "translateZ(36px) scale(1.08)";
+        } else if (image) {
+          image.style.transform = "translateZ(18px) scale(1.02)";
+        }
+      });
+
+      updateDots();
+      requestAnimationFrame(layoutSlides);
     }
 
-    slides.forEach(function (slide, i) {
+    function goTo(index) {
+      var total = slides.length;
+      activeIndex = ((index % total) + total) % total;
+    }
+
+    function next() { goTo(activeIndex + 1); }
+    function prev() { goTo(activeIndex - 1); }
+
+    function restartAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+      if (slides.length <= 1 || reducedMotion) return;
+      autoTimer = setInterval(next, 4500);
+    }
+
+    slides.forEach(function (slide, index) {
       slide.addEventListener("click", function () {
-        if (i !== index) goTo(i);
+        if (index !== activeIndex) {
+          goTo(index);
+          restartAuto();
+        }
       });
     });
 
-    dots.forEach(function (dot, i) {
-      dot.addEventListener("click", function () {
-        goTo(i);
-      });
-    });
-
-    if (prev) {
-      prev.addEventListener("click", function () {
-        goTo(index - 1);
+    if (prevBtn) {
+      prevBtn.addEventListener("click", function () {
+        prev();
+        restartAuto();
       });
     }
 
-    if (next) {
-      next.addEventListener("click", function () {
-        goTo(index + 1);
+    if (nextBtn) {
+      nextBtn.addEventListener("click", function () {
+        next();
+        restartAuto();
       });
     }
 
-    if (viewport) {
-      viewport.addEventListener("touchstart", function (event) {
-        if (!event.changedTouches || !event.changedTouches.length) return;
-        var touch = event.changedTouches[0];
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
-        touchDeltaX = 0;
-        touchActive = true;
-        swipeLocked = false;
-        slides.forEach(function (slide) {
-          slide.classList.add("is-dragging");
-        });
-      }, { passive: true });
-
-      viewport.addEventListener("touchmove", function (event) {
-        if (!touchActive || !event.changedTouches || !event.changedTouches.length) return;
-        var touch = event.changedTouches[0];
-        var deltaX = touch.clientX - touchStartX;
-        var deltaY = touch.clientY - touchStartY;
-
-        if (!swipeLocked) {
-          if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 12) {
-            touchActive = false;
-            slides.forEach(function (slide) {
-              slide.classList.remove("is-dragging");
-            });
-            return;
-          }
-          if (Math.abs(deltaX) > 12) {
-            swipeLocked = true;
-          }
-        }
-
-        if (!swipeLocked) return;
-        touchDeltaX = deltaX;
-        event.preventDefault();
-
-        var dragX = touchDeltaX * 0.42;
-        var rotate = touchDeltaX * -0.055;
-        var activeSlide = slides[index];
-        var prevSlide = slides[mod(index - 1, slides.length)];
-        var nextSlide = slides[mod(index + 1, slides.length)];
-
-        if (activeSlide) {
-          activeSlide.style.transform =
-            "translate3d(" + dragX + "px, 0, 60px) rotateY(" + rotate + "deg) scale(1)";
-        }
-        if (prevSlide && touchDeltaX > 0) {
-          var p = Math.min(touchDeltaX / 220, 1);
-          prevSlide.style.transform =
-            "translate3d(" + (-64 + p * 18) + "%, 0, " + (-110 + p * 90) + "px) rotateY(" +
-            (52 - p * 52) + "deg) scale(" + (0.8 + p * 0.2) + ")";
-        }
-        if (nextSlide && touchDeltaX < 0) {
-          var n = Math.min(Math.abs(touchDeltaX) / 220, 1);
-          nextSlide.style.transform =
-            "translate3d(" + (64 - n * 18) + "%, 0, " + (-110 + n * 90) + "px) rotateY(" +
-            (-52 + n * 52) + "deg) scale(" + (0.8 + n * 0.2) + ")";
-        }
-      }, { passive: false });
-
-      function endTouch() {
-        if (!touchActive) return;
-        touchActive = false;
-        swipeLocked = false;
-
-        slides.forEach(function (slide) {
-          slide.classList.remove("is-dragging");
-          slide.style.transform = "";
-        });
-
-        if (Math.abs(touchDeltaX) > 48) {
-          if (touchDeltaX < 0) goTo(index + 1);
-          else goTo(index - 1);
-        }
-        touchDeltaX = 0;
-      }
-
-      viewport.addEventListener("touchend", endTouch, { passive: true });
-      viewport.addEventListener("touchcancel", endTouch, { passive: true });
+    if (slides.length <= 1) {
+      if (prevBtn) prevBtn.style.display = "none";
+      if (nextBtn) nextBtn.style.display = "none";
+      var hint = carousel.querySelector(".hero-3d-swipe-hint");
+      if (hint) hint.style.display = "none";
     }
 
-    setActive(index);
+    viewport.addEventListener("touchstart", function (event) {
+      if (!event.touches || !event.touches.length) return;
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+
+    viewport.addEventListener("touchend", function (event) {
+      var touch = event.changedTouches[0];
+      if (!touch) return;
+      var deltaX = touch.clientX - touchStartX;
+      var deltaY = touch.clientY - touchStartY;
+      if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+      if (deltaX < 0) next();
+      else prev();
+      restartAuto();
+    }, { passive: true });
+
+    buildDots();
+    layoutSlides();
+    restartAuto();
   }
 
-  initTrainerCarousel3D("trainer-slider");
+  initHero3dCarousel("trainer-slider");
 })();
