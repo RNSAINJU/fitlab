@@ -1,7 +1,18 @@
 {% load static %}
-{% if site_config.logo %}
+{% if site_config.has_dual_logos %}
   <img
-    src="{{ site_config.logo.url }}"
+    src="{{ site_config.logo_light_url }}"
+    alt="{{ site_config.site_name }}"
+    class="site-logo site-logo--theme-light{% if extra_class %} {{ extra_class }}{% endif %}"
+  >
+  <img
+    src="{{ site_config.logo_dark_url }}"
+    alt="{{ site_config.site_name }}"
+    class="site-logo site-logo--theme-dark{% if extra_class %} {{ extra_class }}{% endif %}"
+  >
+{% elif site_config.display_logo_url %}
+  <img
+    src="{{ site_config.display_logo_url }}"
     alt="{{ site_config.site_name }}"
     class="site-logo{% if extra_class %} {{ extra_class }}{% endif %}"
   >

@@ -12,17 +12,27 @@ WIPE_CONFIRM_PHRASE = "DELETE ALL DATA"
 
 
 class SiteSettingsForm(forms.ModelForm):
-    remove_logo = forms.BooleanField(required=False, label="Remove current logo")
+    remove_logo_light = forms.BooleanField(required=False, label="Remove light theme logo")
+    remove_logo_dark = forms.BooleanField(required=False, label="Remove dark theme logo")
 
     class Meta:
         model = SiteConfiguration
-        fields = ["site_name", "logo"]
+        fields = ["site_name", "logo_light", "logo_dark"]
         widgets = {
             "site_name": forms.TextInput(attrs={"placeholder": "e.g. The Fitlab"}),
         }
 
-    def clean_logo(self):
-        logo = self.cleaned_data.get("logo")
+    def clean_logo_light(self):
+        logo = self.cleaned_data.get("logo_light")
+        if not logo or not hasattr(logo, "read"):
+            return logo
+        try:
+            return optimize_site_logo(logo)
+        except ValueError as exc:
+            raise forms.ValidationError(str(exc)) from exc
+
+    def clean_logo_dark(self):
+        logo = self.cleaned_data.get("logo_dark")
         if not logo or not hasattr(logo, "read"):
             return logo
         try:
@@ -32,9 +42,12 @@ class SiteSettingsForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        if self.cleaned_data.get("remove_logo") and instance.logo:
-            instance.logo.delete(save=False)
-            instance.logo = None
+        if self.cleaned_data.get("remove_logo_light") and instance.logo_light:
+            instance.logo_light.delete(save=False)
+            instance.logo_light = None
+        if self.cleaned_data.get("remove_logo_dark") and instance.logo_dark:
+            instance.logo_dark.delete(save=False)
+            instance.logo_dark = None
         if commit:
             instance.save()
         return instance

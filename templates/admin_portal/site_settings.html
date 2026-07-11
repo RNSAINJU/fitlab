@@ -5,7 +5,7 @@
 <div class="admin-hero">
   <p class="admin-kicker">Branding &amp; Data</p>
   <h1>General</h1>
-  <p>Update the public site name and logo shown across the customer app and admin portal.</p>
+  <p>Update the public site name and theme-specific logos for the customer app and admin portal.</p>
 </div>
 
 <div class="ledger-grid">
@@ -29,24 +29,47 @@
 
         <div class="admin-form-row admin-form-row--full">
           <div>
-            <label for="{{ settings_form.logo.id_for_label }}">Logo</label>
-            {% if site_config.logo %}
-              <div class="settings-logo-preview">
-                <img src="{{ site_config.logo.url }}" alt="Current logo" class="site-logo site-logo--preview">
-              </div>
+            <label for="{{ settings_form.logo_light.id_for_label }}">Logo (light theme)</label>
+            <div class="settings-logo-preview settings-logo-preview--light" data-theme="light">
+              {% if site_config.logo_light_url %}
+                <img src="{{ site_config.logo_light_url }}" alt="Light theme logo" class="site-logo site-logo--preview">
+              {% else %}
+                <span class="settings-logo-preview__empty">No light theme logo uploaded</span>
+              {% endif %}
+            </div>
+            {{ settings_form.logo_light }}
+            {{ settings_form.logo_light.errors }}
+            <p class="admin-form-hint">Used on light backgrounds (home page, login, app header). JPG, PNG, or WebP.</p>
+            {% if site_config.logo_light %}
+              <label class="home-cms-check">
+                {{ settings_form.remove_logo_light }}
+                <span>{{ settings_form.remove_logo_light.label }}</span>
+              </label>
             {% endif %}
-            {{ settings_form.logo }}
-            {{ settings_form.logo.errors }}
-            <p class="admin-form-hint">Optional. JPG, PNG, or WebP. Resized to max 512px on upload.</p>
           </div>
         </div>
 
-        {% if site_config.logo %}
-          <label style="display:flex;align-items:center;gap:8px;margin:0 0 16px;cursor:pointer;font-size:13px">
-            {{ settings_form.remove_logo }}
-            <span>{{ settings_form.remove_logo.label }}</span>
-          </label>
-        {% endif %}
+        <div class="admin-form-row admin-form-row--full">
+          <div>
+            <label for="{{ settings_form.logo_dark.id_for_label }}">Logo (dark theme)</label>
+            <div class="settings-logo-preview settings-logo-preview--dark" data-theme="dark">
+              {% if site_config.logo_dark_url %}
+                <img src="{{ site_config.logo_dark_url }}" alt="Dark theme logo" class="site-logo site-logo--preview">
+              {% else %}
+                <span class="settings-logo-preview__empty">No dark theme logo uploaded</span>
+              {% endif %}
+            </div>
+            {{ settings_form.logo_dark }}
+            {{ settings_form.logo_dark.errors }}
+            <p class="admin-form-hint">Used on dark backgrounds. Upload a version designed for dark UI (e.g. light text/mark on transparent or dark fill).</p>
+            {% if site_config.logo_dark %}
+              <label class="home-cms-check">
+                {{ settings_form.remove_logo_dark }}
+                <span>{{ settings_form.remove_logo_dark.label }}</span>
+              </label>
+            {% endif %}
+          </div>
+        </div>
 
         <button type="submit" class="admin-btn admin-btn--primary">Save branding</button>
       </form>

@@ -18,6 +18,14 @@ def site_logo_path(instance, filename):
     return f"site/logo_{filename}"
 
 
+def site_logo_light_path(instance, filename):
+    return f"site/logo_light_{filename}"
+
+
+def site_logo_dark_path(instance, filename):
+    return f"site/logo_dark_{filename}"
+
+
 def home_hero_image_path(instance, filename):
     return f"home/hero/{filename}"
 
@@ -57,6 +65,8 @@ def home_pricing_banner_path(instance, filename):
 class SiteConfiguration(models.Model):
     site_name = models.CharField(max_length=120, default="The Fitlab")
     logo = models.ImageField(upload_to=site_logo_path, blank=True)
+    logo_light = models.ImageField(upload_to=site_logo_light_path, blank=True)
+    logo_dark = models.ImageField(upload_to=site_logo_dark_path, blank=True)
 
     class Meta:
         verbose_name = "Site configuration"
@@ -83,6 +93,28 @@ class SiteConfiguration(models.Model):
     @property
     def admin_title(self):
         return f"{self.site_name} Admin"
+
+    @property
+    def logo_light_url(self):
+        if self.logo_light:
+            return self.logo_light.url
+        if self.logo:
+            return self.logo.url
+        return ""
+
+    @property
+    def logo_dark_url(self):
+        if self.logo_dark:
+            return self.logo_dark.url
+        return ""
+
+    @property
+    def has_dual_logos(self):
+        return bool(self.logo_light_url) and bool(self.logo_dark_url)
+
+    @property
+    def display_logo_url(self):
+        return self.logo_light_url or self.logo_dark_url
 
 
 class HomePageSettings(models.Model):

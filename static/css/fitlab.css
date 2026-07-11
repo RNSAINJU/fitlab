@@ -677,7 +677,28 @@ a { color: inherit; text-decoration: none; }
 }
 
 .settings-logo-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88px;
   margin-bottom: 8px;
+  padding: 16px;
+  border: 1px solid var(--border-muted);
+  border-radius: 12px;
+}
+
+.settings-logo-preview--light {
+  background: #f4f4f5;
+}
+
+.settings-logo-preview--dark {
+  background: #09090b;
+  border-color: #27272a;
+}
+
+.settings-logo-preview__empty {
+  color: var(--text-muted);
+  font-size: 13px;
 }
 
 .site-name {

@@ -277,11 +277,25 @@
   color-scheme: light;
 }
 
-/* Dark theme: fill transparent logo areas with black */
-[data-theme="dark"] .site-logo {
+/* Theme-specific logos */
+.site-logo--theme-light,
+.site-logo--theme-dark {
+  background-color: transparent;
+}
+
+[data-theme="light"] .site-logo--theme-dark {
+  display: none;
+}
+
+[data-theme="dark"] .site-logo--theme-light {
+  display: none;
+}
+
+/* Single logo fallback: fill transparent areas on dark backgrounds */
+[data-theme="dark"] .site-logo:not(.site-logo--theme-light):not(.site-logo--theme-dark) {
   background-color: #000000;
 }
 
-[data-theme="light"] .site-logo {
+[data-theme="light"] .site-logo:not(.site-logo--theme-light):not(.site-logo--theme-dark) {
   background-color: transparent;
 }

@@ -567,7 +567,7 @@ def site_settings(request):
             form = SiteSettingsForm(request.POST, request.FILES, instance=config)
             if form.is_valid():
                 form.save()
-                messages.success(request, "Site name and logo updated.")
+                messages.success(request, "Site name and theme logos updated.")
             else:
                 messages.error(request, form.errors.as_text())
             return redirect("admin_portal:site_settings")
