@@ -25,7 +25,6 @@ from .forms import (
     PasswordResetConfirmForm,
     PasswordResetRequestForm,
     ProfileEditForm,
-    RegistrationForm,
 )
 from .theme import THEME_COOKIE, VALID_THEMES
 
@@ -93,22 +92,7 @@ class FitlabPasswordResetCompleteView(PasswordResetCompleteView):
 
 
 def register(request):
-    if request.user.is_authenticated:
-        return redirect(get_post_login_url(request.user))
-
-    _store_referral_code(request)
-
-    if request.method == "POST":
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            messages.success(request, "Registration submitted. Awaiting admin approval.")
-            login(request, user, backend=DEFAULT_AUTH_BACKEND)
-            return redirect("accounts:pending")
-    else:
-        form = RegistrationForm()
-
-    return render(request, "accounts/register.html", {"form": form})
+    return redirect("accounts:login")
 
 
 @login_required

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Join the Lab — {{ site_config.site_name }}{% endblock %}
+{% block title %}Login — {{ site_config.site_name }}{% endblock %}
 {% block body %}
 <div class="auth-page auth-page--login">
   <div class="auth-bg-gradient"></div>
@@ -68,11 +68,6 @@
     <div style="padding-top:40px">
       {% include "includes/social_auth_buttons.html" with next=request.GET.next %}
     </div>
-
-    <p class="auth-footer-link">
-      <span class="dim">Not part of the lab?</span>
-      <a href="{% url 'accounts:register' %}" class="bright">Join the elite</a>
-    </p>
   </main>
 
   <div class="auth-footer-line"></div>

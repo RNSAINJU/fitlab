@@ -23,8 +23,7 @@
         <a href="#contact">Contact</a>
       </nav>
       <div class="home-header__actions">
-        <a href="{% url 'accounts:login' %}" class="home-btn home-btn--ghost">Login</a>
-        <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary">Join Now</a>
+        <a href="{% url 'accounts:login' %}" class="home-btn home-btn--primary">Login</a>
       </div>
       <button type="button" class="home-menu-toggle" id="home-menu-toggle" aria-label="Open menu" aria-expanded="false">
         <span></span>
@@ -41,8 +40,7 @@
     <a href="#pricing">Pricing</a>
     <a href="#contact">Contact</a>
     <div class="home-mobile-nav__actions">
-      <a href="{% url 'accounts:login' %}" class="home-btn home-btn--ghost">Login</a>
-      <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary">Join Now</a>
+      <a href="{% url 'accounts:login' %}" class="home-btn home-btn--primary">Login</a>
     </div>
   </nav>
 
@@ -65,7 +63,7 @@
         {% endwith %}
       </h1>
       {% if hp.hero_subtext %}<p class="home-hero__lead">{{ hp.hero_subtext }}</p>{% endif %}
-      <a href="{% url 'accounts:register' %}" class="home-btn home-btn--primary">{{ hp.hero_cta_text }}</a>
+      <a href="{% url 'accounts:login' %}" class="home-btn home-btn--primary">{{ hp.hero_cta_text }}</a>
     </div>
   </section>
 
@@ -199,7 +197,6 @@
         <ul>
           <li><a href="{% url 'accounts:home' %}">Home</a></li>
           <li><a href="#about">About Us</a></li>
-          <li><a href="{% url 'accounts:register' %}">Register</a></li>
           <li><a href="{% url 'accounts:login' %}">Member Login</a></li>
         </ul>
       </div>
