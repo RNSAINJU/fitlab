@@ -34,7 +34,7 @@ def athlete_profession_logo(profession, hp):
     url = hp.athlete_profession_logo_url(profession)
     if url:
         return url
-    if profession == "kickboxing":
+    if profession in ("boxing", "kickboxing"):
         return static("images/athlete-logo-boxing.svg")
     return ""
 

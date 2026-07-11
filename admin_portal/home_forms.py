@@ -85,9 +85,9 @@ class HomePowerliftersSectionForm(AdminStyledModelForm):
         required=False,
         label="Remove powerlifting profession logo",
     )
-    remove_athlete_logo_kickboxing = forms.BooleanField(
+    remove_athlete_logo_boxing = forms.BooleanField(
         required=False,
-        label="Remove kick boxing profession logo",
+        label="Remove boxing profession logo",
     )
 
     class Meta:
@@ -97,8 +97,8 @@ class HomePowerliftersSectionForm(AdminStyledModelForm):
             "powerlifters_watermark",
             "athlete_logo_powerlifting",
             "athlete_logo_powerlifting_url",
-            "athlete_logo_kickboxing",
-            "athlete_logo_kickboxing_url",
+            "athlete_logo_boxing",
+            "athlete_logo_boxing_url",
         ]
 
     def clean_athlete_logo_powerlifting(self):
@@ -107,10 +107,10 @@ class HomePowerliftersSectionForm(AdminStyledModelForm):
             self.cleaned_data.get("athlete_logo_powerlifting"),
         )
 
-    def clean_athlete_logo_kickboxing(self):
+    def clean_athlete_logo_boxing(self):
         return _clean_home_image(
-            "athlete_logo_kickboxing",
-            self.cleaned_data.get("athlete_logo_kickboxing"),
+            "athlete_logo_boxing",
+            self.cleaned_data.get("athlete_logo_boxing"),
         )
 
     def save(self, commit=True):
@@ -118,9 +118,9 @@ class HomePowerliftersSectionForm(AdminStyledModelForm):
         if self.cleaned_data.get("remove_athlete_logo_powerlifting") and instance.athlete_logo_powerlifting:
             instance.athlete_logo_powerlifting.delete(save=False)
             instance.athlete_logo_powerlifting = None
-        if self.cleaned_data.get("remove_athlete_logo_kickboxing") and instance.athlete_logo_kickboxing:
-            instance.athlete_logo_kickboxing.delete(save=False)
-            instance.athlete_logo_kickboxing = None
+        if self.cleaned_data.get("remove_athlete_logo_boxing") and instance.athlete_logo_boxing:
+            instance.athlete_logo_boxing.delete(save=False)
+            instance.athlete_logo_boxing = None
         if commit:
             instance.save()
         return instance

@@ -124,23 +124,23 @@
       <div class="admin-form-row admin-form-row--full">
         <div>
           <label>Boxing profession logo</label>
-          {% if hp.athlete_logo_kickboxing %}
-            <img src="{{ hp.athlete_logo_kickboxing.url }}" alt="" class="home-cms-thumb">
-          {% elif hp.athlete_logo_kickboxing_url %}
-            <img src="{{ hp.athlete_logo_kickboxing_url }}" alt="" class="home-cms-thumb">
+          {% if hp.athlete_logo_boxing %}
+            <img src="{{ hp.athlete_logo_boxing.url }}" alt="" class="home-cms-thumb">
+          {% elif hp.athlete_logo_boxing_url %}
+            <img src="{{ hp.athlete_logo_boxing_url }}" alt="" class="home-cms-thumb">
           {% endif %}
-          {{ powerlifters_section_form.athlete_logo_kickboxing }}
-          <p class="admin-form-hint">Shown on athlete cards with profession set to Kick Boxing. Uses the built-in boxing logo if none is uploaded.</p>
-          {% if hp.athlete_logo_kickboxing %}
+          {{ powerlifters_section_form.athlete_logo_boxing }}
+          <p class="admin-form-hint">Shown on athlete cards with profession set to Boxing. Uses the built-in boxing logo if none is uploaded.</p>
+          {% if hp.athlete_logo_boxing %}
             <label class="home-cms-check">
-              {{ powerlifters_section_form.remove_athlete_logo_kickboxing }}
-              <span>{{ powerlifters_section_form.remove_athlete_logo_kickboxing.label }}</span>
+              {{ powerlifters_section_form.remove_athlete_logo_boxing }}
+              <span>{{ powerlifters_section_form.remove_athlete_logo_boxing.label }}</span>
             </label>
           {% endif %}
         </div>
         <div>
           <label>Or logo URL</label>
-          {{ powerlifters_section_form.athlete_logo_kickboxing_url }}
+          {{ powerlifters_section_form.athlete_logo_boxing_url }}
         </div>
       </div>
       <button type="submit" class="admin-btn admin-btn--primary">Save athlete section</button>
@@ -163,7 +163,7 @@
             <label>Profession</label>
             <select name="profession" class="admin-input">
               <option value="powerlifting" {% if item.profession == "powerlifting" %}selected{% endif %}>Powerlifting</option>
-              <option value="kickboxing" {% if item.profession == "kickboxing" %}selected{% endif %}>Kick Boxing</option>
+              <option value="boxing" {% if item.profession == "boxing" %}selected{% endif %}>Boxing</option>
             </select>
           </div>
           <div><label>Sort order</label><input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input"></div>

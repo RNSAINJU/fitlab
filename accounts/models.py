@@ -149,8 +149,8 @@ class HomePageSettings(models.Model):
     powerlifters_watermark = models.CharField(max_length=80, default="Iconic")
     athlete_logo_powerlifting = models.ImageField(upload_to=home_athlete_logo_path, blank=True)
     athlete_logo_powerlifting_url = models.URLField(blank=True)
-    athlete_logo_kickboxing = models.ImageField(upload_to=home_athlete_logo_path, blank=True)
-    athlete_logo_kickboxing_url = models.URLField(blank=True)
+    athlete_logo_boxing = models.ImageField(upload_to=home_athlete_logo_path, blank=True)
+    athlete_logo_boxing_url = models.URLField(blank=True)
 
     welcome_tagline = models.CharField(max_length=200, default="A Private Gym in Kathmandu")
     welcome_paragraph_1 = models.TextField(blank=True)
@@ -252,10 +252,10 @@ class HomePageSettings(models.Model):
         return ""
 
     def athlete_profession_logo_url(self, profession):
-        if profession == HomePowerlifter.Profession.KICKBOXING:
-            if self.athlete_logo_kickboxing:
-                return self.athlete_logo_kickboxing.url
-            return self.athlete_logo_kickboxing_url or ""
+        if profession in (HomePowerlifter.Profession.BOXING, "kickboxing"):
+            if self.athlete_logo_boxing:
+                return self.athlete_logo_boxing.url
+            return self.athlete_logo_boxing_url or ""
         if self.athlete_logo_powerlifting:
             return self.athlete_logo_powerlifting.url
         return self.athlete_logo_powerlifting_url or ""
@@ -264,7 +264,7 @@ class HomePageSettings(models.Model):
 class HomePowerlifter(models.Model):
     class Profession(models.TextChoices):
         POWERLIFTING = "powerlifting", "Powerlifting"
-        KICKBOXING = "kickboxing", "Kick Boxing"
+        BOXING = "boxing", "Boxing"
 
     name = models.CharField(max_length=120)
     profession = models.CharField(
