@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=27">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=30">
 {% endblock %}
 {% block body %}
 <div class="home-page">
@@ -89,38 +89,55 @@
         <h2>{{ hp.trainers_title|accent_last_word }}</h2>
         <span class="home-section-title__line"></span>
       </div>
-      <div class="home-slider home-slider--trainers-3d" id="trainer-slider">
-        <div class="home-slider__stage">
-          <div class="home-slider__viewport" data-trainer-viewport>
-            <div class="home-slider__track home-slider__track--3d">
-              {% for item in trainers %}
-              <article class="home-slider__slide home-slider__card{% if forloop.first %} is-active{% endif %}" data-trainer-index="{{ forloop.counter0 }}">
-                <div class="home-slider__card-inner">
-                  {% if item.display_image_url %}
-                    <img src="{{ item.display_image_url }}" alt="{{ item.name }}" loading="lazy" draggable="false">
-                  {% endif %}
-                  <span class="home-slider__caption">{{ item.name }}</span>
-                </div>
-              </article>
-              {% endfor %}
-            </div>
+      <div class="hero-3d-section">
+        <div class="hero-3d-shell">
+          <div class="hero-3d-backdrop" aria-hidden="true">
+            <div class="hero-3d-bg-overlay"></div>
+            <div class="hero-3d-orb hero-3d-orb--left"></div>
+            <div class="hero-3d-orb hero-3d-orb--right"></div>
+            <div class="hero-3d-grid"></div>
           </div>
-          <button type="button" class="home-slider__arrow home-slider__arrow--prev" aria-label="Previous trainer">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button type="button" class="home-slider__arrow home-slider__arrow--next" aria-label="Next trainer">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <div class="home-slider__dots" role="tablist" aria-label="Trainers">
-          {% for item in trainers %}
-          <button
-            type="button"
-            class="home-slider__dot{% if forloop.first %} is-active{% endif %}"
-            aria-label="Show {{ item.name }}"
-            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-          ></button>
-          {% endfor %}
+
+          <div class="hero-3d-carousel" id="trainer-slider" aria-roledescription="carousel" aria-label="Meet the trainers">
+            <button type="button" class="hero-3d-nav hero-3d-nav--prev" id="trainerCarouselPrev" aria-label="Previous trainer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+
+            <div class="hero-3d-viewport" id="trainerCarouselViewport">
+              <div class="hero-3d-stage" id="trainer3dStage">
+                <div class="hero-3d-pedestal" aria-hidden="true"></div>
+                {% for item in trainers %}
+                <article
+                  class="hero-3d-slide"
+                  data-hero-slide
+                  data-slide-index="{{ forloop.counter0 }}"
+                  {% if forloop.first %}aria-current="true"{% endif %}
+                >
+                  <div class="hero-3d-card-frame">
+                    {% if item.display_image_url %}
+                      <img
+                        class="hero-3d-card-image"
+                        src="{{ item.display_image_url }}"
+                        alt="{{ item.name }}"
+                        loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                        draggable="false"
+                      >
+                    {% endif %}
+                    <div class="hero-3d-card-shine" aria-hidden="true"></div>
+                  </div>
+                  <p class="hero-3d-card-label">{{ item.name }}</p>
+                </article>
+                {% endfor %}
+              </div>
+            </div>
+
+            <button type="button" class="hero-3d-nav hero-3d-nav--next" id="trainerCarouselNext" aria-label="Next trainer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+
+            <div class="hero-3d-dots" id="trainerCarouselDots" role="tablist" aria-label="Choose trainer"></div>
+            <p class="hero-3d-swipe-hint">Swipe or use arrows to browse</p>
+          </div>
         </div>
       </div>
     </div>
@@ -240,5 +257,5 @@
 </div>
 {% endblock %}
 {% block extra_js %}
-<script src="{% static 'js/home.js' %}?v=6"></script>
+<script src="{% static 'js/home.js' %}?v=9"></script>
 {% endblock %}
