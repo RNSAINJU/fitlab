@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=18">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=19">
 {% endblock %}
 {% block body %}
 <div class="home-page">
@@ -115,7 +115,7 @@
 
   {% if powerlifters %}
   <section class="home-section home-powerlifters" id="powerlifters">
-    <div class="home-container home-powerlifters__wrap">
+    <div class="home-container">
       <div class="home-section-title">
         {% if hp.powerlifters_watermark %}
           <span class="home-watermark" aria-hidden="true">{{ hp.powerlifters_watermark }}</span>
@@ -123,24 +123,27 @@
         <h2>{{ hp.powerlifters_title|accent_last_word }}</h2>
         <span class="home-section-title__line"></span>
       </div>
-      <div class="home-accordion" id="powerlifter-accordion">
-        {% for item in powerlifters %}
-        <article class="home-accordion__item{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}">
-          {% if item.display_image_url %}
-            <img src="{{ item.display_image_url }}" alt="{{ item.name }}" loading="lazy">
-          {% endif %}
-          <div class="home-accordion__label">
-            <span class="home-accordion__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M6.5 6.5h11v11h-11z"/>
-                <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
-              </svg>
-            </span>
-            <span class="home-accordion__label-text">{{ item.name }}</span>
-          </div>
-        </article>
-        {% endfor %}
-      </div>
+    </div>
+    <div class="home-accordion" id="powerlifter-accordion">
+      {% for item in powerlifters %}
+      <article
+        class="home-accordion__item{% if forloop.first %} is-active{% endif %}"
+        data-index="{{ forloop.counter0 }}"
+        {% if item.display_image_url %}style="background-image: url('{{ item.display_image_url }}');"{% endif %}
+        role="button"
+        tabindex="0"
+        aria-label="{{ item.name }}"
+      >
+        <div class="home-accordion__label">
+          <span class="home-accordion__icon" aria-hidden="true">
+            <svg viewBox="0 0 640 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fill="currentColor" d="M104 96H56c-13.3 0-24 10.7-24 24v104H8c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h24v104c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V120c0-13.3-10.7-24-24-24zm528 128h-24V120c0-13.3-10.7-24-24-24h-48c-13.3 0-24 10.7-24 24v272c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V288h24c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8zM456 32h-48c-13.3 0-24 10.7-24 24v168H256V56c0-13.3-10.7-24-24-24h-48c-13.3 0-24 10.7-24 24v400c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V288h128v168c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24z"/>
+            </svg>
+          </span>
+          <span class="home-accordion__label-text">{{ item.name }}</span>
+        </div>
+      </article>
+      {% endfor %}
     </div>
   </section>
   {% endif %}
@@ -357,5 +360,5 @@
 </div>
 {% endblock %}
 {% block extra_js %}
-<script src="{% static 'js/home.js' %}?v=2"></script>
+<script src="{% static 'js/home.js' %}?v=3"></script>
 {% endblock %}

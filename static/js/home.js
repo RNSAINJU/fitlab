@@ -76,18 +76,25 @@
 
   var accordion = document.getElementById("powerlifter-accordion");
   if (accordion) {
+    function activateAccordionItem(item) {
+      accordion.querySelectorAll(".home-accordion__item").forEach(function (el) {
+        el.classList.remove("is-active");
+      });
+      item.classList.add("is-active");
+    }
+
     accordion.querySelectorAll(".home-accordion__item").forEach(function (item) {
       item.addEventListener("mouseenter", function () {
-        accordion.querySelectorAll(".home-accordion__item").forEach(function (el) {
-          el.classList.remove("is-active");
-        });
-        item.classList.add("is-active");
+        activateAccordionItem(item);
       });
       item.addEventListener("click", function () {
-        accordion.querySelectorAll(".home-accordion__item").forEach(function (el) {
-          el.classList.remove("is-active");
-        });
-        item.classList.add("is-active");
+        activateAccordionItem(item);
+      });
+      item.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activateAccordionItem(item);
+        }
       });
     });
   }
