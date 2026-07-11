@@ -514,6 +514,11 @@ body.home-nav-open {
   object-fit: contain;
 }
 
+.home-accordion__profession-logo--boxing {
+  width: 28px;
+  height: 28px;
+}
+
 .home-accordion__label-text {
   display: block;
   max-width: 100%;
