@@ -123,14 +123,14 @@
       </div>
       <div class="admin-form-row admin-form-row--full">
         <div>
-          <label>Kick boxing profession logo</label>
+          <label>Boxing profession logo</label>
           {% if hp.athlete_logo_kickboxing %}
             <img src="{{ hp.athlete_logo_kickboxing.url }}" alt="" class="home-cms-thumb">
           {% elif hp.athlete_logo_kickboxing_url %}
             <img src="{{ hp.athlete_logo_kickboxing_url }}" alt="" class="home-cms-thumb">
           {% endif %}
           {{ powerlifters_section_form.athlete_logo_kickboxing }}
-          <p class="admin-form-hint">Shown on athlete cards with profession set to Kick Boxing.</p>
+          <p class="admin-form-hint">Shown on athlete cards with profession set to Kick Boxing. Uses the built-in boxing logo if none is uploaded.</p>
           {% if hp.athlete_logo_kickboxing %}
             <label class="home-cms-check">
               {{ powerlifters_section_form.remove_athlete_logo_kickboxing }}

@@ -3,6 +3,7 @@ import re
 from datetime import timedelta
 
 from django import template
+from django.templatetags.static import static
 from django.utils import timezone
 
 register = template.Library()
@@ -30,7 +31,12 @@ def in_settings_section(request):
 def athlete_profession_logo(profession, hp):
     if not hp:
         return ""
-    return hp.athlete_profession_logo_url(profession)
+    url = hp.athlete_profession_logo_url(profession)
+    if url:
+        return url
+    if profession == "kickboxing":
+        return static("images/athlete-logo-boxing.svg")
+    return ""
 
 
 @register.filter
