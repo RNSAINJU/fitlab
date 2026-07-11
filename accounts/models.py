@@ -147,6 +147,7 @@ class HomePageSettings(models.Model):
     )
     map_embed_url = models.URLField(
         blank=True,
+        max_length=2000,
         default="https://maps.google.com/maps?q=Kathmandu%2C%20Nepal&z=13&output=embed",
     )
 

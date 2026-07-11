@@ -1,6 +1,7 @@
 from django import forms
 
 from accounts.images import optimize_home_image
+from accounts.map_utils import is_embed_url, resolve_map_input
 from accounts.models import (
     HomeClientSpotlight,
     HomeGalleryImage,
@@ -164,6 +165,13 @@ class HomeSectionsForm(AdminStyledModelForm):
 
 
 class HomeFooterForm(AdminStyledModelForm):
+    map_input = forms.CharField(
+        label="Map location",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Address, Google Maps link, or embed URL"}),
+        help_text="Paste your gym address, a Google Maps share link, or the embed URL from Share → Embed a map.",
+    )
+
     class Meta:
         model = HomePageSettings
         fields = [
@@ -171,46 +179,38 @@ class HomeFooterForm(AdminStyledModelForm):
             "footer_cta",
             "contact_address",
             "contact_email",
-            "map_location",
-            "map_embed_url",
         ]
         widgets = {
             "footer_blurb": forms.Textarea(attrs={"rows": 3}),
             "contact_address": forms.Textarea(attrs={"rows": 2}),
         }
 
-    def clean(self):
-        cleaned = super().clean()
-        location = (cleaned.get("map_location") or "").strip()
-        embed = (cleaned.get("map_embed_url") or "").strip()
-
-        if location.startswith("http") and "output=embed" not in location and "/maps/embed" not in location:
-            if embed:
-                cleaned["map_location"] = ""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["map_input"].widget.attrs.setdefault("class", "admin-input")
+        if self.instance and self.instance.pk:
+            if is_embed_url(self.instance.map_embed_url):
+                self.fields["map_input"].initial = self.instance.map_embed_url
             else:
-                self.add_error(
-                    "map_location",
-                    "Use a plain address here, or paste the embed link below "
-                    "(Google Maps → Share → Embed a map). Short share links do not work.",
-                )
+                self.fields["map_input"].initial = self.instance.map_location
 
-        if embed and "/maps/embed" not in embed and "output=embed" not in embed:
-            self.add_error(
-                "map_embed_url",
-                "Paste the full embed URL from Google Maps (starts with https://www.google.com/maps/embed).",
+    def clean_map_input(self):
+        value = (self.cleaned_data.get("map_input") or "").strip()
+        if not value:
+            return ""
+        _label, embed = resolve_map_input(value)
+        if not embed:
+            raise forms.ValidationError(
+                "Could not use that map link. Enter an address, a Google Maps share link, "
+                "or the embed URL from Share → Embed a map."
             )
-
-        return cleaned
+        return value
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        location = (instance.map_location or "").strip()
-        embed = (instance.map_embed_url or "").strip()
-
-        if location.startswith("http") and ("/maps/embed" in location or "output=embed" in location):
-            instance.map_embed_url = location
-            instance.map_location = ""
-
+        label, embed = resolve_map_input(self.cleaned_data.get("map_input", ""))
+        instance.map_location = label
+        instance.map_embed_url = embed
         if commit:
             instance.save()
         return instance
