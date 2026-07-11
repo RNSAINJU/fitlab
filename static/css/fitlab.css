@@ -1776,6 +1776,7 @@ a.app-avatar:hover {
   display: flex;
   min-height: 100vh;
   background: var(--shell-bg);
+  --admin-header-h: 73px;
 }
 
 .admin-sidebar {
@@ -2441,6 +2442,7 @@ a.app-avatar:hover {
 
 @media (max-width: 960px) {
   .ledger-grid { grid-template-columns: 1fr; }
+  .admin-layout { --admin-header-h: 57px; }
   .admin-main { padding: 20px; }
   .admin-header-bar { padding: 16px 20px; gap: 12px; }
   .admin-header-bar__title { flex: 1; min-width: 0; }
@@ -3098,6 +3100,20 @@ a.app-avatar:hover {
 
 
 /* ── Home page CMS (admin settings) ── */
+.home-cms-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.home-cms-page .admin-hero {
+  margin-bottom: 24px;
+}
+
+.home-cms-preview-link {
+  margin-top: 12px;
+}
+
 .home-cms-nav {
   display: flex;
   flex-wrap: wrap;
@@ -3107,6 +3123,9 @@ a.app-avatar:hover {
   background: var(--card);
   border: 1px solid var(--border-muted);
   border-radius: 12px;
+  position: sticky;
+  top: var(--admin-header-h);
+  z-index: 20;
 }
 
 .home-cms-nav a {
@@ -3118,6 +3137,8 @@ a.app-avatar:hover {
   color: var(--text-muted);
   border-radius: 999px;
   border: 1px solid var(--border-muted);
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .home-cms-nav a:hover {
@@ -3129,6 +3150,64 @@ a.app-avatar:hover {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.home-cms-stack .admin-panel {
+  margin-bottom: 0;
+}
+
+.home-cms-stack h3 {
+  margin: 8px 0 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--shell-nav-muted);
+}
+
+.home-cms-section-form {
+  border: 0;
+  padding: 0;
+  margin: 0 0 24px;
+}
+
+.home-cms-section-form--hero,
+.home-cms-section-form--footer {
+  margin-bottom: 0;
+}
+
+.home-cms-section-form > .admin-btn {
+  margin-top: 4px;
+}
+
+.home-cms-stack .admin-form-panel p,
+.home-cms-add p {
+  margin: 0 0 16px;
+}
+
+.home-cms-stack .admin-form-panel p label,
+.home-cms-add p label,
+.home-cms-field > label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--shell-nav-muted);
+  margin-bottom: 6px;
+}
+
+.home-cms-stack .admin-form-panel p input,
+.home-cms-stack .admin-form-panel p select,
+.home-cms-stack .admin-form-panel p textarea,
+.home-cms-add p input,
+.home-cms-add p select,
+.home-cms-add p textarea {
+  width: 100%;
+}
+
+.home-cms-stack .admin-form-row input,
+.home-cms-stack .admin-form-row select {
+  height: 44px;
 }
 
 .home-cms-item {
@@ -3155,6 +3234,51 @@ a.app-avatar:hover {
   margin-bottom: 10px;
 }
 
+.home-cms-item--grid {
+  display: grid;
+  grid-template-columns: 72px minmax(120px, 1fr) minmax(120px, 1fr) minmax(100px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.home-cms-thumb-placeholder {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background: var(--shell-input-bg);
+  border: 1px dashed var(--border-muted);
+}
+
+.home-cms-field {
+  min-width: 0;
+}
+
+.home-cms-media-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 12px;
+}
+
+.home-cms-media-row__fields {
+  flex: 1;
+  min-width: 0;
+}
+
+.home-cms-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.home-cms-actions--inline {
+  margin-top: 0;
+  align-self: end;
+}
+
 .home-cms-inline-form {
   display: flex;
   flex-wrap: wrap;
@@ -3168,6 +3292,11 @@ a.app-avatar:hover {
 .admin-input--sort {
   flex: 0 0 88px;
   max-width: 88px;
+}
+
+.admin-input--grow {
+  flex: 1 1 200px;
+  min-width: 0;
 }
 
 .home-cms-add {
@@ -3187,6 +3316,12 @@ a.app-avatar:hover {
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.home-cms-media-row .home-cms-thumb,
+.home-cms-item--grid .home-cms-thumb {
+  margin-bottom: 0;
 }
 
 .home-cms-thumb--sm {
@@ -3251,41 +3386,26 @@ a.app-avatar:hover {
 .home-cms-stack input[type="number"],
 .home-cms-stack input[type="email"],
 .home-cms-stack select,
-.admin-input {
+.admin-input:not(.admin-input--file) {
   height: 44px;
 }
 
 .home-cms-stack textarea,
-.home-cms-stack .admin-form-row textarea {
+.home-cms-stack .admin-form-row textarea,
+.admin-input textarea {
   min-height: 96px;
+  height: auto;
   padding: 14px 16px;
   border-radius: 16px;
   resize: vertical;
 }
 
-.home-cms-stack input[type="file"] {
+.home-cms-stack input[type="file"],
+.admin-input--file {
   height: auto;
+  min-height: 44px;
   padding: 10px 12px;
   border-radius: 12px;
-}
-
-.home-cms-add p {
-  margin: 0 0 14px;
-}
-
-.home-cms-add p label {
-  display: block;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--shell-nav-muted);
-  margin-bottom: 6px;
-}
-
-.home-cms-add p input,
-.home-cms-add p select,
-.home-cms-add p textarea {
-  width: 100%;
 }
 
 .home-cms-item--inline > input,
@@ -3305,12 +3425,6 @@ a.app-avatar:hover {
 
 @media (max-width: 900px) {
   .home-cms-nav {
-    position: sticky;
-    top: 57px;
-    z-index: 20;
-    margin-left: -4px;
-    margin-right: -4px;
-    border-radius: 10px;
     gap: 6px;
     padding: 10px 12px;
   }
@@ -3324,7 +3438,10 @@ a.app-avatar:hover {
     flex-wrap: wrap;
   }
 
-  .home-cms-item--inline {
+  .home-cms-item--inline,
+  .home-cms-item--grid {
+    grid-template-columns: 1fr;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
   }
@@ -3340,21 +3457,35 @@ a.app-avatar:hover {
   .home-cms-item--inline > .admin-input,
   .home-cms-item--inline > button,
   .home-cms-inline-form > input,
-  .home-cms-inline-form > button {
+  .home-cms-inline-form > button,
+  .home-cms-item--grid > .home-cms-actions--inline {
     width: 100%;
     flex: none;
     max-width: none;
+    align-self: stretch;
+  }
+
+  .home-cms-media-row {
+    flex-direction: column;
   }
 
   .admin-input--sort {
     max-width: none;
   }
 
-  .home-cms-thumb {
+  .home-cms-thumb,
+  .home-cms-thumb-placeholder {
     max-width: 100%;
     width: 100%;
     max-height: 160px;
     object-fit: cover;
+  }
+
+  .home-cms-thumb--sm,
+  .home-cms-thumb-placeholder {
+    max-width: 120px;
+    width: 120px;
+    max-height: 120px;
   }
 
   .home-cms-plan {
@@ -3364,20 +3495,17 @@ a.app-avatar:hover {
 }
 
 @media (max-width: 640px) {
-  .home-cms-nav {
-    top: 52px;
-  }
-
   .home-cms-nav a {
     flex: 1 1 calc(50% - 6px);
     text-align: center;
+    white-space: normal;
   }
 
   .home-cms-item {
     padding: 12px;
   }
 
-  .admin-form-row {
+  .home-cms-stack .admin-form-row {
     grid-template-columns: 1fr;
   }
 }

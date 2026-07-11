@@ -2,11 +2,12 @@
 {% block title %}Home Page — {{ site_config.admin_title }}{% endblock %}
 {% block admin_page_title %}Home Page{% endblock %}
 {% block content %}
+<div class="home-cms-page">
 <div class="admin-hero">
   <p class="admin-kicker">Content Management</p>
   <h1>Home Page</h1>
   <p>Edit all public home page text, photos, videos, pricing, and gallery content.</p>
-  <p class="admin-form-hint" style="margin-top:12px">
+  <p class="admin-form-hint home-cms-preview-link">
     <a href="{% url 'accounts:home' %}" target="_blank" rel="noopener">Preview live home page ↗</a>
   </p>
 </div>
@@ -28,7 +29,7 @@
 
   <section class="admin-panel" id="cms-hero">
     <div class="admin-panel__head"><h2>Hero</h2></div>
-    <form method="post" enctype="multipart/form-data" class="admin-form-panel" style="border:0;padding:0;margin:0">
+    <form method="post" enctype="multipart/form-data" class="admin-form-panel home-cms-section-form home-cms-section-form--hero">
       {% csrf_token %}
       <input type="hidden" name="action" value="hero">
       <div class="admin-form-row admin-form-row--full">
@@ -90,7 +91,7 @@
 
   <section class="admin-panel" id="cms-powerlifters">
     <div class="admin-panel__head"><h2>Powerlifters</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="powerlifters_section">
       <div class="admin-form-row">
@@ -148,7 +149,7 @@
 
   <section class="admin-panel" id="cms-welcome">
     <div class="admin-panel__head"><h2>Welcome &amp; Trainers</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="welcome">
       {{ welcome_form.as_p }}
@@ -191,7 +192,7 @@
 
   <section class="admin-panel" id="cms-training">
     <div class="admin-panel__head"><h2>Training</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="training">
       {{ training_form.as_p }}
@@ -223,7 +224,7 @@
 
   <section class="admin-panel" id="cms-schedule">
     <div class="admin-panel__head"><h2>Session schedule</h2></div>
-    <form method="post" enctype="multipart/form-data" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" enctype="multipart/form-data" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="schedule_section">
       {% if hp.schedule_image %}<img src="{{ hp.schedule_image.url }}" alt="" class="home-cms-thumb">{% endif %}
@@ -266,7 +267,7 @@
 
   <section class="admin-panel" id="cms-rates">
     <div class="admin-panel__head"><h2>Rates / pricing</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="sections">
       <div class="admin-form-row admin-form-row--full">
@@ -306,8 +307,8 @@
                 <input type="hidden" name="item_id" value="{{ tier.pk }}">
                 <input type="hidden" name="plan" value="{{ plan.pk }}">
                 <input type="hidden" name="item_type" value="pricing_tier">
-                <input type="text" name="price_label" value="{{ tier.price_label }}" class="admin-input" style="flex:1">
-                <input type="text" name="sessions_label" value="{{ tier.sessions_label }}" class="admin-input" style="flex:1">
+                <input type="text" name="price_label" value="{{ tier.price_label }}" class="admin-input admin-input--grow">
+                <input type="text" name="sessions_label" value="{{ tier.sessions_label }}" class="admin-input admin-input--grow">
                 <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
                 <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='pricing_tier';return confirm('Delete tier?')">×</button>
               </form>
@@ -319,8 +320,8 @@
           <input type="hidden" name="action" value="save_item">
           <input type="hidden" name="item_type" value="pricing_tier">
           <input type="hidden" name="plan" value="{{ plan.pk }}">
-          <input type="text" name="price_label" placeholder="3 Days a week – NRs. 23,000/-" class="admin-input" style="flex:1" required>
-          <input type="text" name="sessions_label" placeholder="12 sessions (Valid for 40 days)" class="admin-input" style="flex:1">
+          <input type="text" name="price_label" placeholder="3 Days a week – NRs. 23,000/-" class="admin-input admin-input--grow" required>
+          <input type="text" name="sessions_label" placeholder="12 sessions (Valid for 40 days)" class="admin-input admin-input--grow">
           <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Add tier</button>
         </form>
       </div>
@@ -337,7 +338,7 @@
 
   <section class="admin-panel" id="cms-gallery">
     <div class="admin-panel__head"><h2>Gallery</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="sections">
       <div class="admin-form-row">
@@ -347,20 +348,32 @@
       <button type="submit" class="admin-btn admin-btn--primary">Save gallery headings</button>
     </form>
     {% for item in gallery_images %}
-      <form method="post" enctype="multipart/form-data" class="home-cms-item home-cms-item--inline">
+      <form method="post" enctype="multipart/form-data" class="home-cms-item home-cms-item--grid">
         {% csrf_token %}
         <input type="hidden" name="action" value="save_item">
         <input type="hidden" name="item_type" value="gallery_image">
         <input type="hidden" name="item_id" value="{{ item.pk }}">
         {% if item.image or item.image_url %}
           <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ item.image_url }}{% endif %}" alt="" class="home-cms-thumb home-cms-thumb--sm">
+        {% else %}
+          <span class="home-cms-thumb-placeholder" aria-hidden="true"></span>
         {% endif %}
-        <input type="hidden" name="item_type" value="gallery_image">
-        <input type="file" name="image" accept="image/*">
-        <input type="url" name="image_url" value="{{ item.image_url }}" placeholder="Image URL" class="admin-input">
-        <input type="text" name="alt_text" value="{{ item.alt_text }}" placeholder="Alt text" class="admin-input">
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
-        <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='gallery_image';return confirm('Delete?')">×</button>
+        <div class="home-cms-field">
+          <label for="gallery-file-{{ item.pk }}">Photo</label>
+          <input id="gallery-file-{{ item.pk }}" type="file" name="image" accept="image/*">
+        </div>
+        <div class="home-cms-field">
+          <label for="gallery-url-{{ item.pk }}">Image URL</label>
+          <input id="gallery-url-{{ item.pk }}" type="url" name="image_url" value="{{ item.image_url }}" placeholder="Image URL" class="admin-input">
+        </div>
+        <div class="home-cms-field">
+          <label for="gallery-alt-{{ item.pk }}">Alt text</label>
+          <input id="gallery-alt-{{ item.pk }}" type="text" name="alt_text" value="{{ item.alt_text }}" placeholder="Alt text" class="admin-input">
+        </div>
+        <div class="home-cms-actions home-cms-actions--inline">
+          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
+          <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='gallery_image';return confirm('Delete?')">×</button>
+        </div>
       </form>
     {% endfor %}
     <form method="post" enctype="multipart/form-data" class="home-cms-add">
@@ -375,7 +388,7 @@
 
   <section class="admin-panel" id="cms-testimonials">
     <div class="admin-panel__head"><h2>Testimonials</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="sections">
       <div class="admin-form-row admin-form-row--full"><div><label>Section title</label>{{ sections_form.testimonials_title }}</div></div>
@@ -387,11 +400,22 @@
         <input type="hidden" name="action" value="save_item">
         <input type="hidden" name="item_type" value="testimonial">
         <input type="hidden" name="item_id" value="{{ item.pk }}">
-        <input type="hidden" name="item_type" value="testimonial">
-        <textarea name="quote" rows="3" class="admin-input">{{ item.quote }}</textarea>
-        <input type="text" name="author" value="{{ item.author }}" class="admin-input" placeholder="Author">
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
-        <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='testimonial';return confirm('Delete?')">Delete</button>
+        <div class="admin-form-row admin-form-row--full">
+          <div>
+            <label for="testimonial-quote-{{ item.pk }}">Quote</label>
+            <textarea id="testimonial-quote-{{ item.pk }}" name="quote" rows="3" class="admin-input">{{ item.quote }}</textarea>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div>
+            <label for="testimonial-author-{{ item.pk }}">Author</label>
+            <input id="testimonial-author-{{ item.pk }}" type="text" name="author" value="{{ item.author }}" class="admin-input" placeholder="Author name">
+          </div>
+        </div>
+        <div class="home-cms-actions">
+          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
+          <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='testimonial';return confirm('Delete?')">Delete</button>
+        </div>
       </form>
     {% endfor %}
     <form method="post" class="home-cms-add">
@@ -406,7 +430,7 @@
 
   <section class="admin-panel" id="cms-clients">
     <div class="admin-panel__head"><h2>Our clients</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0 0 24px">
+    <form method="post" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="sections">
       <div class="admin-form-row admin-form-row--full"><div><label>Title</label>{{ sections_form.clients_title }}</div></div>
@@ -419,18 +443,42 @@
         <input type="hidden" name="action" value="save_item">
         <input type="hidden" name="item_type" value="client">
         <input type="hidden" name="item_id" value="{{ item.pk }}">
-        <input type="hidden" name="item_type" value="client">
         <div class="admin-form-row">
-          <div><label>Caption</label><input type="text" name="caption" value="{{ item.caption }}" class="admin-input"></div>
-          <div><label>Row</label><select name="row" class="admin-input"><option value="1" {% if item.row == 1 %}selected{% endif %}>Row 1</option><option value="2" {% if item.row == 2 %}selected{% endif %}>Row 2</option></select></div>
+          <div>
+            <label for="client-caption-{{ item.pk }}">Caption</label>
+            <input id="client-caption-{{ item.pk }}" type="text" name="caption" value="{{ item.caption }}" class="admin-input">
+          </div>
+          <div>
+            <label for="client-row-{{ item.pk }}">Row</label>
+            <select id="client-row-{{ item.pk }}" name="row" class="admin-input">
+              <option value="1" {% if item.row == 1 %}selected{% endif %}>Row 1</option>
+              <option value="2" {% if item.row == 2 %}selected{% endif %}>Row 2</option>
+            </select>
+          </div>
         </div>
-        {% if item.image or item.image_url %}
-          <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ item.image_url }}{% endif %}" alt="" class="home-cms-thumb home-cms-thumb--sm">
-        {% endif %}
-        <input type="file" name="image" accept="image/*">
-        <input type="url" name="image_url" value="{{ item.image_url }}" class="admin-input" placeholder="Image URL">
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
-        <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='client';return confirm('Delete?')">Delete</button>
+        <div class="home-cms-media-row">
+          {% if item.image or item.image_url %}
+            <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ item.image_url }}{% endif %}" alt="" class="home-cms-thumb home-cms-thumb--sm">
+          {% endif %}
+          <div class="home-cms-media-row__fields">
+            <div class="admin-form-row admin-form-row--full">
+              <div>
+                <label for="client-image-{{ item.pk }}">Photo</label>
+                <input id="client-image-{{ item.pk }}" type="file" name="image" accept="image/*">
+              </div>
+            </div>
+            <div class="admin-form-row admin-form-row--full">
+              <div>
+                <label for="client-url-{{ item.pk }}">Image URL</label>
+                <input id="client-url-{{ item.pk }}" type="url" name="image_url" value="{{ item.image_url }}" class="admin-input" placeholder="Image URL">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="home-cms-actions">
+          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
+          <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='client';return confirm('Delete?')">Delete</button>
+        </div>
       </form>
     {% endfor %}
     <form method="post" enctype="multipart/form-data" class="home-cms-add">
@@ -445,7 +493,7 @@
 
   <section class="admin-panel" id="cms-footer">
     <div class="admin-panel__head"><h2>Footer &amp; contact</h2></div>
-    <form method="post" class="admin-form-panel" style="border:0;padding:0;margin:0">
+    <form method="post" class="admin-form-panel home-cms-section-form home-cms-section-form--footer">
       {% csrf_token %}
       <input type="hidden" name="action" value="footer">
       {{ footer_form.as_p }}
@@ -453,5 +501,6 @@
     </form>
   </section>
 
+</div>
 </div>
 {% endblock %}

@@ -15,6 +15,29 @@ from accounts.models import (
 )
 
 
+def _apply_admin_input_widgets(form):
+    """Apply consistent admin-input styling to Django form widgets."""
+    for field in form.fields.values():
+        widget = field.widget
+        if isinstance(widget, forms.CheckboxInput):
+            continue
+        if isinstance(widget, forms.RadioSelect):
+            continue
+        existing = widget.attrs.get("class", "")
+        if isinstance(widget, forms.FileInput):
+            widget.attrs["class"] = f"{existing} admin-input admin-input--file".strip()
+        elif isinstance(widget, forms.Textarea):
+            widget.attrs["class"] = f"{existing} admin-input".strip()
+        else:
+            widget.attrs["class"] = f"{existing} admin-input".strip()
+
+
+class AdminStyledModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _apply_admin_input_widgets(self)
+
+
 def _clean_home_image(field_name, uploaded_file):
     if not uploaded_file or not hasattr(uploaded_file, "read"):
         return uploaded_file
@@ -24,7 +47,7 @@ def _clean_home_image(field_name, uploaded_file):
         raise forms.ValidationError(str(exc)) from exc
 
 
-class HomeHeroForm(forms.ModelForm):
+class HomeHeroForm(AdminStyledModelForm):
     remove_hero_image = forms.BooleanField(required=False, label="Remove hero image")
     remove_hero_video = forms.BooleanField(required=False, label="Remove hero video")
 
@@ -56,13 +79,13 @@ class HomeHeroForm(forms.ModelForm):
         return instance
 
 
-class HomePowerliftersSectionForm(forms.ModelForm):
+class HomePowerliftersSectionForm(AdminStyledModelForm):
     class Meta:
         model = HomePageSettings
         fields = ["powerlifters_title", "powerlifters_watermark"]
 
 
-class HomeWelcomeForm(forms.ModelForm):
+class HomeWelcomeForm(AdminStyledModelForm):
     class Meta:
         model = HomePageSettings
         fields = [
@@ -79,14 +102,14 @@ class HomeWelcomeForm(forms.ModelForm):
         }
 
 
-class HomeTrainingForm(forms.ModelForm):
+class HomeTrainingForm(AdminStyledModelForm):
     class Meta:
         model = HomePageSettings
         fields = ["training_title", "training_intro"]
         widgets = {"training_intro": forms.Textarea(attrs={"rows": 5})}
 
 
-class HomeScheduleSectionForm(forms.ModelForm):
+class HomeScheduleSectionForm(AdminStyledModelForm):
     remove_schedule_image = forms.BooleanField(required=False, label="Remove schedule photo")
 
     class Meta:
@@ -106,7 +129,7 @@ class HomeScheduleSectionForm(forms.ModelForm):
         return instance
 
 
-class HomeSectionsForm(forms.ModelForm):
+class HomeSectionsForm(AdminStyledModelForm):
     class Meta:
         model = HomePageSettings
         fields = [
@@ -120,7 +143,7 @@ class HomeSectionsForm(forms.ModelForm):
         widgets = {"clients_intro": forms.Textarea(attrs={"rows": 4})}
 
 
-class HomeFooterForm(forms.ModelForm):
+class HomeFooterForm(AdminStyledModelForm):
     class Meta:
         model = HomePageSettings
         fields = [
@@ -137,7 +160,7 @@ class HomeFooterForm(forms.ModelForm):
         }
 
 
-class HomePowerlifterForm(forms.ModelForm):
+class HomePowerlifterForm(AdminStyledModelForm):
     remove_image = forms.BooleanField(required=False, label="Remove photo")
 
     class Meta:
@@ -157,7 +180,7 @@ class HomePowerlifterForm(forms.ModelForm):
         return instance
 
 
-class HomeTrainerForm(forms.ModelForm):
+class HomeTrainerForm(AdminStyledModelForm):
     remove_image = forms.BooleanField(required=False, label="Remove photo")
 
     class Meta:
@@ -177,19 +200,19 @@ class HomeTrainerForm(forms.ModelForm):
         return instance
 
 
-class HomeTrainingServiceForm(forms.ModelForm):
+class HomeTrainingServiceForm(AdminStyledModelForm):
     class Meta:
         model = HomeTrainingService
         fields = ["title", "sort_order", "is_active"]
 
 
-class HomeScheduleSlotForm(forms.ModelForm):
+class HomeScheduleSlotForm(AdminStyledModelForm):
     class Meta:
         model = HomeScheduleSlot
         fields = ["title", "time_info", "days_info", "sort_order", "is_active"]
 
 
-class HomePricingPlanForm(forms.ModelForm):
+class HomePricingPlanForm(AdminStyledModelForm):
     remove_background = forms.BooleanField(required=False, label="Remove background image")
 
     class Meta:
@@ -218,13 +241,13 @@ class HomePricingPlanForm(forms.ModelForm):
         return instance
 
 
-class HomePricingTierForm(forms.ModelForm):
+class HomePricingTierForm(AdminStyledModelForm):
     class Meta:
         model = HomePricingTier
         fields = ["plan", "price_label", "sessions_label", "sort_order"]
 
 
-class HomeGalleryImageForm(forms.ModelForm):
+class HomeGalleryImageForm(AdminStyledModelForm):
     remove_image = forms.BooleanField(required=False, label="Remove photo")
 
     class Meta:
@@ -244,14 +267,14 @@ class HomeGalleryImageForm(forms.ModelForm):
         return instance
 
 
-class HomeTestimonialForm(forms.ModelForm):
+class HomeTestimonialForm(AdminStyledModelForm):
     class Meta:
         model = HomeTestimonial
         fields = ["quote", "author", "sort_order", "is_active"]
         widgets = {"quote": forms.Textarea(attrs={"rows": 3})}
 
 
-class HomeClientSpotlightForm(forms.ModelForm):
+class HomeClientSpotlightForm(AdminStyledModelForm):
     remove_image = forms.BooleanField(required=False, label="Remove photo")
 
     class Meta:
