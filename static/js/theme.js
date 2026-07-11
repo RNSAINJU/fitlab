@@ -28,8 +28,14 @@
     writeCookie(theme);
   }
 
+  function readForcedTheme() {
+    var meta = document.querySelector('meta[name="fitlab-forced-theme"]');
+    var forced = meta && meta.getAttribute("content");
+    return forced && VALID[forced] ? forced : null;
+  }
+
   function applyTheme(theme) {
-    if (!VALID[theme]) theme = "light";
+    if (!VALID[theme]) theme = "dark";
     document.documentElement.setAttribute("data-theme", theme);
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
       var isLight = theme === "light";
@@ -75,10 +81,16 @@
   };
 
   document.addEventListener("DOMContentLoaded", function () {
+    var forced = readForcedTheme();
+    if (forced) {
+      setTheme(forced, { syncServer: false });
+      return;
+    }
+
     var initial =
       document.documentElement.getAttribute("data-theme") ||
       readStoredTheme() ||
-      "light";
+      "dark";
     applyTheme(initial);
     persistTheme(initial);
 

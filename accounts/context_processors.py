@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from accounts.models import SiteConfiguration
-from accounts.theme import resolve_theme
+from accounts.theme import resolve_theme, theme_toggle_enabled
 
 
 def social_auth(request):
@@ -20,4 +20,6 @@ def theme(request):
     return {
         "theme": active,
         "theme_is_light": active == "light",
+        "theme_toggle_enabled": theme_toggle_enabled(),
+        "theme_forced": active if not theme_toggle_enabled() else "",
     }

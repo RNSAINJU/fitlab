@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="{{ theme|default:'light' }}">
+<html lang="en" data-theme="{{ theme|default:'dark' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="fitlab-authenticated" content="{% if user.is_authenticated %}1{% else %}0{% endif %}">
-  <meta name="fitlab-theme" content="{{ theme|default:'light' }}">
+  <meta name="fitlab-theme" content="{{ theme|default:'dark' }}">
+  {% if theme_forced %}<meta name="fitlab-forced-theme" content="{{ theme_forced }}">{% endif %}
   <title>{% block title %}{{ site_config.site_name }}{% endblock %}</title>
   {% load static %}
   <script>
     (function () {
       try {
+        var forcedMeta = document.querySelector('meta[name="fitlab-forced-theme"]');
+        var forcedTheme = forcedMeta && forcedMeta.getAttribute("content");
+        if (forcedTheme === "light" || forcedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", forcedTheme);
+          localStorage.setItem("fitlab-theme", forcedTheme);
+          return;
+        }
         var authMeta = document.querySelector('meta[name="fitlab-authenticated"]');
         var themeMeta = document.querySelector('meta[name="fitlab-theme"]');
         var authenticated = authMeta && authMeta.getAttribute("content") === "1";
@@ -33,11 +41,13 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body data-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+  {% if theme_toggle_enabled %}
   <div class="theme-toggle-portal" aria-hidden="false">
     {% include "includes/theme_toggle.html" %}
   </div>
+  {% endif %}
   {% block body %}{% endblock %}
-  <script src="{% static 'js/theme.js' %}?v=2"></script>
+  <script src="{% static 'js/theme.js' %}?v=3"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>
