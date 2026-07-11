@@ -616,6 +616,8 @@ body.home-nav-open {
   font-size: 15px;
   line-height: 1.8;
   color: var(--home-text-muted);
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .home-slider {
@@ -1047,6 +1049,8 @@ body.home-nav-open {
   font-size: 14px;
   line-height: 1.7;
   color: var(--home-text-muted);
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .home-footer__col h3 {
