@@ -194,14 +194,12 @@ class HomePageSettings(models.Model):
         def is_embed_url(url):
             return bool(url) and ("/maps/embed" in url or "output=embed" in url)
 
-        if is_embed_url(embed) and (not location or location.startswith("http")):
+        if is_embed_url(embed):
             return embed
 
         if location.startswith("http"):
             if is_embed_url(location):
                 return location
-            if is_embed_url(embed):
-                return embed
             return ""
 
         if location:
@@ -210,8 +208,6 @@ class HomePageSettings(models.Model):
                 "&z=15&output=embed"
             )
 
-        if is_embed_url(embed):
-            return embed
         return ""
 
 
