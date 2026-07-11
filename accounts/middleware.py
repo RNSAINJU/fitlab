@@ -15,7 +15,8 @@ class SecurityHeadersMiddleware:
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
         "script-src 'self'; "
-        "connect-src 'self'"
+        "connect-src 'self'; "
+        "frame-src 'self' https://www.google.com https://maps.google.com https://www.google.com.np"
     )
 
     def __init__(self, get_response):

@@ -189,13 +189,29 @@ class HomePageSettings(models.Model):
         from urllib.parse import quote
 
         location = (self.map_location or "").strip()
+        embed = (self.map_embed_url or "").strip()
+
+        def is_embed_url(url):
+            return bool(url) and ("/maps/embed" in url or "output=embed" in url)
+
+        if is_embed_url(embed) and (not location or location.startswith("http")):
+            return embed
+
+        if location.startswith("http"):
+            if is_embed_url(location):
+                return location
+            if is_embed_url(embed):
+                return embed
+            return ""
+
         if location:
             return (
                 f"https://www.google.com/maps?q={quote(location)}"
                 "&z=15&output=embed"
             )
-        if self.map_embed_url:
-            return self.map_embed_url
+
+        if is_embed_url(embed):
+            return embed
         return ""
 
 

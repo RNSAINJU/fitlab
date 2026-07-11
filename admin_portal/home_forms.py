@@ -172,11 +172,48 @@ class HomeFooterForm(AdminStyledModelForm):
             "contact_address",
             "contact_email",
             "map_location",
+            "map_embed_url",
         ]
         widgets = {
             "footer_blurb": forms.Textarea(attrs={"rows": 3}),
             "contact_address": forms.Textarea(attrs={"rows": 2}),
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        location = (cleaned.get("map_location") or "").strip()
+        embed = (cleaned.get("map_embed_url") or "").strip()
+
+        if location.startswith("http") and "output=embed" not in location and "/maps/embed" not in location:
+            if embed:
+                cleaned["map_location"] = ""
+            else:
+                self.add_error(
+                    "map_location",
+                    "Use a plain address here, or paste the embed link below "
+                    "(Google Maps → Share → Embed a map). Short share links do not work.",
+                )
+
+        if embed and "/maps/embed" not in embed and "output=embed" not in embed:
+            self.add_error(
+                "map_embed_url",
+                "Paste the full embed URL from Google Maps (starts with https://www.google.com/maps/embed).",
+            )
+
+        return cleaned
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        location = (instance.map_location or "").strip()
+        embed = (instance.map_embed_url or "").strip()
+
+        if location.startswith("http") and ("/maps/embed" in location or "output=embed" in location):
+            instance.map_embed_url = location
+            instance.map_location = ""
+
+        if commit:
+            instance.save()
+        return instance
 
 
 class HomePowerlifterForm(AdminStyledModelForm):

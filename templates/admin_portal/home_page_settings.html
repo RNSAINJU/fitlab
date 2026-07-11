@@ -259,7 +259,14 @@
         <div>
           <label for="{{ footer_form.map_location.id_for_label }}">Find Us map location</label>
           {{ footer_form.map_location }}
-          <p class="admin-form-hint">Enter your gym address or place name (e.g. The Fit Lab Gym, Bhaktapur, Nepal). This powers the map in the footer.</p>
+          <p class="admin-form-hint">Plain address or place name (e.g. The Fit Lab Gym, Bhaktapur, Nepal). Do not paste a Google Maps share link here.</p>
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ footer_form.map_embed_url.id_for_label }}">Google Maps embed URL</label>
+          {{ footer_form.map_embed_url }}
+          <p class="admin-form-hint">Optional but recommended. In Google Maps open your gym → Share → Embed a map → copy the <code>src</code> URL (starts with <code>https://www.google.com/maps/embed</code>).</p>
         </div>
       </div>
       {% if hp.map_iframe_src %}
