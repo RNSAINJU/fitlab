@@ -38,6 +38,10 @@ def home_section_image_path(instance, filename):
     return f"home/sections/{filename}"
 
 
+def home_athlete_logo_path(instance, filename):
+    return f"home/athletes/logos/{filename}"
+
+
 def home_powerlifter_path(instance, filename):
     return f"home/powerlifters/{filename}"
 
@@ -141,8 +145,12 @@ class HomePageSettings(models.Model):
         help_text="Used when no hero image is uploaded.",
     )
 
-    powerlifters_title = models.CharField(max_length=120, default="Powerlifters")
+    powerlifters_title = models.CharField(max_length=120, default="Athlete")
     powerlifters_watermark = models.CharField(max_length=80, default="Iconic")
+    athlete_logo_powerlifting = models.ImageField(upload_to=home_athlete_logo_path, blank=True)
+    athlete_logo_powerlifting_url = models.URLField(blank=True)
+    athlete_logo_kickboxing = models.ImageField(upload_to=home_athlete_logo_path, blank=True)
+    athlete_logo_kickboxing_url = models.URLField(blank=True)
 
     welcome_tagline = models.CharField(max_length=200, default="A Private Gym in Kathmandu")
     welcome_paragraph_1 = models.TextField(blank=True)
@@ -243,9 +251,27 @@ class HomePageSettings(models.Model):
 
         return ""
 
+    def athlete_profession_logo_url(self, profession):
+        if profession == HomePowerlifter.Profession.KICKBOXING:
+            if self.athlete_logo_kickboxing:
+                return self.athlete_logo_kickboxing.url
+            return self.athlete_logo_kickboxing_url or ""
+        if self.athlete_logo_powerlifting:
+            return self.athlete_logo_powerlifting.url
+        return self.athlete_logo_powerlifting_url or ""
+
 
 class HomePowerlifter(models.Model):
+    class Profession(models.TextChoices):
+        POWERLIFTING = "powerlifting", "Powerlifting"
+        KICKBOXING = "kickboxing", "Kick Boxing"
+
     name = models.CharField(max_length=120)
+    profession = models.CharField(
+        max_length=20,
+        choices=Profession.choices,
+        default=Profession.POWERLIFTING,
+    )
     image = models.ImageField(upload_to=home_powerlifter_path, blank=True)
     image_url = models.URLField(blank=True)
     sort_order = models.PositiveIntegerField(default=0)

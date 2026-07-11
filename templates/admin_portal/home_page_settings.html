@@ -14,7 +14,7 @@
 
 <nav class="home-cms-nav" aria-label="Home page sections">
   <a href="#cms-hero">Hero</a>
-  <a href="#cms-powerlifters">Powerlifters</a>
+  <a href="#cms-athletes">Athlete</a>
   <a href="#cms-welcome">Welcome</a>
   <a href="#cms-pricing">Pricing</a>
   <a href="#cms-footer">Footer</a>
@@ -84,9 +84,9 @@
     </form>
   </section>
 
-  <section class="admin-panel" id="cms-powerlifters">
-    <div class="admin-panel__head"><h2>Powerlifters</h2></div>
-    <form method="post" class="admin-form-panel home-cms-section-form">
+  <section class="admin-panel" id="cms-athletes">
+    <div class="admin-panel__head"><h2>Athlete</h2></div>
+    <form method="post" enctype="multipart/form-data" class="admin-form-panel home-cms-section-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="powerlifters_section">
       <div class="admin-form-row">
@@ -99,7 +99,51 @@
           {{ powerlifters_section_form.powerlifters_watermark }}
         </div>
       </div>
-      <button type="submit" class="admin-btn admin-btn--primary">Save section title</button>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label>Powerlifting profession logo</label>
+          {% if hp.athlete_logo_powerlifting %}
+            <img src="{{ hp.athlete_logo_powerlifting.url }}" alt="" class="home-cms-thumb">
+          {% elif hp.athlete_logo_powerlifting_url %}
+            <img src="{{ hp.athlete_logo_powerlifting_url }}" alt="" class="home-cms-thumb">
+          {% endif %}
+          {{ powerlifters_section_form.athlete_logo_powerlifting }}
+          <p class="admin-form-hint">Shown on athlete cards with profession set to Powerlifting.</p>
+          {% if hp.athlete_logo_powerlifting %}
+            <label class="home-cms-check">
+              {{ powerlifters_section_form.remove_athlete_logo_powerlifting }}
+              <span>{{ powerlifters_section_form.remove_athlete_logo_powerlifting.label }}</span>
+            </label>
+          {% endif %}
+        </div>
+        <div>
+          <label>Or logo URL</label>
+          {{ powerlifters_section_form.athlete_logo_powerlifting_url }}
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label>Kick boxing profession logo</label>
+          {% if hp.athlete_logo_kickboxing %}
+            <img src="{{ hp.athlete_logo_kickboxing.url }}" alt="" class="home-cms-thumb">
+          {% elif hp.athlete_logo_kickboxing_url %}
+            <img src="{{ hp.athlete_logo_kickboxing_url }}" alt="" class="home-cms-thumb">
+          {% endif %}
+          {{ powerlifters_section_form.athlete_logo_kickboxing }}
+          <p class="admin-form-hint">Shown on athlete cards with profession set to Kick Boxing.</p>
+          {% if hp.athlete_logo_kickboxing %}
+            <label class="home-cms-check">
+              {{ powerlifters_section_form.remove_athlete_logo_kickboxing }}
+              <span>{{ powerlifters_section_form.remove_athlete_logo_kickboxing.label }}</span>
+            </label>
+          {% endif %}
+        </div>
+        <div>
+          <label>Or logo URL</label>
+          {{ powerlifters_section_form.athlete_logo_kickboxing_url }}
+        </div>
+      </div>
+      <button type="submit" class="admin-btn admin-btn--primary">Save athlete section</button>
     </form>
 
     {% for item in powerlifters %}
@@ -115,6 +159,13 @@
         <input type="hidden" name="item_id" value="{{ item.pk }}">
         <div class="admin-form-row">
           <div><label>Name</label><input type="text" name="name" value="{{ item.name }}" class="admin-input"></div>
+          <div>
+            <label>Profession</label>
+            <select name="profession" class="admin-input">
+              <option value="powerlifting" {% if item.profession == "powerlifting" %}selected{% endif %}>Powerlifting</option>
+              <option value="kickboxing" {% if item.profession == "kickboxing" %}selected{% endif %}>Kick Boxing</option>
+            </select>
+          </div>
           <div><label>Sort order</label><input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input"></div>
           <div><label class="home-cms-check"><input type="checkbox" name="is_active" {% if item.is_active %}checked{% endif %}> Active</label></div>
         </div>
@@ -129,16 +180,16 @@
       </form>
       </div>
     {% empty %}
-      <p class="admin-form-hint">No powerlifters yet. Add one below.</p>
+      <p class="admin-form-hint">No athletes yet. Add one below.</p>
     {% endfor %}
 
     <form method="post" enctype="multipart/form-data" class="home-cms-add">
       {% csrf_token %}
       <input type="hidden" name="action" value="save_item">
       <input type="hidden" name="item_type" value="powerlifter">
-      <h3>Add powerlifter</h3>
+      <h3>Add athlete</h3>
       {{ powerlifter_form.as_p }}
-      <button type="submit" class="admin-btn admin-btn--primary">Add powerlifter</button>
+      <button type="submit" class="admin-btn admin-btn--primary">Add athlete</button>
     </form>
   </section>
 

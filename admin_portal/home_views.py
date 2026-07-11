@@ -76,7 +76,7 @@ def home_page_settings(request):
                 request.POST,
                 None,
                 settings,
-                "Powerlifters section updated.",
+                "Athlete section updated.",
             ),
             "welcome": (
                 HomeWelcomeForm,

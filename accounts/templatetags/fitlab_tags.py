@@ -27,6 +27,13 @@ def in_settings_section(request):
 
 
 @register.filter
+def athlete_profession_logo(profession, hp):
+    if not hp:
+        return ""
+    return hp.athlete_profession_logo_url(profession)
+
+
+@register.filter
 def points_from_title(title):
     if "+" in str(title) and "TFL" in str(title):
         return str(title).split("TFL")[0].strip()

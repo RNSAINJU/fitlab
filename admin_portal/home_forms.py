@@ -81,9 +81,49 @@ class HomeHeroForm(AdminStyledModelForm):
 
 
 class HomePowerliftersSectionForm(AdminStyledModelForm):
+    remove_athlete_logo_powerlifting = forms.BooleanField(
+        required=False,
+        label="Remove powerlifting profession logo",
+    )
+    remove_athlete_logo_kickboxing = forms.BooleanField(
+        required=False,
+        label="Remove kick boxing profession logo",
+    )
+
     class Meta:
         model = HomePageSettings
-        fields = ["powerlifters_title", "powerlifters_watermark"]
+        fields = [
+            "powerlifters_title",
+            "powerlifters_watermark",
+            "athlete_logo_powerlifting",
+            "athlete_logo_powerlifting_url",
+            "athlete_logo_kickboxing",
+            "athlete_logo_kickboxing_url",
+        ]
+
+    def clean_athlete_logo_powerlifting(self):
+        return _clean_home_image(
+            "athlete_logo_powerlifting",
+            self.cleaned_data.get("athlete_logo_powerlifting"),
+        )
+
+    def clean_athlete_logo_kickboxing(self):
+        return _clean_home_image(
+            "athlete_logo_kickboxing",
+            self.cleaned_data.get("athlete_logo_kickboxing"),
+        )
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.cleaned_data.get("remove_athlete_logo_powerlifting") and instance.athlete_logo_powerlifting:
+            instance.athlete_logo_powerlifting.delete(save=False)
+            instance.athlete_logo_powerlifting = None
+        if self.cleaned_data.get("remove_athlete_logo_kickboxing") and instance.athlete_logo_kickboxing:
+            instance.athlete_logo_kickboxing.delete(save=False)
+            instance.athlete_logo_kickboxing = None
+        if commit:
+            instance.save()
+        return instance
 
 
 class HomeWelcomeForm(AdminStyledModelForm):
@@ -221,7 +261,7 @@ class HomePowerlifterForm(AdminStyledModelForm):
 
     class Meta:
         model = HomePowerlifter
-        fields = ["name", "image", "image_url", "sort_order", "is_active"]
+        fields = ["name", "profession", "image", "image_url", "sort_order", "is_active"]
 
     def clean_image(self):
         return _clean_home_image("powerlifter_image", self.cleaned_data.get("image"))
