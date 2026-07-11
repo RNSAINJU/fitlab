@@ -19,9 +19,6 @@
         <a href="#about">About Us</a>
         <a href="#trainers">Trainers</a>
         <a href="#powerlifters">Powerlifters</a>
-        <a href="#rates">Rates</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#testimonials">Testimonials</a>
         <a href="#contact">Contact</a>
       </nav>
       <div class="home-header__actions">
@@ -40,9 +37,6 @@
     <a href="#about">About Us</a>
     <a href="#trainers">Trainers</a>
     <a href="#powerlifters">Powerlifters</a>
-    <a href="#rates">Rates</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#testimonials">Testimonials</a>
     <a href="#contact">Contact</a>
     <div class="home-mobile-nav__actions">
       <a href="{% url 'accounts:login' %}" class="home-btn home-btn--ghost">Login</a>
@@ -148,25 +142,6 @@
   </section>
   {% endif %}
 
-  <section class="home-section home-section--elevated" id="training">
-    <div class="home-container home-training">
-      <div class="home-training__copy">
-        <div class="home-section-title">
-          <h2>{{ hp.training_title|accent_last_word }}</h2>
-          <span class="home-section-title__line"></span>
-        </div>
-        {% if hp.training_intro %}<p>{{ hp.training_intro }}</p>{% endif %}
-      </div>
-      {% if training_services %}
-      <ul class="home-training__list">
-        {% for item in training_services %}
-          <li>{{ item.title }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
-  </section>
-
   {% if schedule_slots %}
   <section class="home-section home-schedule-section">
     <div class="home-container home-schedule">
@@ -183,134 +158,6 @@
         <div class="home-schedule__frame">
           <img src="{{ hp.schedule_photo_url }}" alt="Trainer at {{ site_config.site_name }}" loading="lazy">
         </div>
-      </div>
-    </div>
-  </section>
-  {% endif %}
-
-  {% if pricing_plans %}
-  <section class="home-section" id="rates">
-    <div class="home-container">
-      <div class="home-section-title">
-        <h2>{{ hp.rates_title|accent_last_word }}</h2>
-        <span class="home-section-title__line"></span>
-      </div>
-      <div class="home-pricing">
-        {% for plan in pricing_plans %}
-        <article class="home-price-card" style="--card-bg: url('{{ plan.background_url }}')">
-          <div class="home-price-card__inner">
-            <h3>{{ plan.title }}</h3>
-            {% if plan.features %}
-            <ul class="home-price-card__features">
-              {% for feature in plan.features %}
-                <li>{{ feature }}</li>
-              {% endfor %}
-            </ul>
-            {% endif %}
-            {% for tier in plan.tiers.all %}
-            <div class="home-price-card__tier">
-              <strong>{{ tier.price_label }}</strong>
-              {% if tier.sessions_label %}<span>{{ tier.sessions_label }}</span>{% endif %}
-            </div>
-            {% endfor %}
-            <a href="{% url 'accounts:register' %}" class="home-price-card__cta">Enquire Now &rsaquo;</a>
-          </div>
-        </article>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-  {% endif %}
-
-  {% if gallery_images %}
-  <section class="home-section home-gallery-section" id="gallery">
-    <div class="home-container">
-      <div class="home-section-title">
-        {% if hp.gallery_watermark %}
-          <span class="home-watermark" aria-hidden="true">{{ hp.gallery_watermark }}</span>
-        {% endif %}
-        <h2>{{ hp.gallery_title|accent_last_word }}</h2>
-        <span class="home-section-title__line"></span>
-      </div>
-      <div class="home-slider home-slider--gallery" id="gallery-slider">
-        <button type="button" class="home-slider__arrow home-slider__arrow--prev" data-slider="gallery-slider" aria-label="Previous image">&lsaquo;</button>
-        <div class="home-slider__track home-slider__track--gallery">
-          {% for item in gallery_images %}
-          <div class="home-slider__slide{% if forloop.first %} is-active{% endif %}">
-            {% if item.display_image_url %}
-              <img src="{{ item.display_image_url }}" alt="{{ item.alt_text|default:'Training session' }}" loading="lazy">
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-        <button type="button" class="home-slider__arrow home-slider__arrow--next" data-slider="gallery-slider" aria-label="Next image">&rsaquo;</button>
-      </div>
-    </div>
-  </section>
-  {% endif %}
-
-  {% if testimonials %}
-  <section class="home-section" id="testimonials">
-    <div class="home-container">
-      <div class="home-section-title">
-        <h2>{{ hp.testimonials_title|accent_last_word }}</h2>
-        <span class="home-section-title__line"></span>
-      </div>
-      <div class="home-quotes">
-        {% for item in testimonials %}
-        <blockquote class="home-quote">
-          <p>"{{ item.quote }}"</p>
-          <footer>— {{ item.author }}</footer>
-        </blockquote>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-  {% endif %}
-
-  {% if clients_row_1 or clients_row_2 %}
-  <section class="home-section home-clients-section" id="clients">
-    <div class="home-container home-clients">
-      <div class="home-clients__copy">
-        <div class="home-section-title">
-          <h2>{{ hp.clients_title|accent_last_word }}</h2>
-          <span class="home-section-title__line"></span>
-        </div>
-        {% if hp.clients_intro %}<p>{{ hp.clients_intro }}</p>{% endif %}
-      </div>
-      <div class="home-clients__grid">
-        {% if clients_row_1 %}
-        <div class="home-clients__row" id="clients-row-1">
-          <button type="button" class="home-slider__arrow home-slider__arrow--prev home-slider__arrow--sm" data-slider="clients-row-1" aria-label="Previous">&lsaquo;</button>
-          <div class="home-clients__track">
-            {% for item in clients_row_1 %}
-            <figure class="home-client-card{% if forloop.first %} is-active{% endif %}">
-              {% if item.display_image_url %}
-                <img src="{{ item.display_image_url }}" alt="{{ item.caption }}" loading="lazy">
-              {% endif %}
-              <figcaption>{{ item.caption }}</figcaption>
-            </figure>
-            {% endfor %}
-          </div>
-          <button type="button" class="home-slider__arrow home-slider__arrow--next home-slider__arrow--sm" data-slider="clients-row-1" aria-label="Next">&rsaquo;</button>
-        </div>
-        {% endif %}
-        {% if clients_row_2 %}
-        <div class="home-clients__row" id="clients-row-2">
-          <button type="button" class="home-slider__arrow home-slider__arrow--prev home-slider__arrow--sm" data-slider="clients-row-2" aria-label="Previous">&lsaquo;</button>
-          <div class="home-clients__track">
-            {% for item in clients_row_2 %}
-            <figure class="home-client-card{% if forloop.first %} is-active{% endif %}">
-              {% if item.display_image_url %}
-                <img src="{{ item.display_image_url }}" alt="{{ item.caption }}" loading="lazy">
-              {% endif %}
-              <figcaption>{{ item.caption }}</figcaption>
-            </figure>
-            {% endfor %}
-          </div>
-          <button type="button" class="home-slider__arrow home-slider__arrow--next home-slider__arrow--sm" data-slider="clients-row-2" aria-label="Next">&rsaquo;</button>
-        </div>
-        {% endif %}
       </div>
     </div>
   </section>
@@ -335,7 +182,6 @@
         <ul>
           <li><a href="{% url 'accounts:home' %}">Home</a></li>
           <li><a href="#about">About Us</a></li>
-          <li><a href="#rates">Rates</a></li>
           <li><a href="{% url 'accounts:register' %}">Register</a></li>
           <li><a href="{% url 'accounts:login' %}">Member Login</a></li>
         </ul>
@@ -360,5 +206,5 @@
 </div>
 {% endblock %}
 {% block extra_js %}
-<script src="{% static 'js/home.js' %}?v=3"></script>
+<script src="{% static 'js/home.js' %}?v=4"></script>
 {% endblock %}

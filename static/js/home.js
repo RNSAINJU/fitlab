@@ -117,5 +117,5 @@
     if (next) next.addEventListener("click", function () { show(index + 1); });
   }
 
-  ["trainer-slider", "gallery-slider", "clients-row-1", "clients-row-2"].forEach(initSlider);
+  ["trainer-slider"].forEach(initSlider);
 })();
