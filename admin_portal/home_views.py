@@ -2,49 +2,25 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.models import (
-    HomeClientSpotlight,
-    HomeGalleryImage,
     HomePageSettings,
     HomePowerlifter,
-    HomePricingPlan,
-    HomePricingTier,
-    HomeScheduleSlot,
-    HomeTestimonial,
     HomeTrainer,
-    HomeTrainingService,
 )
 
 from .decorators import staff_required
 from .home_forms import (
-    HomeClientSpotlightForm,
     HomeFooterForm,
-    HomeGalleryImageForm,
     HomeHeroForm,
     HomePowerlifterForm,
     HomePowerliftersSectionForm,
     HomePricingImageForm,
-    HomePricingPlanForm,
-    HomePricingTierForm,
-    HomeScheduleSectionForm,
-    HomeScheduleSlotForm,
-    HomeSectionsForm,
-    HomeTestimonialForm,
     HomeTrainerForm,
-    HomeTrainingForm,
-    HomeTrainingServiceForm,
     HomeWelcomeForm,
 )
 
 ITEM_FORMS = {
     "powerlifter": (HomePowerlifter, HomePowerlifterForm),
     "trainer": (HomeTrainer, HomeTrainerForm),
-    "training_service": (HomeTrainingService, HomeTrainingServiceForm),
-    "schedule_slot": (HomeScheduleSlot, HomeScheduleSlotForm),
-    "pricing_plan": (HomePricingPlan, HomePricingPlanForm),
-    "pricing_tier": (HomePricingTier, HomePricingTierForm),
-    "gallery_image": (HomeGalleryImage, HomeGalleryImageForm),
-    "testimonial": (HomeTestimonial, HomeTestimonialForm),
-    "client": (HomeClientSpotlight, HomeClientSpotlightForm),
 }
 
 
@@ -109,33 +85,12 @@ def home_page_settings(request):
                 settings,
                 "Welcome section updated.",
             ),
-            "training": (
-                HomeTrainingForm,
-                request.POST,
-                None,
-                settings,
-                "Training section updated.",
-            ),
-            "schedule_section": (
-                HomeScheduleSectionForm,
-                request.POST,
-                request.FILES,
-                settings,
-                "Schedule photo updated.",
-            ),
             "pricing_image": (
                 HomePricingImageForm,
                 request.POST,
                 request.FILES,
                 settings,
                 "Pricing image updated.",
-            ),
-            "sections": (
-                HomeSectionsForm,
-                request.POST,
-                None,
-                settings,
-                "Section headings updated.",
             ),
             "footer": (
                 HomeFooterForm,
@@ -165,8 +120,6 @@ def home_page_settings(request):
             messages.error(request, "Unknown item type.")
             return redirect(redirect_name)
 
-    pricing_plans = HomePricingPlan.objects.prefetch_related("tiers").order_by("sort_order", "pk")
-
     return render(
         request,
         "admin_portal/home_page_settings.html",
@@ -175,38 +128,11 @@ def home_page_settings(request):
             "hero_form": HomeHeroForm(instance=settings),
             "powerlifters_section_form": HomePowerliftersSectionForm(instance=settings),
             "welcome_form": HomeWelcomeForm(instance=settings),
-            "training_form": HomeTrainingForm(instance=settings),
-            "schedule_section_form": HomeScheduleSectionForm(instance=settings),
             "pricing_image_form": HomePricingImageForm(instance=settings),
-            "sections_form": HomeSectionsForm(instance=settings),
             "footer_form": HomeFooterForm(instance=settings),
             "powerlifter_form": HomePowerlifterForm(),
             "trainer_form": HomeTrainerForm(),
-            "training_service_form": HomeTrainingServiceForm(),
-            "schedule_slot_form": HomeScheduleSlotForm(),
-            "pricing_plan_form": HomePricingPlanForm(),
-            "pricing_tier_form": HomePricingTierForm(),
-            "gallery_form": HomeGalleryImageForm(),
-            "testimonial_form": HomeTestimonialForm(),
-            "client_form": HomeClientSpotlightForm(),
             "powerlifters": HomePowerlifter.objects.order_by("sort_order", "pk"),
             "trainers": HomeTrainer.objects.order_by("sort_order", "pk"),
-            "training_services": HomeTrainingService.objects.order_by("sort_order", "pk"),
-            "schedule_slots": HomeScheduleSlot.objects.order_by("sort_order", "pk"),
-            "pricing_plans": pricing_plans,
-            "gallery_images": HomeGalleryImage.objects.order_by("sort_order", "pk"),
-            "testimonials": HomeTestimonial.objects.order_by("sort_order", "pk"),
-            "clients": HomeClientSpotlight.objects.order_by("row", "sort_order", "pk"),
-            "item_forms": {
-                "powerlifter": HomePowerlifterForm,
-                "trainer": HomeTrainerForm,
-                "training_service": HomeTrainingServiceForm,
-                "schedule_slot": HomeScheduleSlotForm,
-                "pricing_plan": HomePricingPlanForm,
-                "pricing_tier": HomePricingTierForm,
-                "gallery_image": HomeGalleryImageForm,
-                "testimonial": HomeTestimonialForm,
-                "client": HomeClientSpotlightForm,
-            },
         },
     )

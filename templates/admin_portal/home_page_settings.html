@@ -6,7 +6,7 @@
 <div class="admin-hero">
   <p class="admin-kicker">Content Management</p>
   <h1>Home Page</h1>
-  <p>Edit all public home page text, photos, videos, pricing, and gallery content.</p>
+  <p>Edit hero, welcome, trainers, athletes, pricing image, and footer content for the public home page.</p>
   <p class="admin-form-hint home-cms-preview-link">
     <a href="{% url 'accounts:home' %}" target="_blank" rel="noopener">Preview live home page ↗</a>
   </p>
@@ -16,11 +16,7 @@
   <a href="#cms-hero">Hero</a>
   <a href="#cms-powerlifters">Powerlifters</a>
   <a href="#cms-welcome">Welcome</a>
-  <a href="#cms-training">Training</a>
   <a href="#cms-pricing">Pricing</a>
-  <a href="#cms-gallery">Gallery</a>
-  <a href="#cms-testimonials">Testimonials</a>
-  <a href="#cms-clients">Clients</a>
   <a href="#cms-footer">Footer</a>
 </nav>
 
@@ -189,38 +185,6 @@
     </form>
   </section>
 
-  <section class="admin-panel" id="cms-training">
-    <div class="admin-panel__head"><h2>Training</h2></div>
-    <form method="post" class="admin-form-panel home-cms-section-form">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="training">
-      {{ training_form.as_p }}
-      <button type="submit" class="admin-btn admin-btn--primary">Save training intro</button>
-    </form>
-    <h3>Service list</h3>
-    {% for item in training_services %}
-      <div class="home-cms-item home-cms-item--inline">
-        <form method="post" class="home-cms-inline-form">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="save_item">
-          <input type="hidden" name="item_type" value="training_service">
-          <input type="hidden" name="item_id" value="{{ item.pk }}">
-          <input type="text" name="title" value="{{ item.title }}" class="admin-input" aria-label="Service title">
-          <input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input admin-input--sort" aria-label="Sort order">
-          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
-        </form>
-        {% include "admin_portal/includes/cms_delete_button.html" with item_type="training_service" item_id=item.pk %}
-      </div>
-    {% endfor %}
-    <form method="post" class="home-cms-add home-cms-item--inline">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="save_item">
-      <input type="hidden" name="item_type" value="training_service">
-      <input type="text" name="title" placeholder="New service" class="admin-input" required>
-      <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Add</button>
-    </form>
-  </section>
-
   <section class="admin-panel" id="cms-pricing">
     <div class="admin-panel__head"><h2>Pricing image</h2></div>
     <p class="admin-form-hint" style="margin:0 0 20px">Upload one large pricing graphic shown on the home page after the Athlete section.</p>
@@ -259,224 +223,6 @@
         </div>
       </div>
       <button type="submit" class="admin-btn admin-btn--primary">Save pricing image</button>
-    </form>
-  </section>
-
-  <section class="admin-panel" id="cms-rates">
-    <div class="admin-panel__head"><h2>Legacy pricing cards</h2></div>
-    <p class="admin-form-hint" style="margin:0 0 20px">These card plans are no longer shown on the public home page.</p>
-    {% for plan in pricing_plans %}
-      <div class="home-cms-plan">
-        <form method="post" enctype="multipart/form-data" class="home-cms-item">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="save_item">
-          <input type="hidden" name="item_type" value="pricing_plan">
-          <input type="hidden" name="item_id" value="{{ plan.pk }}">
-          <input type="hidden" name="item_type" value="pricing_plan">
-          <h3>{{ plan.title }}</h3>
-          <div class="admin-form-row"><div><label>Title</label><input type="text" name="title" value="{{ plan.title }}" class="admin-input"></div></div>
-          <div class="admin-form-row">
-            <div><label>Feature 1</label><input type="text" name="feature_1" value="{{ plan.feature_1 }}" class="admin-input"></div>
-            <div><label>Feature 2</label><input type="text" name="feature_2" value="{{ plan.feature_2 }}" class="admin-input"></div>
-            <div><label>Feature 3</label><input type="text" name="feature_3" value="{{ plan.feature_3 }}" class="admin-input"></div>
-          </div>
-          {% if plan.background_image %}<img src="{{ plan.background_image.url }}" alt="" class="home-cms-thumb">{% endif %}
-          <div class="admin-form-row admin-form-row--full"><div><label>Background image</label><input type="file" name="background_image" accept="image/*"></div></div>
-          <div class="admin-form-row admin-form-row--full"><div><label>Background URL</label><input type="url" name="background_image_url" value="{{ plan.background_image_url }}" class="admin-input"></div></div>
-          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update plan</button>
-          <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='pricing_plan';return confirm('Delete plan and all tiers?')">Delete plan</button>
-        </form>
-        <ul class="home-cms-tiers">
-          {% for tier in plan.tiers.all %}
-            <li>
-              <form method="post" class="home-cms-item--inline">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="save_item">
-                <input type="hidden" name="item_type" value="pricing_tier">
-                <input type="hidden" name="item_id" value="{{ tier.pk }}">
-                <input type="hidden" name="plan" value="{{ plan.pk }}">
-                <input type="hidden" name="item_type" value="pricing_tier">
-                <input type="text" name="price_label" value="{{ tier.price_label }}" class="admin-input admin-input--grow">
-                <input type="text" name="sessions_label" value="{{ tier.sessions_label }}" class="admin-input admin-input--grow">
-                <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
-                <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='pricing_tier';return confirm('Delete tier?')">×</button>
-              </form>
-            </li>
-          {% endfor %}
-        </ul>
-        <form method="post" class="home-cms-add home-cms-item--inline">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="save_item">
-          <input type="hidden" name="item_type" value="pricing_tier">
-          <input type="hidden" name="plan" value="{{ plan.pk }}">
-          <input type="text" name="price_label" placeholder="3 Days a week – NRs. 23,000/-" class="admin-input admin-input--grow" required>
-          <input type="text" name="sessions_label" placeholder="12 sessions (Valid for 40 days)" class="admin-input admin-input--grow">
-          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Add tier</button>
-        </form>
-      </div>
-    {% endfor %}
-    <form method="post" enctype="multipart/form-data" class="home-cms-add">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="save_item">
-      <input type="hidden" name="item_type" value="pricing_plan">
-      <h3>Add pricing plan</h3>
-      {{ pricing_plan_form.as_p }}
-      <button type="submit" class="admin-btn admin-btn--primary">Add plan</button>
-    </form>
-  </section>
-
-  <section class="admin-panel" id="cms-gallery">
-    <div class="admin-panel__head"><h2>Gallery</h2></div>
-    <form method="post" class="admin-form-panel home-cms-section-form">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="sections">
-      <div class="admin-form-row">
-        <div><label>Title</label>{{ sections_form.gallery_title }}</div>
-        <div><label>Watermark</label>{{ sections_form.gallery_watermark }}</div>
-      </div>
-      <button type="submit" class="admin-btn admin-btn--primary">Save gallery headings</button>
-    </form>
-    {% for item in gallery_images %}
-      <form method="post" enctype="multipart/form-data" class="home-cms-item home-cms-item--grid">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_item">
-        <input type="hidden" name="item_type" value="gallery_image">
-        <input type="hidden" name="item_id" value="{{ item.pk }}">
-        {% if item.image or item.image_url %}
-          <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ item.image_url }}{% endif %}" alt="" class="home-cms-thumb home-cms-thumb--sm">
-        {% else %}
-          <span class="home-cms-thumb-placeholder" aria-hidden="true"></span>
-        {% endif %}
-        <div class="home-cms-field">
-          <label for="gallery-file-{{ item.pk }}">Photo</label>
-          <input id="gallery-file-{{ item.pk }}" type="file" name="image" accept="image/*">
-        </div>
-        <div class="home-cms-field">
-          <label for="gallery-url-{{ item.pk }}">Image URL</label>
-          <input id="gallery-url-{{ item.pk }}" type="url" name="image_url" value="{{ item.image_url }}" placeholder="Image URL" class="admin-input">
-        </div>
-        <div class="home-cms-field">
-          <label for="gallery-alt-{{ item.pk }}">Alt text</label>
-          <input id="gallery-alt-{{ item.pk }}" type="text" name="alt_text" value="{{ item.alt_text }}" placeholder="Alt text" class="admin-input">
-        </div>
-        <div class="home-cms-actions home-cms-actions--inline">
-          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Save</button>
-          <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='gallery_image';return confirm('Delete?')">×</button>
-        </div>
-      </form>
-    {% endfor %}
-    <form method="post" enctype="multipart/form-data" class="home-cms-add">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="save_item">
-      <input type="hidden" name="item_type" value="gallery_image">
-      <h3>Add gallery image</h3>
-      {{ gallery_form.as_p }}
-      <button type="submit" class="admin-btn admin-btn--primary">Add image</button>
-    </form>
-  </section>
-
-  <section class="admin-panel" id="cms-testimonials">
-    <div class="admin-panel__head"><h2>Testimonials</h2></div>
-    <form method="post" class="admin-form-panel home-cms-section-form">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="sections">
-      <div class="admin-form-row admin-form-row--full"><div><label>Section title</label>{{ sections_form.testimonials_title }}</div></div>
-      <button type="submit" class="admin-btn admin-btn--primary">Save title</button>
-    </form>
-    {% for item in testimonials %}
-      <form method="post" class="home-cms-item">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_item">
-        <input type="hidden" name="item_type" value="testimonial">
-        <input type="hidden" name="item_id" value="{{ item.pk }}">
-        <div class="admin-form-row admin-form-row--full">
-          <div>
-            <label for="testimonial-quote-{{ item.pk }}">Quote</label>
-            <textarea id="testimonial-quote-{{ item.pk }}" name="quote" rows="3" class="admin-input">{{ item.quote }}</textarea>
-          </div>
-        </div>
-        <div class="admin-form-row">
-          <div>
-            <label for="testimonial-author-{{ item.pk }}">Author</label>
-            <input id="testimonial-author-{{ item.pk }}" type="text" name="author" value="{{ item.author }}" class="admin-input" placeholder="Author name">
-          </div>
-        </div>
-        <div class="home-cms-actions">
-          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
-          <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='testimonial';return confirm('Delete?')">Delete</button>
-        </div>
-      </form>
-    {% endfor %}
-    <form method="post" class="home-cms-add">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="save_item">
-      <input type="hidden" name="item_type" value="testimonial">
-      <h3>Add testimonial</h3>
-      {{ testimonial_form.as_p }}
-      <button type="submit" class="admin-btn admin-btn--primary">Add testimonial</button>
-    </form>
-  </section>
-
-  <section class="admin-panel" id="cms-clients">
-    <div class="admin-panel__head"><h2>Our clients</h2></div>
-    <form method="post" class="admin-form-panel home-cms-section-form">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="sections">
-      <div class="admin-form-row admin-form-row--full"><div><label>Title</label>{{ sections_form.clients_title }}</div></div>
-      <div class="admin-form-row admin-form-row--full"><div><label>Intro</label>{{ sections_form.clients_intro }}</div></div>
-      <button type="submit" class="admin-btn admin-btn--primary">Save clients section</button>
-    </form>
-    {% for item in clients %}
-      <form method="post" enctype="multipart/form-data" class="home-cms-item">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_item">
-        <input type="hidden" name="item_type" value="client">
-        <input type="hidden" name="item_id" value="{{ item.pk }}">
-        <div class="admin-form-row">
-          <div>
-            <label for="client-caption-{{ item.pk }}">Caption</label>
-            <input id="client-caption-{{ item.pk }}" type="text" name="caption" value="{{ item.caption }}" class="admin-input">
-          </div>
-          <div>
-            <label for="client-row-{{ item.pk }}">Row</label>
-            <select id="client-row-{{ item.pk }}" name="row" class="admin-input">
-              <option value="1" {% if item.row == 1 %}selected{% endif %}>Row 1</option>
-              <option value="2" {% if item.row == 2 %}selected{% endif %}>Row 2</option>
-            </select>
-          </div>
-        </div>
-        <div class="home-cms-media-row">
-          {% if item.image or item.image_url %}
-            <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ item.image_url }}{% endif %}" alt="" class="home-cms-thumb home-cms-thumb--sm">
-          {% endif %}
-          <div class="home-cms-media-row__fields">
-            <div class="admin-form-row admin-form-row--full">
-              <div>
-                <label for="client-image-{{ item.pk }}">Photo</label>
-                <input id="client-image-{{ item.pk }}" type="file" name="image" accept="image/*">
-              </div>
-            </div>
-            <div class="admin-form-row admin-form-row--full">
-              <div>
-                <label for="client-url-{{ item.pk }}">Image URL</label>
-                <input id="client-url-{{ item.pk }}" type="url" name="image_url" value="{{ item.image_url }}" class="admin-input" placeholder="Image URL">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="home-cms-actions">
-          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
-          <button type="submit" name="action" value="delete_item" class="admin-btn admin-btn--danger admin-btn--sm" onclick="this.form.item_type.value='client';return confirm('Delete?')">Delete</button>
-        </div>
-      </form>
-    {% endfor %}
-    <form method="post" enctype="multipart/form-data" class="home-cms-add">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="save_item">
-      <input type="hidden" name="item_type" value="client">
-      <h3>Add client</h3>
-      {{ client_form.as_p }}
-      <button type="submit" class="admin-btn admin-btn--primary">Add client</button>
     </form>
   </section>
 
