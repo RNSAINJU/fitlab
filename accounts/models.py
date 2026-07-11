@@ -50,6 +50,10 @@ def home_pricing_bg_path(instance, filename):
     return f"home/pricing/{filename}"
 
 
+def home_pricing_banner_path(instance, filename):
+    return f"home/pricing/banner_{filename}"
+
+
 class SiteConfiguration(models.Model):
     site_name = models.CharField(max_length=120, default="The Fitlab")
     logo = models.ImageField(upload_to=site_logo_path, blank=True)
@@ -120,7 +124,10 @@ class HomePageSettings(models.Model):
     schedule_image = models.ImageField(upload_to=home_section_image_path, blank=True)
     schedule_image_url = models.URLField(blank=True)
 
-    rates_title = models.CharField(max_length=120, default="Training Session")
+    rates_title = models.CharField(max_length=120, default="Pricing")
+    pricing_image = models.ImageField(upload_to=home_pricing_banner_path, blank=True)
+    pricing_image_url = models.URLField(blank=True)
+    pricing_image_alt = models.CharField(max_length=160, blank=True, default="Gym pricing")
     gallery_title = models.CharField(max_length=120, default="Training Gallery")
     gallery_watermark = models.CharField(max_length=80, default="Gallery")
     testimonials_title = models.CharField(max_length=160, default="What People Say About Us")
@@ -166,6 +173,11 @@ class HomePageSettings(models.Model):
         return self.schedule_image_url or (
             "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80"
         )
+
+    def pricing_photo_url(self):
+        if self.pricing_image:
+            return self.pricing_image.url
+        return self.pricing_image_url or ""
 
 
 class HomePowerlifter(models.Model):

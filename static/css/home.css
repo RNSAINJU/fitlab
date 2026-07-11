@@ -533,6 +533,35 @@ body.home-nav-open {
   visibility: visible;
 }
 
+/* ── Pricing banner ── */
+.home-pricing-banner-section {
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.home-section-title--center {
+  text-align: center;
+}
+
+.home-section-title--center .home-section-title__line {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-pricing-banner {
+  margin: 0;
+  width: 100%;
+}
+
+.home-pricing-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--home-border);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+}
+
 /* ── Welcome ── */
 .home-welcome {
   max-width: 720px;

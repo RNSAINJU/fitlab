@@ -17,8 +17,7 @@
   <a href="#cms-powerlifters">Powerlifters</a>
   <a href="#cms-welcome">Welcome</a>
   <a href="#cms-training">Training</a>
-  <a href="#cms-schedule">Schedule</a>
-  <a href="#cms-rates">Rates</a>
+  <a href="#cms-pricing">Pricing</a>
   <a href="#cms-gallery">Gallery</a>
   <a href="#cms-testimonials">Testimonials</a>
   <a href="#cms-clients">Clients</a>
@@ -222,60 +221,50 @@
     </form>
   </section>
 
-  <section class="admin-panel" id="cms-schedule">
-    <div class="admin-panel__head"><h2>Session schedule</h2></div>
-    <form method="post" enctype="multipart/form-data" class="admin-form-panel home-cms-section-form">
+  <section class="admin-panel" id="cms-pricing">
+    <div class="admin-panel__head"><h2>Pricing image</h2></div>
+    <p class="admin-form-hint" style="margin:0 0 20px">Upload one large pricing graphic shown on the home page after the Athlete section.</p>
+    <form method="post" enctype="multipart/form-data" class="admin-form-panel home-cms-section-form home-cms-section-form--footer">
       {% csrf_token %}
-      <input type="hidden" name="action" value="schedule_section">
-      {% if hp.schedule_image %}<img src="{{ hp.schedule_image.url }}" alt="" class="home-cms-thumb">{% endif %}
-      {{ schedule_section_form.as_p }}
-      {% if hp.schedule_image %}<label class="home-cms-check">{{ schedule_section_form.remove_schedule_image }} Remove photo</label>{% endif %}
-      <button type="submit" class="admin-btn admin-btn--primary">Save schedule photo</button>
-    </form>
-    {% for item in schedule_slots %}
-      <div class="home-cms-item">
-        <div class="home-cms-item__head">
-          <strong>{{ item.title }}</strong>
-          {% include "admin_portal/includes/cms_delete_button.html" with item_type="schedule_slot" item_id=item.pk %}
+      <input type="hidden" name="action" value="pricing_image">
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ pricing_image_form.rates_title.id_for_label }}">Section title</label>
+          {{ pricing_image_form.rates_title }}
+          <p class="admin-form-hint">Optional heading above the image. Leave blank to show only the image.</p>
         </div>
-        <form method="post">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="save_item">
-          <input type="hidden" name="item_type" value="schedule_slot">
-          <input type="hidden" name="item_id" value="{{ item.pk }}">
-          <div class="admin-form-row">
-            <div><label>Title</label><input type="text" name="title" value="{{ item.title }}" class="admin-input"></div>
-            <div><label>Times</label><input type="text" name="time_info" value="{{ item.time_info }}" class="admin-input"></div>
-          </div>
-          <div class="admin-form-row">
-            <div><label>Days</label><input type="text" name="days_info" value="{{ item.days_info }}" class="admin-input"></div>
-            <div><label>Sort</label><input type="number" name="sort_order" value="{{ item.sort_order }}" class="admin-input"></div>
-          </div>
-          <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Update</button>
-        </form>
       </div>
-    {% endfor %}
-    <form method="post" class="home-cms-add">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="save_item">
-      <input type="hidden" name="item_type" value="schedule_slot">
-      <h3>Add schedule slot</h3>
-      {{ schedule_slot_form.as_p }}
-      <button type="submit" class="admin-btn admin-btn--primary">Add slot</button>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ pricing_image_form.pricing_image_alt.id_for_label }}">Image alt text</label>
+          {{ pricing_image_form.pricing_image_alt }}
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ pricing_image_form.pricing_image.id_for_label }}">Pricing image</label>
+          {% if hp.pricing_image %}<img src="{{ hp.pricing_image.url }}" alt="" class="home-cms-thumb home-cms-thumb--pricing">{% endif %}
+          {{ pricing_image_form.pricing_image }}
+          {% if hp.pricing_image %}
+            <label class="home-cms-check">{{ pricing_image_form.remove_pricing_image }} {{ pricing_image_form.remove_pricing_image.label }}</label>
+          {% endif %}
+          <p class="admin-form-hint">Recommended: wide image (e.g. 1200×1600px or larger). JPG, PNG, or WebP.</p>
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ pricing_image_form.pricing_image_url.id_for_label }}">Or image URL</label>
+          {{ pricing_image_form.pricing_image_url }}
+          <p class="admin-form-hint">Used when no file is uploaded.</p>
+        </div>
+      </div>
+      <button type="submit" class="admin-btn admin-btn--primary">Save pricing image</button>
     </form>
   </section>
 
   <section class="admin-panel" id="cms-rates">
-    <div class="admin-panel__head"><h2>Rates / pricing</h2></div>
-    <form method="post" class="admin-form-panel home-cms-section-form">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="sections">
-      <div class="admin-form-row admin-form-row--full">
-        <div><label>Rates section title</label>{{ sections_form.rates_title }}</div>
-      </div>
-      <button type="submit" class="admin-btn admin-btn--primary">Save title</button>
-    </form>
-
+    <div class="admin-panel__head"><h2>Legacy pricing cards</h2></div>
+    <p class="admin-form-hint" style="margin:0 0 20px">These card plans are no longer shown on the public home page.</p>
     {% for plan in pricing_plans %}
       <div class="home-cms-plan">
         <form method="post" enctype="multipart/form-data" class="home-cms-item">

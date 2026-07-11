@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=19">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=20">
 {% endblock %}
 {% block body %}
 <div class="home-page">
@@ -19,6 +19,7 @@
         <a href="#about">About Us</a>
         <a href="#trainers">Trainers</a>
         <a href="#powerlifters">Powerlifters</a>
+        <a href="#pricing">Pricing</a>
         <a href="#contact">Contact</a>
       </nav>
       <div class="home-header__actions">
@@ -37,6 +38,7 @@
     <a href="#about">About Us</a>
     <a href="#trainers">Trainers</a>
     <a href="#powerlifters">Powerlifters</a>
+    <a href="#pricing">Pricing</a>
     <a href="#contact">Contact</a>
     <div class="home-mobile-nav__actions">
       <a href="{% url 'accounts:login' %}" class="home-btn home-btn--ghost">Login</a>
@@ -142,23 +144,22 @@
   </section>
   {% endif %}
 
-  {% if schedule_slots %}
-  <section class="home-section home-schedule-section">
-    <div class="home-container home-schedule">
-      <div class="home-schedule__grid">
-        {% for item in schedule_slots %}
-        <div class="home-schedule__cell">
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.time_info }}</p>
-          <p>{{ item.days_info }}</p>
-        </div>
-        {% endfor %}
+  {% if hp.pricing_photo_url %}
+  <section class="home-section home-pricing-banner-section" id="pricing">
+    <div class="home-container">
+      {% if hp.rates_title %}
+      <div class="home-section-title home-section-title--center">
+        <h2>{{ hp.rates_title|accent_last_word }}</h2>
+        <span class="home-section-title__line"></span>
       </div>
-      <div class="home-schedule__visual">
-        <div class="home-schedule__frame">
-          <img src="{{ hp.schedule_photo_url }}" alt="Trainer at {{ site_config.site_name }}" loading="lazy">
-        </div>
-      </div>
+      {% endif %}
+      <figure class="home-pricing-banner">
+        <img
+          src="{{ hp.pricing_photo_url }}"
+          alt="{{ hp.pricing_image_alt|default:hp.rates_title }}"
+          loading="lazy"
+        >
+      </figure>
     </div>
   </section>
   {% endif %}

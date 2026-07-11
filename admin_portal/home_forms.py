@@ -129,6 +129,26 @@ class HomeScheduleSectionForm(AdminStyledModelForm):
         return instance
 
 
+class HomePricingImageForm(AdminStyledModelForm):
+    remove_pricing_image = forms.BooleanField(required=False, label="Remove pricing image")
+
+    class Meta:
+        model = HomePageSettings
+        fields = ["rates_title", "pricing_image", "pricing_image_url", "pricing_image_alt"]
+
+    def clean_pricing_image(self):
+        return _clean_home_image("pricing_image", self.cleaned_data.get("pricing_image"))
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.cleaned_data.get("remove_pricing_image") and instance.pricing_image:
+            instance.pricing_image.delete(save=False)
+            instance.pricing_image = None
+        if commit:
+            instance.save()
+        return instance
+
+
 class HomeSectionsForm(AdminStyledModelForm):
     class Meta:
         model = HomePageSettings
