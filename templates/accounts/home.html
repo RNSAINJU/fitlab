@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=17">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=18">
 {% endblock %}
 {% block body %}
 <div class="home-page">
@@ -130,8 +130,13 @@
             <img src="{{ item.display_image_url }}" alt="{{ item.name }}" loading="lazy">
           {% endif %}
           <div class="home-accordion__label">
-            {% if forloop.first %}<span class="home-accordion__icon" aria-hidden="true">⬡</span>{% endif %}
-            <span>{{ item.name }}</span>
+            <span class="home-accordion__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6.5 6.5h11v11h-11z"/>
+                <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+              </svg>
+            </span>
+            <span class="home-accordion__label-text">{{ item.name }}</span>
           </div>
         </article>
         {% endfor %}

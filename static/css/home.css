@@ -440,8 +440,23 @@ body.home-nav-open {
   transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.home-accordion__item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 1;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .home-accordion__item.is-active {
   flex: 4;
+}
+
+.home-accordion__item.is-active::after {
+  opacity: 0;
 }
 
 .home-accordion__item img {
@@ -449,7 +464,8 @@ body.home-nav-open {
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  filter: brightness(0.85);
+  filter: brightness(0.45);
+  transition: filter 0.35s ease;
 }
 
 .home-accordion__item.is-active img {
@@ -458,11 +474,16 @@ body.home-nav-open {
 
 .home-accordion__label {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20px 16px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 24px 12px;
+  text-align: center;
+  background: linear-gradient(transparent 35%, rgba(0, 0, 0, 0.82) 100%);
   font-family: var(--home-font-display);
   font-size: 14px;
   font-weight: 600;
@@ -470,6 +491,7 @@ body.home-nav-open {
   letter-spacing: 0.08em;
   opacity: 0;
   transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 .home-accordion__item.is-active .home-accordion__label {
@@ -477,9 +499,26 @@ body.home-nav-open {
 }
 
 .home-accordion__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #111111;
+  flex-shrink: 0;
+}
+
+.home-accordion__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.home-accordion__label-text {
   display: block;
-  margin-bottom: 6px;
-  font-size: 18px;
+  max-width: 100%;
+  line-height: 1.25;
 }
 
 /* ── Welcome ── */
@@ -1018,7 +1057,22 @@ body.home-nav-open {
     display: inline-flex;
   }
 
-  .home-accordion { height: 300px; }
+  .home-accordion { height: 300px; gap: 4px; }
+
+  .home-accordion__label {
+    font-size: 12px;
+    padding: 18px 8px;
+  }
+
+  .home-accordion__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .home-accordion__icon svg {
+    width: 20px;
+    height: 20px;
+  }
 
   .home-welcome,
   .home-trainers,
