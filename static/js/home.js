@@ -117,5 +117,153 @@
     if (next) next.addEventListener("click", function () { show(index + 1); });
   }
 
-  ["trainer-slider"].forEach(initSlider);
+  function initTrainerCarousel3D(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    var viewport = container.querySelector("[data-trainer-viewport]");
+    var slides = Array.prototype.slice.call(
+      container.querySelectorAll(".home-slider__card")
+    );
+    if (!slides.length) return;
+
+    var dots = Array.prototype.slice.call(
+      container.querySelectorAll(".home-slider__dot")
+    );
+    var prev = container.querySelector(".home-slider__arrow--prev");
+    var next = container.querySelector(".home-slider__arrow--next");
+    var index = slides.findIndex(function (slide) {
+      return slide.classList.contains("is-active");
+    });
+    if (index < 0) index = 0;
+
+    var touchStartX = 0;
+    var touchStartY = 0;
+    var touchDeltaX = 0;
+    var touchActive = false;
+    var swipeLocked = false;
+
+    function mod(n, m) {
+      return ((n % m) + m) % m;
+    }
+
+    function setActive(nextIndex) {
+      index = mod(nextIndex, slides.length);
+      slides.forEach(function (slide, i) {
+        var offset = i - index;
+        if (offset > slides.length / 2) offset -= slides.length;
+        if (offset < -slides.length / 2) offset += slides.length;
+
+        slide.classList.remove("is-active", "is-prev", "is-next", "is-far", "is-dragging");
+        if (offset === 0) slide.classList.add("is-active");
+        else if (offset === -1) slide.classList.add("is-prev");
+        else if (offset === 1) slide.classList.add("is-next");
+        else slide.classList.add("is-far");
+      });
+
+      dots.forEach(function (dot, i) {
+        var isActive = i === index;
+        dot.classList.toggle("is-active", isActive);
+        dot.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+    }
+
+    function goTo(nextIndex) {
+      setActive(nextIndex);
+    }
+
+    slides.forEach(function (slide, i) {
+      slide.addEventListener("click", function () {
+        if (i !== index) goTo(i);
+      });
+    });
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener("click", function () {
+        goTo(i);
+      });
+    });
+
+    if (prev) {
+      prev.addEventListener("click", function () {
+        goTo(index - 1);
+      });
+    }
+
+    if (next) {
+      next.addEventListener("click", function () {
+        goTo(index + 1);
+      });
+    }
+
+    if (viewport) {
+      viewport.addEventListener("touchstart", function (event) {
+        if (!event.changedTouches || !event.changedTouches.length) return;
+        var touch = event.changedTouches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchDeltaX = 0;
+        touchActive = true;
+        swipeLocked = false;
+        slides.forEach(function (slide) {
+          slide.classList.add("is-dragging");
+        });
+      }, { passive: true });
+
+      viewport.addEventListener("touchmove", function (event) {
+        if (!touchActive || !event.changedTouches || !event.changedTouches.length) return;
+        var touch = event.changedTouches[0];
+        var deltaX = touch.clientX - touchStartX;
+        var deltaY = touch.clientY - touchStartY;
+
+        if (!swipeLocked) {
+          if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 12) {
+            touchActive = false;
+            slides.forEach(function (slide) {
+              slide.classList.remove("is-dragging");
+            });
+            return;
+          }
+          if (Math.abs(deltaX) > 12) {
+            swipeLocked = true;
+          }
+        }
+
+        if (!swipeLocked) return;
+        touchDeltaX = deltaX;
+        event.preventDefault();
+
+        var activeSlide = slides[index];
+        if (activeSlide) {
+          activeSlide.style.transform =
+            "translate3d(" + (touchDeltaX * 0.35) + "px, 0, 90px) rotateY(" +
+            (touchDeltaX * -0.04) + "deg) scale(1)";
+        }
+      }, { passive: false });
+
+      function endTouch() {
+        if (!touchActive) return;
+        touchActive = false;
+        swipeLocked = false;
+
+        slides.forEach(function (slide) {
+          slide.classList.remove("is-dragging");
+          slide.style.transform = "";
+        });
+
+        if (Math.abs(touchDeltaX) > 48) {
+          if (touchDeltaX < 0) goTo(index + 1);
+          else goTo(index - 1);
+        }
+        touchDeltaX = 0;
+      }
+
+      viewport.addEventListener("touchend", endTouch, { passive: true });
+      viewport.addEventListener("touchcancel", endTouch, { passive: true });
+    }
+
+    setActive(index);
+  }
+
+  initTrainerCarousel3D("trainer-slider");
 })();
