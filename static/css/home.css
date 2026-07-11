@@ -1089,35 +1089,6 @@ body.home-nav-open {
     top: 0;
   }
 
-  /* Horizontal scroll accordion on mobile */
-  .home-accordion {
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    height: 300px;
-    gap: 8px;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-
-  .home-accordion::-webkit-scrollbar { display: none; }
-
-  .home-accordion__item,
-  .home-accordion__item.is-active {
-    flex: 0 0 78%;
-    min-width: 78%;
-    height: 100%;
-    scroll-snap-align: center;
-  }
-
-  .home-accordion__label {
-    opacity: 1;
-    font-size: 12px;
-    padding: 14px 12px;
-  }
-
   .home-slider {
     gap: 8px;
   }
@@ -1226,12 +1197,6 @@ body.home-nav-open {
   .home-hero .home-btn--outline {
     width: 100%;
     max-width: 280px;
-  }
-
-  .home-accordion__item,
-  .home-accordion__item.is-active {
-    flex: 0 0 88%;
-    min-width: 88%;
   }
 
   .home-quote {
