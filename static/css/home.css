@@ -822,8 +822,10 @@ body.home-nav-open {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 5;
-  object-fit: cover;
-  transform: translateZ(28px) scale(1.06);
+  object-fit: contain;
+  object-position: center center;
+  background: #0a0a0a;
+  transform: translateZ(28px);
   will-change: transform;
   pointer-events: none;
   -webkit-user-drag: none;
@@ -846,10 +848,12 @@ body.home-nav-open {
 .home-trainers .hero-3d-card-label {
   margin: 0.55rem 0 0;
   text-align: center;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(227, 30, 36, 0.85);
+  color: #ffffff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65);
 }
 
 @media (min-width: 768px) {

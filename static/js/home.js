@@ -204,9 +204,9 @@
 
         var image = slide.querySelector(".hero-3d-card-image");
         if (image && offset === 0) {
-          image.style.transform = "translateZ(36px) scale(1.08)";
+          image.style.transform = "translateZ(36px)";
         } else if (image) {
-          image.style.transform = "translateZ(18px) scale(1.02)";
+          image.style.transform = "translateZ(18px)";
         }
       });
 
