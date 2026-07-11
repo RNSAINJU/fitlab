@@ -233,11 +233,27 @@
         touchDeltaX = deltaX;
         event.preventDefault();
 
+        var dragX = touchDeltaX * 0.42;
+        var rotate = touchDeltaX * -0.055;
         var activeSlide = slides[index];
+        var prevSlide = slides[mod(index - 1, slides.length)];
+        var nextSlide = slides[mod(index + 1, slides.length)];
+
         if (activeSlide) {
           activeSlide.style.transform =
-            "translate3d(" + (touchDeltaX * 0.35) + "px, 0, 90px) rotateY(" +
-            (touchDeltaX * -0.04) + "deg) scale(1)";
+            "translate3d(" + dragX + "px, 0, 60px) rotateY(" + rotate + "deg) scale(1)";
+        }
+        if (prevSlide && touchDeltaX > 0) {
+          var p = Math.min(touchDeltaX / 220, 1);
+          prevSlide.style.transform =
+            "translate3d(" + (-64 + p * 18) + "%, 0, " + (-110 + p * 90) + "px) rotateY(" +
+            (52 - p * 52) + "deg) scale(" + (0.8 + p * 0.2) + ")";
+        }
+        if (nextSlide && touchDeltaX < 0) {
+          var n = Math.min(Math.abs(touchDeltaX) / 220, 1);
+          nextSlide.style.transform =
+            "translate3d(" + (64 - n * 18) + "%, 0, " + (-110 + n * 90) + "px) rotateY(" +
+            (-52 + n * 52) + "deg) scale(" + (0.8 + n * 0.2) + ")";
         }
       }, { passive: false });
 
