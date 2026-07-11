@@ -1,9 +1,9 @@
-<svg class="home-accordion__boxing-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" aria-hidden="true">
-  <g fill="#ffffff">
-    <path d="M36 2h8c2.2 0 4 1.8 4 4v4H32V6c0-2.2 1.8-4 4-4z"/>
-    <path d="M8 18h24c7.7 0 14 6.3 14 14v20c0 11-9 20-20 20S6 63 6 52V32c0-7.7 6.3-14 14-14z"/>
-    <path d="M26 30c3.8 2.2 5.8 6.6 4.8 10.8-1.2 5.2-6.4 8.4-11.2 7-4-.9-6.8-4.8-6.4-9 .3-3.2 2.4-6 5.4-7.4 2.3-1 4.9-1.2 7.4-.4z"/>
-    <path d="M48 18h24c7.7 0 14 6.3 14 14v20c0 11-9 20-20 20S42 63 42 52V32c0-7.7 6.3-14 14-14z"/>
-    <path d="M54 30c-3.8 2.2-5.8 6.6-4.8 10.8 1.2 5.2 6.4 8.4 11.2 7 4-.9 6.8-4.8 6.4-9-.3-3.2-2.4-6-5.4-7.4-2.3-1-4.9-1.2-7.4-.4z"/>
+<svg class="home-accordion__boxing-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+  <g fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 44l2 8c1 3 4 5 8 5h6c10 0 18-8 18-18 0-8-5-15-13-17-4-1-8 0-11 3-5 4-7 10-6 16-3-1-7 0-9 3-3 4-2 9 1 12 3 4 8 5 12 2z"/>
+    <path d="M40 24c3-2 7-1 9 2 2 3 1 7-2 9"/>
+    <path d="M18 44h10"/>
+    <path d="M20 48v4"/>
+    <path d="M26 49v4"/>
   </g>
 </svg>
