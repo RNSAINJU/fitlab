@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" aria-hidden="true">
+<svg class="home-accordion__boxing-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" aria-hidden="true">
   <g fill="#ffffff">
     <path d="M36 2h8c2.2 0 4 1.8 4 4v4H32V6c0-2.2 1.8-4 4-4z"/>
     <path d="M8 18h24c7.7 0 14 6.3 14 14v20c0 11-9 20-20 20S6 63 6 52V32c0-7.7 6.3-14 14-14z"/>
