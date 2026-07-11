@@ -187,12 +187,12 @@
           <li><a href="{% url 'accounts:login' %}">Member Login</a></li>
         </ul>
       </div>
-      {% if hp.map_embed_url %}
+      {% if hp.map_iframe_src %}
       <div class="home-footer__col home-footer__map">
         <h3>Find Us</h3>
         <iframe
           title="Map – {{ site_config.site_name }}"
-          src="{{ hp.map_embed_url }}"
+          src="{{ hp.map_iframe_src }}"
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
         ></iframe>

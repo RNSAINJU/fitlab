@@ -3335,6 +3335,19 @@ a.app-avatar:hover {
   width: auto;
 }
 
+.home-cms-map-preview {
+  margin: 0 0 20px;
+}
+
+.home-cms-map-preview iframe {
+  display: block;
+  width: 100%;
+  height: 220px;
+  border: 1px solid var(--border-muted);
+  border-radius: 12px;
+  background: var(--shell-input-bg);
+}
+
 .home-cms-check {
   display: flex;
   align-items: center;

@@ -231,7 +231,48 @@
     <form method="post" class="admin-form-panel home-cms-section-form home-cms-section-form--footer">
       {% csrf_token %}
       <input type="hidden" name="action" value="footer">
-      {{ footer_form.as_p }}
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ footer_form.footer_blurb.id_for_label }}">Footer blurb</label>
+          {{ footer_form.footer_blurb }}
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ footer_form.footer_cta.id_for_label }}">Footer call to action</label>
+          {{ footer_form.footer_cta }}
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ footer_form.contact_address.id_for_label }}">Contact address</label>
+          {{ footer_form.contact_address }}
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ footer_form.contact_email.id_for_label }}">Contact email</label>
+          {{ footer_form.contact_email }}
+        </div>
+      </div>
+      <div class="admin-form-row admin-form-row--full">
+        <div>
+          <label for="{{ footer_form.map_location.id_for_label }}">Find Us map location</label>
+          {{ footer_form.map_location }}
+          <p class="admin-form-hint">Enter your gym address or place name (e.g. The Fit Lab Gym, Bhaktapur, Nepal). This powers the map in the footer.</p>
+        </div>
+      </div>
+      {% if hp.map_iframe_src %}
+        <div class="home-cms-map-preview">
+          <p class="admin-form-hint" style="margin:0 0 8px">Map preview</p>
+          <iframe
+            title="Map preview"
+            src="{{ hp.map_iframe_src }}"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      {% endif %}
       <button type="submit" class="admin-btn admin-btn--primary">Save footer</button>
     </form>
   </section>

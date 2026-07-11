@@ -171,12 +171,11 @@ class HomeFooterForm(AdminStyledModelForm):
             "footer_cta",
             "contact_address",
             "contact_email",
-            "map_embed_url",
+            "map_location",
         ]
         widgets = {
             "footer_blurb": forms.Textarea(attrs={"rows": 3}),
             "contact_address": forms.Textarea(attrs={"rows": 2}),
-            "map_embed_url": forms.URLInput(attrs={"style": "width:100%"}),
         }
 
 

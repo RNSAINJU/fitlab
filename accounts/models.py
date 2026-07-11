@@ -139,6 +139,12 @@ class HomePageSettings(models.Model):
     footer_cta = models.CharField(max_length=120, default="Join us today!")
     contact_address = models.TextField(blank=True, default="Kathmandu, Nepal")
     contact_email = models.EmailField(blank=True, default="info@thefitlab.com.np")
+    map_location = models.CharField(
+        max_length=255,
+        blank=True,
+        default="The Fit Lab Gym, Bhaktapur, Nepal",
+        help_text="Address or place name used for the Find Us map.",
+    )
     map_embed_url = models.URLField(
         blank=True,
         default="https://maps.google.com/maps?q=Kathmandu%2C%20Nepal&z=13&output=embed",
@@ -178,6 +184,19 @@ class HomePageSettings(models.Model):
         if self.pricing_image:
             return self.pricing_image.url
         return self.pricing_image_url or ""
+
+    def map_iframe_src(self):
+        from urllib.parse import quote
+
+        location = (self.map_location or "").strip()
+        if location:
+            return (
+                f"https://www.google.com/maps?q={quote(location)}"
+                "&z=15&output=embed"
+            )
+        if self.map_embed_url:
+            return self.map_embed_url
+        return ""
 
 
 class HomePowerlifter(models.Model):
