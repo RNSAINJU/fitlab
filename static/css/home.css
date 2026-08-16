@@ -601,197 +601,280 @@ body.home-nav-open {
   margin-top: 16px;
 }
 
-/* ── Trainers 3D coverflow carousel ── */
-.home-slider--trainers-3d {
-  display: block;
+/* ── Trainers hero 3D carousel (nirmalajewellers-style) ── */
+.home-trainers .hero-3d-section {
+  position: relative;
+  margin-top: 16px;
 }
 
-.home-slider--trainers-3d .home-slider__stage {
+.home-trainers .hero-3d-shell {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  padding: 32px 0 24px;
-  background:
-    radial-gradient(120% 95% at 50% 18%, rgba(72, 52, 38, 0.42) 0%, rgba(12, 10, 9, 0.96) 62%),
-    linear-gradient(180deg, #171311 0%, #080808 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 28px 64px rgba(0, 0, 0, 0.38);
-}
-
-.home-slider--trainers-3d .home-slider__viewport {
-  position: relative;
+  border-radius: 1rem;
+  border: 1px solid rgba(227, 30, 36, 0.18);
+  background-color: #0c0a09;
+  padding: 1.75rem 0.75rem 1.5rem;
   min-height: 460px;
-  perspective: 860px;
-  perspective-origin: 50% 46%;
-  overflow: hidden;
+  isolation: isolate;
   touch-action: pan-y;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
-.home-slider--trainers-3d .home-slider__track--3d {
+.home-trainers .hero-3d-carousel {
   position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 460px;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  gap: 0.35rem 0.25rem;
+}
+
+.home-trainers .hero-3d-viewport {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  overflow: visible;
+  touch-action: pan-y;
+  padding: 0.75rem 0.25rem 0.35rem;
+}
+
+.home-trainers .hero-3d-nav {
+  z-index: 5;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(227, 30, 36, 0.35);
+  background: rgba(12, 10, 9, 0.85);
+  color: var(--home-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.home-trainers .hero-3d-nav svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.home-trainers .hero-3d-nav:hover {
+  background: rgba(227, 30, 36, 0.2);
+  transform: scale(1.05);
+}
+
+.home-trainers .hero-3d-nav--prev {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  margin-left: 0.15rem;
+}
+
+.home-trainers .hero-3d-nav--next {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+  margin-right: 0.15rem;
+}
+
+.home-trainers .hero-3d-dots {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+  min-height: 1rem;
+}
+
+.home-trainers .hero-3d-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  border: 0;
+  padding: 0;
+  background: rgba(227, 30, 36, 0.28);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.home-trainers .hero-3d-dot.is-active {
+  background: var(--home-accent);
+  transform: scale(1.35);
+}
+
+.home-trainers .hero-3d-swipe-hint {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  margin: 0;
+  text-align: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(227, 30, 36, 0.55);
+}
+
+.home-trainers .hero-3d-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.home-trainers .hero-3d-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(12, 10, 9, 0.35) 0%, rgba(12, 10, 9, 0.62) 42%, rgba(12, 10, 9, 0.92) 100%),
+    radial-gradient(ellipse 90% 70% at 50% 20%, rgba(227, 30, 36, 0.12), transparent 65%);
+}
+
+.home-trainers .hero-3d-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  opacity: 0.45;
+}
+
+.home-trainers .hero-3d-orb--left {
+  width: 180px;
+  height: 180px;
+  top: -40px;
+  left: -30px;
+  background: rgba(227, 30, 36, 0.35);
+}
+
+.home-trainers .hero-3d-orb--right {
+  width: 140px;
+  height: 140px;
+  bottom: 20px;
+  right: -20px;
+  background: rgba(227, 30, 36, 0.22);
+}
+
+.home-trainers .hero-3d-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(227, 30, 36, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(227, 30, 36, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 100%);
+}
+
+.home-trainers .hero-3d-stage {
+  position: relative;
+  height: 380px;
+  margin: 0 auto;
+  max-width: 100%;
+  perspective: 1400px;
+  perspective-origin: 50% 42%;
+  transform-style: preserve-3d;
+  z-index: 2;
+  overflow: visible;
+}
+
+.home-trainers .hero-3d-pedestal {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 58%;
+  height: 28px;
+  transform: translateX(-50%) rotateX(72deg);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(227, 30, 36, 0.35), rgba(0, 0, 0, 0.65) 70%);
+  filter: blur(2px);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.home-trainers .hero-3d-slide {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: min(58vw, 230px);
+  margin: 0;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transition: opacity 0.35s ease;
+  cursor: pointer;
+}
+
+.home-trainers .hero-3d-card-frame {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  padding: 14px 12px 10px;
+  background: linear-gradient(145deg, #1f1414, #120c0c);
+  border: 1px solid rgba(227, 30, 36, 0.35);
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 28px rgba(227, 30, 36, 0.12);
   transform-style: preserve-3d;
 }
 
-.home-slider--trainers-3d .home-slider__card {
-  position: absolute;
-  left: 50%;
-  top: 8px;
-  width: min(330px, 58vw);
-  aspect-ratio: 4 / 5;
-  margin-left: calc(min(330px, 58vw) / -2);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
-  transform: translate3d(0, 0, -280px) rotateY(0deg) scale(0.68);
-  transition:
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.45s ease,
-    filter 0.45s ease;
-  filter: brightness(0.45) saturate(0.85);
-  cursor: pointer;
-  will-change: transform;
-}
-
-.home-slider--trainers-3d .home-slider__card.is-dragging {
-  transition: none;
-  cursor: grabbing;
-}
-
-.home-slider--trainers-3d .home-slider__card.is-active {
-  opacity: 1;
-  pointer-events: auto;
-  z-index: 5;
-  transform: translate3d(0, 0, 60px) rotateY(0deg) scale(1);
-  filter: brightness(1) saturate(1);
-}
-
-.home-slider--trainers-3d .home-slider__card.is-prev {
-  opacity: 1;
-  pointer-events: auto;
-  z-index: 4;
-  transform: translate3d(-64%, 0, -110px) rotateY(52deg) scale(0.8);
-  filter: brightness(0.72) saturate(0.92);
-}
-
-.home-slider--trainers-3d .home-slider__card.is-next {
-  opacity: 1;
-  pointer-events: auto;
-  z-index: 4;
-  transform: translate3d(64%, 0, -110px) rotateY(-52deg) scale(0.8);
-  filter: brightness(0.72) saturate(0.92);
-}
-
-.home-slider--trainers-3d .home-slider__card.is-far {
-  opacity: 0;
-  z-index: 0;
-  transform: translate3d(0, 0, -320px) rotateY(0deg) scale(0.62);
-}
-
-.home-slider--trainers-3d .home-slider__card-inner {
-  position: relative;
+.home-trainers .hero-3d-card-image {
+  display: block;
   width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  background: #101010;
-  box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.08);
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.home-slider--trainers-3d .home-slider__card.is-active .home-slider__card-inner {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.62),
-    0 0 0 1px rgba(255, 255, 255, 0.14);
-}
-
-.home-slider--trainers-3d .home-slider__card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  object-position: center center;
+  background: #0a0a0a;
+  border-radius: 0.55rem;
+  transform: none;
+  will-change: auto;
   pointer-events: none;
   -webkit-user-drag: none;
 }
 
-.home-slider--trainers-3d .home-slider__caption {
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-.home-slider--trainers-3d .home-slider__card.is-active .home-slider__caption {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.home-slider--trainers-3d .home-slider__arrow {
+.home-trainers .hero-3d-card-shine {
   position: absolute;
-  top: 50%;
-  z-index: 8;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.42);
-  color: #fff;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transform: translateY(-50%);
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  top: 14px;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  border-radius: 0.55rem;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.04) 28%,
+    transparent 52%,
+    rgba(227, 30, 36, 0.08) 100%
+  );
+  pointer-events: none;
+  will-change: transform;
 }
 
-.home-slider--trainers-3d .home-slider__arrow svg {
-  width: 22px;
-  height: 22px;
+.home-trainers .hero-3d-card-label {
+  margin: 0.55rem 0 0;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65);
 }
 
-.home-slider--trainers-3d .home-slider__arrow:hover {
-  background: rgba(0, 0, 0, 0.62);
-  border-color: rgba(255, 255, 255, 0.24);
-}
+@media (min-width: 768px) {
+  .home-trainers .hero-3d-shell {
+    min-height: 520px;
+    padding: 2rem 1.25rem 1.75rem;
+  }
 
-.home-slider--trainers-3d .home-slider__arrow--prev {
-  left: 16px;
-}
+  .home-trainers .hero-3d-stage {
+    height: 430px;
+  }
 
-.home-slider--trainers-3d .home-slider__arrow--next {
-  right: 16px;
-}
-
-.home-slider--trainers-3d .home-slider__dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.home-slider--trainers-3d .home-slider__dot {
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.28);
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.home-slider--trainers-3d .home-slider__dot.is-active {
-  background: var(--home-accent);
-  transform: scale(1.2);
+  .home-trainers .hero-3d-slide {
+    width: 250px;
+  }
 }
 
 .home-welcome__tagline {
@@ -1401,40 +1484,22 @@ body.home-nav-open {
     max-width: none;
   }
 
-  .home-slider--trainers-3d .home-slider__stage {
-    border-radius: 18px;
-    padding: 24px 0 18px;
+  .home-trainers .hero-3d-shell {
+    min-height: 440px;
+    padding: 1.35rem 0.5rem 1.25rem;
   }
 
-  .home-slider--trainers-3d .home-slider__viewport,
-  .home-slider--trainers-3d .home-slider__track--3d {
-    min-height: 380px;
+  .home-trainers .hero-3d-stage {
+    height: 340px;
   }
 
-  .home-slider--trainers-3d .home-slider__card {
-    width: min(270px, 72vw);
-    margin-left: calc(min(270px, 72vw) / -2);
+  .home-trainers .hero-3d-slide {
+    width: min(64vw, 210px);
   }
 
-  .home-slider--trainers-3d .home-slider__card.is-prev {
-    transform: translate3d(-70%, 0, -120px) rotateY(54deg) scale(0.76);
-  }
-
-  .home-slider--trainers-3d .home-slider__card.is-next {
-    transform: translate3d(70%, 0, -120px) rotateY(-54deg) scale(0.76);
-  }
-
-  .home-slider--trainers-3d .home-slider__arrow {
-    width: 40px;
-    height: 40px;
-  }
-
-  .home-slider--trainers-3d .home-slider__arrow--prev {
-    left: 10px;
-  }
-
-  .home-slider--trainers-3d .home-slider__arrow--next {
-    right: 10px;
+  .home-trainers .hero-3d-nav {
+    width: 2rem;
+    height: 2rem;
   }
 
   .home-slider:not(.home-slider--trainers-3d) {
