@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load static fitlab_tags %}
 {% block title %}{{ site_config.site_name }} — {{ hp.welcome_tagline }}{% endblock %}
-{% block meta_description %}{{ hp.hero_subtext }} {{ hp.welcome_tagline }}. Located at {{ hp.map_location }}.{% endblock %}
+{% block meta_description %}{{ hp.hero_subtext }} {{ hp.welcome_tagline }} Located at {{ hp.map_location }}.{% endblock %}
 {% block og_title %}{{ site_config.site_name }} — {{ hp.welcome_tagline }}{% endblock %}
-{% block og_description %}{{ hp.hero_subtext }} {{ hp.welcome_tagline }}. Located at {{ hp.map_location }}.{% endblock %}
+{% block og_description %}{{ hp.hero_subtext }} {{ hp.welcome_tagline }} Located at {{ hp.map_location }}.{% endblock %}
 {% block og_image %}
 {% with img=hp.hero_background_url %}
 <meta property="og:image" content="{% if 'http' in img %}{{ img }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ img }}{% endif %}">
