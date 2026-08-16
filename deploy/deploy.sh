@@ -33,7 +33,7 @@ fi
 
 if [ -f deploy/nginx-fitlab.conf ] && [ -f /etc/nginx/sites-available/fitlab ]; then
   echo "==> Refresh nginx config"
-  GUNICORN_PORT=$(grep -oP 'bind = "127\.0\.0\.1:\K[0-9]+' /etc/systemd/system/fitlab.service 2>/dev/null || echo "8004")
+  GUNICORN_PORT=$(grep -oP -- '--bind 127\.0\.0\.1:\K[0-9]+' /etc/systemd/system/fitlab.service 2>/dev/null || echo "8004")
   NGINX_PORT=$(grep -oP 'listen \K[0-9]+' /etc/nginx/sites-available/fitlab | head -1)
   SERVER_NAME=$(grep -oP 'server_name \K[^;]+' /etc/nginx/sites-available/fitlab | head -1)
   sed -e "s/__FITLAB_SERVER_NAME__/${SERVER_NAME}/g" \
