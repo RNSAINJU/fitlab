@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /$
+Disallow: /dashboard/
+Disallow: /register
+Disallow: /accounts/
+Disallow: /activity/
+Disallow: /rewards/
+Disallow: /referrals/
+Disallow: /admin-portal/
+Disallow: /django-admin/
+Disallow: /oauth/
+
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml

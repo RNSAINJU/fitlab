@@ -1,11 +1,36 @@
 {% extends "base.html" %}
 {% load static fitlab_tags %}
-{% block title %}{{ site_config.site_name }}{% endblock %}
+{% block title %}{{ site_config.site_name }} — {{ hp.welcome_tagline }}{% endblock %}
+{% block meta_description %}{{ hp.hero_subtext }} {{ hp.welcome_tagline }}. Located at {{ hp.map_location }}.{% endblock %}
+{% block og_title %}{{ site_config.site_name }} — {{ hp.welcome_tagline }}{% endblock %}
+{% block og_description %}{{ hp.hero_subtext }} {{ hp.welcome_tagline }}. Located at {{ hp.map_location }}.{% endblock %}
+{% block og_image %}
+{% with img=hp.hero_background_url %}
+<meta property="og:image" content="{% if 'http' in img %}{{ img }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ img }}{% endif %}">
+{% endwith %}
+{% endblock %}
 {% block extra_head %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/home.css' %}?v=30">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ExerciseGym",
+  "name": "{{ site_config.site_name|escapejs }}",
+  "description": "{{ hp.hero_subtext|escapejs }} {{ hp.welcome_tagline|escapejs }}",
+  "url": "{{ request.scheme }}://{{ request.get_host }}/",
+  "image": "{% with img=hp.hero_background_url %}{% if 'http' in img %}{{ img|escapejs }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ img|escapejs }}{% endif %}{% endwith %}",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Kathmandu",
+    "addressCountry": "NP",
+    "streetAddress": "{{ hp.contact_address|escapejs }}"
+  },
+  "email": "{{ hp.contact_email|escapejs }}"
+}
+</script>
 {% endblock %}
 {% block body %}
 <div class="home-page">
